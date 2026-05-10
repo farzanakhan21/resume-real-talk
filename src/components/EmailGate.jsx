@@ -25,7 +25,7 @@ export default function EmailGate({ onSubmit, onClose }) {
         <div className="modal__badge">one last thing</div>
         <h2>Where should we send your reality check?</h2>
         <p>
-          Your analysis is ready. Drop your email and we'll pull it right up. We'll occasionally send career intel worth your time — nothing else.
+          Your analysis is ready. Drop your email and we'll pull it right up. We'll occasionally send career intel worth your time - nothing else.
         </p>
         <form onSubmit={handleSubmit} noValidate>
           <div className="field">

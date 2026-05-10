@@ -21,14 +21,14 @@ export default function MultiStepForm({ onSubmit, error }) {
   const fileInputRef = useRef()
 
   const handleRoleNext = () => {
-    if (!roleCategory) return setFormError('Pick a category first — we need this to calibrate the whole analysis.')
+    if (!roleCategory) return setFormError('Pick a category first - we need this to calibrate the whole analysis.')
     if (roleCategory === 'custom' && !customRole.trim()) return setFormError('Tell us what role you\'re going for.')
     setFormError('')
     setStep(2)
   }
 
   const handleFile = (f) => {
-    if (!f || f.type !== 'application/pdf') return setFormError('PDF only please — we can\'t read anything else.')
+    if (!f || f.type !== 'application/pdf') return setFormError('PDF only please - we can\'t read anything else.')
     setFile(f)
     setFormError('')
   }
@@ -148,7 +148,7 @@ export default function MultiStepForm({ onSubmit, error }) {
 
               <div className="field">
                 <label className="field__label">
-                  Who are you trying to impress? <em>(optional — makes the analysis sharper)</em>
+                  Who are you trying to impress? <em>(optional - makes the analysis sharper)</em>
                 </label>
                 <input
                   className="input"

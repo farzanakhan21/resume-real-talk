@@ -16,7 +16,7 @@ export default function Hero() {
         to you.
       </h1>
       <p className="hero__sub">
-        Not a generic ATS scanner. A brutally honest hiring perception analysis — what the recruiter sees, what the hiring manager actually feels, and exactly what you need to do differently.
+        Not a generic ATS scanner. A brutally honest hiring perception analysis - what the recruiter sees, what the hiring manager actually feels, and exactly what you need to do differently.
       </p>
     </motion.section>
   )

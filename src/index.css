@@ -29,11 +29,11 @@
   --font: 'Space Grotesk', sans-serif;
   --mono: 'Space Mono', monospace;
 
-  /* Geometry — flat and editorial */
+  /* Geometry - flat and editorial */
   --radius: 4px;
   --radius-sm: 2px;
 
-  /* Hard shadows — no blur, graphic feel */
+  /* Hard shadows - no blur, graphic feel */
   --shadow: 4px 4px 0 var(--border-dark);
   --shadow-sm: 2px 2px 0 var(--border-dark);
 }

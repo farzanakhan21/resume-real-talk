@@ -22,14 +22,14 @@ export default function PaywallModal({ email, onClose, onUpgrade, loading }) {
           <div className="modal__badge">you've been here before</div>
           <h2>Once is free. Twice is $39.</h2>
           <p>
-            You've already used your free reality check. Unlock the full report — LinkedIn rewrite, 30-day visibility plan, PDF download, and more.
+            You've already used your free reality check. Unlock the full report - LinkedIn rewrite, 30-day visibility plan, PDF download, and more.
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', marginBottom: '1.75rem' }}>
             {[
-              { icon: '📄', text: 'Full analysis report — downloadable PDF' },
-              { icon: '💼', text: 'LinkedIn profile rewrite — headline, about, experience' },
-              { icon: '📈', text: '30-day visibility sprint — week-by-week action plan' },
+              { icon: '📄', text: 'Full analysis report - downloadable PDF' },
+              { icon: '💼', text: 'LinkedIn profile rewrite - headline, about, experience' },
+              { icon: '📈', text: '30-day visibility sprint - week-by-week action plan' },
               { icon: '🎯', text: '5 targeted rewrite suggestions (vs 3 in free)' },
             ].map(({ icon, text }) => (
               <div key={text} style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>

@@ -19,10 +19,10 @@ export const ROLE_CATEGORIES = [
 ];
 
 export const scoreColor = (score) => {
-  if (score >= 80) return '#2D5016';
-  if (score >= 65) return '#4A7228';
-  if (score >= 50) return '#8B6914';
-  return '#8B3A2E';
+  if (score >= 80) return '#2A6B3A';
+  if (score >= 65) return '#3A8A4A';
+  if (score >= 50) return '#C48A10';
+  return '#B33A2A';
 };
 
 export const scoreLabel = (score) => {
@@ -34,7 +34,7 @@ export const scoreLabel = (score) => {
 };
 
 export const riskColor = (level) => {
-  const map = { Low: '#2D5016', Medium: '#8B6914', High: '#8B3A2E', Critical: '#8B3A2E' };
+  const map = { Low: '#2A6B3A', Medium: '#C48A10', High: '#B33A2A', Critical: '#B33A2A' };
   return map[level] || 'var(--text-tertiary)';
 };
 

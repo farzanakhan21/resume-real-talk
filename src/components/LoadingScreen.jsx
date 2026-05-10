@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const MESSAGES = [
-  'Reading between the lines of your resume…',
-  'Analysing what recruiters actually see…',
-  'Scanning for ATS compatibility issues…',
-  'Assessing executive presence signals…',
-  'Finding your hidden competitive advantages…',
-  'Mapping industry translation gaps…',
-  'Crafting your positioning strategy…',
+  "Doing what your last recruiter wouldn't...",
+  "Reading between the lines...",
+  "Separating the buzzwords from the results...",
+  "Finding out what hiring managers actually see...",
+  "Checking for ATS landmines...",
+  "Spotting your hidden competitive advantages...",
+  "Translating career story into positioning strategy...",
 ]
 
 export default function LoadingScreen() {
   const [msgIndex, setMsgIndex] = useState(0)
 
   useEffect(() => {
-    const id = setInterval(() => setMsgIndex((i) => (i + 1) % MESSAGES.length), 2400)
+    const id = setInterval(() => setMsgIndex((i) => (i + 1) % MESSAGES.length), 2600)
     return () => clearInterval(id)
   }, [])
 
@@ -28,17 +28,23 @@ export default function LoadingScreen() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
+      <div className="loading__eyebrow">not ur regular hr</div>
+      <h2 className="loading__title">
+        Working on your<br />reality check.
+      </h2>
       <div className="loading__spinner" />
-      <motion.p
-        key={msgIndex}
-        className="loading__msg"
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        {MESSAGES[msgIndex]}
-      </motion.p>
+      <AnimatePresence mode="wait">
+        <motion.p
+          key={msgIndex}
+          className="loading__msg"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.35 }}
+        >
+          {MESSAGES[msgIndex]}
+        </motion.p>
+      </AnimatePresence>
     </motion.div>
   )
 }

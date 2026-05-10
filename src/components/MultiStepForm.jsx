@@ -21,22 +21,22 @@ export default function MultiStepForm({ onSubmit, error }) {
   const fileInputRef = useRef()
 
   const handleRoleNext = () => {
-    if (!roleCategory) return setFormError('Please select a role category.')
-    if (roleCategory === 'custom' && !customRole.trim()) return setFormError('Please describe your target role.')
+    if (!roleCategory) return setFormError('Pick a category first — we need this to calibrate the whole analysis.')
+    if (roleCategory === 'custom' && !customRole.trim()) return setFormError('Tell us what role you\'re going for.')
     setFormError('')
     setStep(2)
   }
 
   const handleFile = (f) => {
-    if (!f || f.type !== 'application/pdf') return setFormError('Please upload a PDF file.')
+    if (!f || f.type !== 'application/pdf') return setFormError('PDF only please — we can\'t read anything else.')
     setFile(f)
     setFormError('')
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (!file) return setFormError('Please upload your resume PDF.')
-    if (!jobTitle.trim()) return setFormError('Please enter your target job title.')
+    if (!file) return setFormError('Drop your resume in first.')
+    if (!jobTitle.trim()) return setFormError('We need the exact job title you\'re targeting.')
     setFormError('')
     onSubmit({
       file,
@@ -56,8 +56,8 @@ export default function MultiStepForm({ onSubmit, error }) {
       <AnimatePresence mode="wait">
         {step === 1 && (
           <motion.div key="step1" {...slide}>
-            <p className="muted small mb-3" style={{ marginBottom: '1.25rem' }}>
-              What role are you targeting? We'll tailor the entire analysis to this.
+            <p className="muted small mb-3" style={{ marginBottom: '1.25rem', fontWeight: 500 }}>
+              Pick the bucket you belong in. We'll calibrate the whole analysis to it.
             </p>
             <div className="role-grid mb-4" style={{ marginBottom: '1.5rem' }}>
               {ROLE_CATEGORIES.map((r) => (
@@ -80,7 +80,7 @@ export default function MultiStepForm({ onSubmit, error }) {
                 transition={{ duration: 0.25 }}
                 style={{ marginBottom: '1.5rem' }}
               >
-                <label className="field__label">Describe your role</label>
+                <label className="field__label">Tell us what you're going for</label>
                 <input
                   className="input"
                   value={customRole}
@@ -92,8 +92,8 @@ export default function MultiStepForm({ onSubmit, error }) {
 
             {formError && <div className="error-msg">{formError}</div>}
 
-            <button className="btn btn--primary mt-2" style={{ marginTop: '1.5rem' }} onClick={handleRoleNext}>
-              Continue <span className="btn-arrow">→</span>
+            <button className="btn btn--primary" style={{ marginTop: '1.5rem' }} onClick={handleRoleNext}>
+              Let's go <span className="btn-arrow">→</span>
             </button>
           </motion.div>
         )}
@@ -111,7 +111,7 @@ export default function MultiStepForm({ onSubmit, error }) {
 
             <form onSubmit={handleSubmit} noValidate>
               <div className="field">
-                <label className="field__label">Upload your resume <span>*</span></label>
+                <label className="field__label">Your resume <span>*</span></label>
                 <div
                   className={`drop-zone ${dragOver ? 'over' : ''}`}
                   onClick={() => fileInputRef.current.click()}
@@ -127,14 +127,16 @@ export default function MultiStepForm({ onSubmit, error }) {
                     onChange={(e) => handleFile(e.target.files[0])}
                   />
                   <span className="drop-zone__icon">{file ? '✓' : '📄'}</span>
-                  <span className="drop-zone__text">{file ? file.name : 'Click or drag your PDF here'}</span>
+                  <span className="drop-zone__text">
+                    {file ? file.name : 'Drop your resume here. We won\'t sugarcoat it.'}
+                  </span>
                   {!file && <span className="drop-zone__sub">PDF only · max 10MB</span>}
-                  {file && <span className="drop-zone__file">Ready to analyse</span>}
+                  {file && <span className="drop-zone__file">Locked and loaded ✓</span>}
                 </div>
               </div>
 
               <div className="field">
-                <label className="field__label">Exact target job title <span>*</span></label>
+                <label className="field__label">Exact job title you're targeting <span>*</span></label>
                 <input
                   className="input"
                   value={jobTitle}
@@ -145,7 +147,9 @@ export default function MultiStepForm({ onSubmit, error }) {
               </div>
 
               <div className="field">
-                <label className="field__label">Target company <em>(optional, makes analysis more specific)</em></label>
+                <label className="field__label">
+                  Who are you trying to impress? <em>(optional — makes the analysis sharper)</em>
+                </label>
                 <input
                   className="input"
                   value={company}
@@ -157,7 +161,7 @@ export default function MultiStepForm({ onSubmit, error }) {
               {(formError || error) && <div className="error-msg">{formError || error}</div>}
 
               <button type="submit" className="btn btn--primary" style={{ marginTop: '1.5rem' }}>
-                Get My Positioning Analysis <span className="btn-arrow">→</span>
+                Show me the truth <span className="btn-arrow">→</span>
               </button>
             </form>
           </motion.div>

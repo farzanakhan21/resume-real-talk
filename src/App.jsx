@@ -204,7 +204,7 @@ export default function App() {
 
       {view !== 'results' && (
         <footer className="footer">
-          <p>not ur regular hr &copy; 2025. On your side, not lying to you about it.</p>
+          <p>not ur regular hr &copy; 2026 · built different. because you deserve better than a template.</p>
         </footer>
       )}
     </>

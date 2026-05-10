@@ -26,10 +26,22 @@ const config = {
   PORT: process.env.PORT || fileConfig.PORT || 3001,
 };
 
+// ── Startup validation ────────────────────────────────────────────────────
+const configSource = process.env.ANTHROPIC_API_KEY ? 'environment variables' : 'config.json';
+console.log(`Config loaded from: ${configSource}`);
+if (!config.ANTHROPIC_API_KEY) {
+  console.error('ERROR: ANTHROPIC_API_KEY is not set. Add it to Vercel Environment Variables.');
+}
+if (!config.STRIPE_SECRET_KEY || config.STRIPE_SECRET_KEY.includes('YOUR')) {
+  console.warn('WARNING: STRIPE_SECRET_KEY is not configured — payment features disabled.');
+}
+
 const app = express();
 const storage = multer.memoryStorage();
 const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
-const client = new Anthropic({ apiKey: config.ANTHROPIC_API_KEY });
+const client = config.ANTHROPIC_API_KEY
+  ? new Anthropic({ apiKey: config.ANTHROPIC_API_KEY })
+  : null;
 const stripe = config.STRIPE_SECRET_KEY && !config.STRIPE_SECRET_KEY.includes('YOUR')
   ? new Stripe(config.STRIPE_SECRET_KEY)
   : null;
@@ -140,6 +152,7 @@ app.get('/api/verify-payment', async (req, res) => {
 
 // ── Analysis endpoint ──────────────────────────────────────────────────────
 app.post('/api/analyze', upload.single('resume'), async (req, res) => {
+  if (!client) return res.status(503).json({ error: 'ANTHROPIC_API_KEY is not configured. Add it to Vercel Environment Variables.' });
   try {
     const { jobTitle, roleCategory, company, email } = req.body;
     if (!req.file) return res.status(400).json({ error: 'No resume uploaded.' });

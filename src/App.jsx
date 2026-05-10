@@ -21,7 +21,7 @@ export default function App() {
   const [userEmail, setUserEmail] = useState('')
   const [checkoutLoading, setCheckoutLoading] = useState(false)
 
-  // Handle payment redirect back from Stripe
+  // Handle payment redirect back from Stripe + restore sessionStorage on back navigation
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const payment = params.get('payment')
@@ -29,20 +29,45 @@ export default function App() {
     const email = params.get('email')
 
     if (payment === 'success' && sessionId) {
-      // Clean up URL
       window.history.replaceState({}, '', '/')
-      // Verify payment server-side and mark paid
       fetch(`/api/verify-payment?session_id=${sessionId}&email=${encodeURIComponent(email || '')}`)
         .then(r => r.json())
         .then(data => {
           if (data.paid) {
+            const resolvedEmail = data.email || email || ''
             setIsPaid(true)
-            setUserEmail(data.email || email || '')
+            setUserEmail(resolvedEmail)
+            // Restore results from session and mark as paid
+            const saved = sessionStorage.getItem('nrhr_session')
+            if (saved) {
+              try {
+                const { results: savedResults } = JSON.parse(saved)
+                if (savedResults) {
+                  setResults(savedResults)
+                  sessionStorage.setItem('nrhr_session', JSON.stringify({ results: savedResults, isPaid: true, userEmail: resolvedEmail }))
+                  setView('results')
+                }
+              } catch {}
+            }
           }
         })
         .catch(() => {})
     } else if (payment === 'cancelled') {
       window.history.replaceState({}, '', '/')
+    } else {
+      // Restore results from sessionStorage (handles browser back button)
+      const saved = sessionStorage.getItem('nrhr_session')
+      if (saved) {
+        try {
+          const { results: savedResults, isPaid: savedPaid, userEmail: savedEmail } = JSON.parse(saved)
+          if (savedResults) {
+            setResults(savedResults)
+            setIsPaid(savedPaid || false)
+            setUserEmail(savedEmail || '')
+            setView('results')
+          }
+        } catch {}
+      }
     }
   }, [])
 
@@ -78,6 +103,7 @@ export default function App() {
 
       setResults(json.data)
       setIsPaid(json.isPaid || false)
+      sessionStorage.setItem('nrhr_session', JSON.stringify({ results: json.data, isPaid: json.isPaid || false, userEmail: email }))
       setView('results')
       window.scrollTo({ top: 0 })
     } catch (err) {
@@ -108,6 +134,7 @@ export default function App() {
   }
 
   const handleReset = () => {
+    sessionStorage.removeItem('nrhr_session')
     setView('home')
     setResults(null)
     setPendingData(null)

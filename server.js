@@ -36,7 +36,12 @@ if (!config.ANTHROPIC_API_KEY) {
   console.error('ERROR: ANTHROPIC_API_KEY is not set. Add it to Vercel Environment Variables.');
 }
 if (!config.STRIPE_SECRET_KEY || config.STRIPE_SECRET_KEY.includes('YOUR')) {
-  console.warn('WARNING: STRIPE_SECRET_KEY is not configured — payment features disabled.');
+  console.warn('WARNING: STRIPE_SECRET_KEY is not configured - payment features disabled.');
+}
+console.log(`RESEND_API_KEY: ${config.RESEND_API_KEY ? 'SET (' + config.RESEND_API_KEY.slice(0, 8) + '...)' : 'NOT SET - emails will be skipped'}`);
+console.log(`RESEND_FROM: ${config.RESEND_FROM}`);
+if (config.RESEND_FROM.includes('onboarding@resend.dev')) {
+  console.warn('WARNING: RESEND_FROM is using onboarding@resend.dev - Resend only allows this to send to your own Resend account email. Set RESEND_FROM to a verified domain address to send to real users.');
 }
 
 const app = express();
@@ -158,7 +163,11 @@ app.get('/api/verify-payment', async (req, res) => {
 
 // ── Email helper ──────────────────────────────────────────────────────────
 async function sendResultsEmail(to, jobTitle, data, isPaid) {
-  if (!resend) return;
+  console.log(`[Email] sendResultsEmail called — to: ${to}, jobTitle: ${jobTitle}, isPaid: ${isPaid}`);
+  if (!resend) {
+    console.log('[Email] Resend client is null — RESEND_API_KEY not set or invalid. Skipping email.');
+    return;
+  }
 
   const score = data.scores?.overall ?? '—';
   const headline = data.firstImpression?.headline ?? '';
@@ -249,12 +258,24 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
 </body>
 </html>`;
 
-  await resend.emails.send({
-    from: config.RESEND_FROM,
-    to,
-    subject: `Your resume positioning report — ${jobTitle} (Score: ${score}/100)`,
-    html,
-  });
+  console.log(`[Email] Sending from: ${config.RESEND_FROM} to: ${to}`);
+  try {
+    const result = await resend.emails.send({
+      from: config.RESEND_FROM,
+      to,
+      subject: `Your resume positioning report - ${jobTitle} (Score: ${score}/100)`,
+      html,
+    });
+    console.log('[Email] Resend response:', JSON.stringify(result));
+    if (result.error) {
+      console.error('[Email] Resend returned an error:', JSON.stringify(result.error));
+    } else {
+      console.log('[Email] Sent successfully, id:', result.data?.id);
+    }
+  } catch (err) {
+    console.error('[Email] resend.emails.send threw:', err.message, '| statusCode:', err.statusCode, '| full:', JSON.stringify(err));
+    throw err;
+  }
 }
 
 // ── Analysis endpoint ──────────────────────────────────────────────────────
@@ -421,7 +442,7 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
 
     // Send results email — fire and forget, never block the response
     sendResultsEmail(normalised, jobTitle, parsed, isPaid).catch(err =>
-      console.error('Email send failed:', err.message)
+      console.error('[Email] Fire-and-forget failed:', err.message, err.statusCode, JSON.stringify(err))
     );
 
     res.json({ success: true, data: parsed, isPaid });

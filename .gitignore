@@ -1,0 +1,14 @@
+node_modules/
+.env
+.env.txt
+config.json
+emails.json
+dist/
+*.out
+*.err
+srv.out
+srv.err
+vite.out
+vite.err
+server-out.txt
+server-err.txt

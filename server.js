@@ -25,6 +25,7 @@ const config = {
   STRIPE_PRICE_ID: process.env.STRIPE_PRICE_ID || fileConfig.STRIPE_PRICE_ID || '',
   RESEND_API_KEY: process.env.RESEND_API_KEY || fileConfig.RESEND_API_KEY || '',
   RESEND_FROM: process.env.RESEND_FROM || fileConfig.RESEND_FROM || 'not ur regular hr <onboarding@resend.dev>',
+  RESEND_AUDIENCE_ID: process.env.RESEND_AUDIENCE_ID || fileConfig.RESEND_AUDIENCE_ID || '13acb378-9a32-45c8-b256-64a3875581d6',
   APP_URL: process.env.APP_URL || fileConfig.APP_URL || 'http://localhost:5173',
   PORT: process.env.PORT || fileConfig.PORT || 3001,
 };
@@ -160,6 +161,32 @@ app.get('/api/verify-payment', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// ── Audience helper ───────────────────────────────────────────────────────
+function extractFirstName(email) {
+  const local = email.split('@')[0];
+  const first = local.split(/[._\-+]/)[0];
+  if (first && first.length >= 2 && /^[a-zA-Z]+$/.test(first)) {
+    return first.charAt(0).toUpperCase() + first.slice(1).toLowerCase();
+  }
+  return null;
+}
+
+async function addToAudience(email) {
+  if (!resend || !config.RESEND_AUDIENCE_ID) return;
+  const firstName = extractFirstName(email);
+  try {
+    const result = await resend.contacts.create({
+      audienceId: config.RESEND_AUDIENCE_ID,
+      email,
+      ...(firstName && { firstName }),
+      unsubscribed: false,
+    });
+    console.log(`[Audience] Added ${email} to audience:`, result?.data?.id ?? JSON.stringify(result));
+  } catch (err) {
+    console.error(`[Audience] Failed to add ${email}:`, err.message);
+  }
+}
 
 // ── Email helper ──────────────────────────────────────────────────────────
 async function sendResultsEmail(to, jobTitle, data, isPaid) {
@@ -442,6 +469,9 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
       emails.used.push(normalised);
       writeEmails(emails);
     }
+
+    // Add to Resend audience — fire and forget
+    addToAudience(normalised);
 
     // Send results email — fire and forget, never block the response
     sendResultsEmail(normalised, jobTitle, parsed, isPaid).catch(err =>

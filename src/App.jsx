@@ -195,6 +195,17 @@ export default function App() {
             <div className="container--narrow" style={{ paddingBottom: '6rem' }}>
               <MultiStepForm onSubmit={handleFormSubmit} error={globalError} />
             </div>
+            <section className="contact-section">
+              <div className="contact-section__inner">
+                <h2 className="contact-section__heading">got a question? just ask.</h2>
+                <p className="contact-section__body">
+                  I'm not hard to find. If you want to chat, give feedback, or just say hi — reply to any email I've sent you, or reach me directly at{' '}
+                  <a href="mailto:farzana@noturregularhr.com" className="contact-section__email">
+                    farzana@noturregularhr.com
+                  </a>
+                </p>
+              </div>
+            </section>
           </motion.div>
         )}
 

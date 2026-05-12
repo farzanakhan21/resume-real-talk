@@ -1074,6 +1074,38 @@ ul { list-style: none; }
   line-height: 1.8;
 }
 
+/* ── Contact section ── */
+.contact-section {
+  border-top: 2px solid var(--border-dark);
+  padding: 5rem 2rem;
+}
+.contact-section__inner {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.contact-section__heading {
+  font-size: clamp(1.6rem, 3.5vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+}
+.contact-section__body {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  max-width: 560px;
+}
+.contact-section__email {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity 0.15s;
+}
+.contact-section__email:hover { opacity: 0.75; }
+
 /* ── About page ── */
 .about-page { min-height: 80vh; }
 .about-inner {

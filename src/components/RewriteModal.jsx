@@ -5,7 +5,7 @@ import { copyToClipboard } from '../utils'
 const VERSIONS = [
   { key: 'ats', label: 'ATS-Optimised', desc: 'Keyword-rich, metric-driven, scan-friendly' },
   { key: 'executive', label: 'Executive', desc: 'Strategic framing, authority language, outcome-led' },
-  { key: 'startup', label: 'Startup / Founder', desc: 'Punchy, direct, zero corporate fluff' },
+  { key: 'startup', label: 'Startup / Founder', desc: 'Punchy, direct, zero corporate BS' },
   { key: 'concise', label: 'Ultra-Concise', desc: 'Maximum signal, minimum words' },
 ]
 

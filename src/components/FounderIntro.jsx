@@ -13,7 +13,7 @@ export default function FounderIntro() {
         <div className="founder-intro__body">
           <p>I've spent 10+ years in HR and recruitment watching talented people get overlooked - not because they weren't good enough, but because their resume wasn't telling the right story.</p>
           <p>Most career advice out there is generic. Vague. Written for everyone, which means it helps no one.</p>
-          <p>This tool gives you the kind of specific, tailored feedback I'd give you if you were my friend sitting across from me. Not the corporate version. The real version.</p>
+          <p>This tool gives you the kind of specific, tailored feedback I'd give you if you were my friend sitting across from me. Not the corporate BS. The real version.</p>
           <div className="founder-intro__sig">
             <div className="founder-intro__name">Farzana</div>
             <div className="founder-intro__brand">not ur regular hr</div>

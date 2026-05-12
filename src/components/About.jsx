@@ -33,7 +33,7 @@ export default function About({ onNavigate }) {
         >
           <span className="hero__badge">✦ about</span>
           <h1 className="about-headline">
-            not ur regular hr —<br />and I mean that <em>literally.</em>
+            not ur regular hr -<br />and I mean that <em>literally.</em>
           </h1>
         </motion.div>
 
@@ -41,13 +41,13 @@ export default function About({ onNavigate }) {
           <p>I'm not on the employee's side. I'm not on the employer's side.</p>
           <p className="about-emphasis">I'm at the intersection.</p>
           <p>After 10+ years across HR, recruitment, and people &amp; culture - in startups, hospitality, and everything in between - I've sat in every seat at the table. I've been the one making the decisions, and I've been the one affected by them.</p>
-          <p>What I've learned: everyone deserves to be heard. Employees, managers, founders, operators. And there's always a way to figure out how to voice what you want, get what you deserve, and move forward.</p>
+          <p>What I've learned: everyone deserves to be heard. Employees, managers, founders, operators. And there's always a way to figure out how to use your voice - whether you're trying to get in the room, run the room, or redesign what happens inside it.</p>
         </Section>
 
         <Section delay={0.15}>
           <p className="about-emphasis">My whole philosophy is simple: if the goal is experience, you never fail.</p>
-          <p>I'm not here to be your therapist or your hype person. I'm here to share what I know - the same advice I give my friends and family when they call me (and they always call me) about work, careers, and figuring out what's next.</p>
-          <p>Specific. Honest. Practical. No corporate fluff.</p>
+          <p>I'm not here to be your therapist or your hype person. I'm here to share what I know - the same advice I give my friends and family when they call me about work, careers, and figuring out what's next.</p>
+          <p>Specific. Honest. Practical. No corporate BS.</p>
         </Section>
 
         <Section delay={0.2}>

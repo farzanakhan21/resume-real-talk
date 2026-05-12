@@ -453,7 +453,7 @@ Return exactly this JSON (no markdown, no extra text):
 {
   "ats": "<ATS-optimised version - strong action verb + quantified outcome + relevant keywords. Clean, scannable, metric-driven.>",
   "executive": "<Executive-level version - strategic framing, outcome-focused, signals ownership and authority. Board-room language.>",
-  "startup": "<Startup/founder-style version - punchy, results-obsessed, zero corporate fluff. Direct and credible.>",
+  "startup": "<Startup/founder-style version - punchy, results-obsessed, zero corporate BS. Direct and credible.>",
   "concise": "<Ultra-concise version - maximum signal in minimum words. Under 20 words. No filler.>"
 }`;
 

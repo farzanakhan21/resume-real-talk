@@ -30,6 +30,10 @@ const FAQS = [
     q: "What's coming next?",
     a: "This is just the start. I'm building out tools for navigating difficult workplace conversations, making the case for your promotion, and recognising toxic workplaces before they take a toll. Stay tuned.",
   },
+  {
+    q: 'What is your refund policy?',
+    a: "All sales are final. Because this is a digital product delivered instantly, I'm unable to offer refunds once the report has been generated.",
+  },
 ]
 
 export default function FAQ() {

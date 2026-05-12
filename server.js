@@ -208,7 +208,7 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
 
         <!-- Header -->
         <tr><td style="background:#0A0A0A;border-radius:12px 12px 0 0;padding:28px 36px;">
-          <p style="margin:0;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#5B21B6;font-family:monospace;">not ur regular hr</p>
+          <p style="margin:0;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#7C3AED;font-family:monospace;">not ur regular hr</p>
           <p style="margin:6px 0 0;font-size:18px;font-weight:700;color:#FFFFFF;letter-spacing:-0.02em;">career reality check</p>
         </td></tr>
 
@@ -220,7 +220,7 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
           <p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">what did the feedback bring up for you? anything you're going to change?</p>
           <p style="margin:0 0 36px;font-size:15px;color:#0A0A0A;line-height:1.75;">hit reply - I read and respond to every single one.</p>
           <p style="margin:0 0 2px;font-size:15px;font-weight:700;color:#0A0A0A;letter-spacing:-0.01em;">farzana</p>
-          <p style="margin:0 0 36px;font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:#5B21B6;font-family:monospace;">not ur regular hr</p>
+          <p style="margin:0 0 36px;font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:#7C3AED;font-family:monospace;">not ur regular hr</p>
           <p style="margin:0;font-size:11px;color:#9CA3AF;letter-spacing:0.04em;border-top:1px solid #E5E7EB;padding-top:24px;">built different. because you deserve better than a template.</p>
         </td></tr>
 
@@ -254,7 +254,7 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
 app.post('/api/analyze', upload.single('resume'), async (req, res) => {
   if (!client) return res.status(503).json({ error: 'ANTHROPIC_API_KEY is not configured. Add it to Vercel Environment Variables.' });
   try {
-    const { jobTitle, roleCategory, company, email, testPaid } = req.body;
+    const { jobTitle, roleCategory, industry, company, email, testPaid } = req.body;
     if (!req.file) return res.status(400).json({ error: 'No resume uploaded.' });
     if (!jobTitle) return res.status(400).json({ error: 'Job title is required.' });
     if (!email) return res.status(400).json({ error: 'Email is required.' });
@@ -283,6 +283,7 @@ app.post('/api/analyze', upload.single('resume'), async (req, res) => {
 
     const companyCtx = company ? `Target Company: ${company}` : 'No specific company specified.';
     const roleCtx = roleCategory && roleCategory !== 'custom' ? `Role Category: ${roleCategory}` : '';
+    const industryCtx = industry ? `Industry: ${industry}` : '';
     const rewriteCount = isPaid ? 5 : 3;
 
     const paidSections = isPaid ? `
@@ -310,9 +311,10 @@ ${resumeText}
 
 TARGET JOB TITLE: ${jobTitle}
 ${roleCtx}
+${industryCtx}
 ${companyCtx}
 
-Analyse this resume through the lens of a hiring decision-maker evaluating a ${jobTitle} candidate.
+Analyse this resume through the lens of a hiring decision-maker evaluating a ${jobTitle} candidate${industry ? ` in the ${industry} industry` : ''}.
 
 Return EXACTLY this JSON structure. No markdown fences, no extra text, only valid JSON:
 

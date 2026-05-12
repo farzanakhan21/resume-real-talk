@@ -55,6 +55,9 @@ export default function PaywallModal({ email, onClose, onUpgrade, loading }) {
           <p style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '0.75rem', fontFamily: 'var(--mono)' }}>
             One-time payment · Secure checkout via Stripe · Instant access
           </p>
+          <p style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', marginTop: '0.35rem' }}>
+            All sales are final. No refunds on digital products.
+          </p>
         </motion.div>
       </motion.div>
     </AnimatePresence>

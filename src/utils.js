@@ -1,26 +1,26 @@
 export const ROLE_CATEGORIES = [
-  { id: 'people-hr', label: 'HR Director / Chief People Officer' },
-  { id: 'people-culture', label: 'People & Culture Lead / HR Business Partner' },
-  { id: 'talent', label: 'Talent Acquisition Lead' },
-  { id: 'talent-head', label: 'Head of Talent / Recruitment Lead' },
-  { id: 'operations', label: 'Operations Manager / COO' },
-  { id: 'general-manager', label: 'General Manager / Site Lead' },
-  { id: 'ea-cos', label: 'Executive Assistant / Chief of Staff' },
-  { id: 'product', label: 'Product Manager / CPO' },
-  { id: 'marketing', label: 'Marketing Lead / CMO' },
-  { id: 'founder', label: 'Startup Founder / CEO' },
-  { id: 'engineering', label: 'Engineering Lead / CTO' },
-  { id: 'finance', label: 'Finance / Strategy' },
-  { id: 'ld-od', label: 'L&D / Organisational Development Lead' },
-  { id: 'data', label: 'Data & Analytics Lead' },
   { id: 'consulting', label: 'Consulting / Advisory' },
+  { id: 'data', label: 'Data & Analytics Lead' },
+  { id: 'engineering', label: 'Engineering Lead / CTO' },
+  { id: 'ea-cos', label: 'Executive Assistant / Chief of Staff' },
+  { id: 'finance', label: 'Finance / Strategy' },
+  { id: 'general-manager', label: 'General Manager / Site Lead' },
+  { id: 'talent-head', label: 'Head of Talent / Recruitment Lead' },
+  { id: 'people-hr', label: 'HR Director / Chief People Officer' },
+  { id: 'ld-od', label: 'L&D / Organisational Development Lead' },
+  { id: 'marketing', label: 'Marketing Lead / CMO' },
+  { id: 'operations', label: 'Operations Manager / COO' },
+  { id: 'people-culture', label: 'People & Culture Lead / HR Business Partner' },
+  { id: 'product', label: 'Product Manager / CPO' },
   { id: 'sales', label: 'Sales / Business Development' },
+  { id: 'founder', label: 'Startup Founder / CEO' },
+  { id: 'talent', label: 'Talent Acquisition Lead' },
   { id: 'custom', label: 'Other: I\'ll describe my role below' },
 ];
 
 export const scoreColor = (score) => {
-  if (score >= 80) return '#5B21B6';
-  if (score >= 65) return '#7C3AED';
+  if (score >= 80) return '#7C3AED';
+  if (score >= 65) return '#8B5CF6';
   if (score >= 50) return '#C48A10';
   return '#B33A2A';
 };
@@ -34,7 +34,7 @@ export const scoreLabel = (score) => {
 };
 
 export const riskColor = (level) => {
-  const map = { Low: '#5B21B6', Medium: '#C48A10', High: '#B33A2A', Critical: '#B33A2A' };
+  const map = { Low: '#7C3AED', Medium: '#C48A10', High: '#B33A2A', Critical: '#B33A2A' };
   return map[level] || 'var(--text-tertiary)';
 };
 

@@ -9,12 +9,32 @@ const slide = {
   transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] },
 }
 
+const INDUSTRIES = [
+  'Construction & Engineering',
+  'Creative & Design',
+  'Education',
+  'Finance & Banking',
+  'Government & Public Sector',
+  'Healthcare & Medical',
+  'Hospitality & Tourism',
+  'HR & People & Culture',
+  'Legal & Professional Services',
+  'Marketing & Media',
+  'Not-for-Profit & Social Impact',
+  'Operations & Logistics',
+  'Retail & E-commerce',
+  'Sales & Business Development',
+  'Technology & Startups',
+  'Other (I\'ll describe below)',
+]
+
 export default function MultiStepForm({ onSubmit, error }) {
   const [step, setStep] = useState(1)
   const [roleCategory, setRoleCategory] = useState('')
   const [customRole, setCustomRole] = useState('')
   const [file, setFile] = useState(null)
   const [jobTitle, setJobTitle] = useState('')
+  const [industry, setIndustry] = useState('')
   const [company, setCompany] = useState('')
   const [dragOver, setDragOver] = useState(false)
   const [formError, setFormError] = useState('')
@@ -42,6 +62,7 @@ export default function MultiStepForm({ onSubmit, error }) {
       file,
       jobTitle: jobTitle.trim(),
       roleCategory: roleCategory === 'custom' ? customRole.trim() : roleCategory,
+      industry: industry.trim(),
       company: company.trim(),
     })
   }
@@ -147,6 +168,21 @@ export default function MultiStepForm({ onSubmit, error }) {
                   placeholder="e.g. Head of People, Senior Product Manager"
                   required
                 />
+              </div>
+
+              <div className="field">
+                <label className="field__label">YOUR INDUSTRY <em>(optional)</em></label>
+                <select
+                  className="input"
+                  value={industry}
+                  onChange={(e) => setIndustry(e.target.value)}
+                >
+                  <option value="">Select your industry</option>
+                  {INDUSTRIES.map((ind) => (
+                    <option key={ind} value={ind}>{ind}</option>
+                  ))}
+                </select>
+                <p className="field__hint">The more specific you are, the more tailored your feedback.</p>
               </div>
 
               <div className="field">

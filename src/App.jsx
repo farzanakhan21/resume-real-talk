@@ -124,6 +124,7 @@ export default function App() {
         fd.append('testPaid', 'true')
       }
       fd.append('roleCategory', pendingData.roleCategory)
+      fd.append('industry', pendingData.industry || '')
       fd.append('company', pendingData.company || '')
       fd.append('email', email)
 

@@ -1,14 +1,13 @@
 import { motion } from 'framer-motion'
 
-function Section({ label, children }) {
+function Section({ children, delay = 0 }) {
   return (
     <motion.div
       className="about-section"
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.45 }}
+      transition={{ duration: 0.45, delay }}
     >
-      <div className="about-section__label">{label}</div>
       <div className="about-section__body">{children}</div>
     </motion.div>
   )
@@ -22,7 +21,7 @@ export default function About({ onNavigate }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.35 }}
     >
       <div className="about-inner">
 
@@ -32,51 +31,35 @@ export default function About({ onNavigate }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <span className="hero__badge">✦ the person behind the tool</span>
+          <span className="hero__badge">✦ about</span>
           <h1 className="about-headline">
-            I didn't plan to<br />work in HR.<br />HR <em>found</em> me.
+            not ur regular hr —<br />and I mean that <em>literally.</em>
           </h1>
         </motion.div>
 
-        <Section label="the beginning">
-          <p>I was nineteen, working as a barista. Everything that could go wrong, went wrong.</p>
-          <p>I was underpaid, overworked, and when I asked for a promotion or a pay rise, my manager made it clear there were other ways I could earn more. He was asking me to have an affair with him.</p>
-          <p>I reached out to someone in the HR space for advice. I liked how she thought. I told her I wanted to do what she did.</p>
-          <p>She gave me my first HR job.</p>
-          <p>I was twenty-one, still at uni, and I walked into a company that had never had HR before. I was their first hire. I built the entire practice from scratch and stayed for five years. That's where I learned everything.</p>
+        <Section delay={0.1}>
+          <p>I'm not on the employee's side. I'm not on the employer's side.</p>
+          <p className="about-emphasis">I'm at the intersection.</p>
+          <p>After 10+ years across HR, recruitment, and people &amp; culture - in startups, hospitality, and everything in between - I've sat in every seat at the table. I've been the one making the decisions, and I've been the one affected by them.</p>
+          <p>What I've learned: everyone deserves to be heard. Employees, managers, founders, operators. And there's always a way to figure out how to voice what you want, get what you deserve, and move forward.</p>
         </Section>
 
-        <Section label="what I learned at the top">
-          <p>I never chased a career ladder. I chased projects. I wanted to get really good at specific things - and I knew that staying in one place wasn't going to get me the experience or the pay I was worth.</p>
-          <p>So I kept moving. And eventually, I made it to the most senior HR seat in the room.</p>
-          <p>And that's when I realised something that changed everything:</p>
-          <blockquote className="about-pull">
-            Nobody actually knows what they're doing. Everyone is figuring it out as they go.
-          </blockquote>
-          <p>I watched decisions get made - good ones, bad ones, manipulated ones. I saw how little most organisations actually invest in their people when it comes down to it. I spent years fighting for my team, my employees, my people.</p>
-          <p>And I realised that no one at the top was going to fight for me the same way.</p>
-          <p>So I stopped waiting for someone to give me permission.</p>
+        <Section delay={0.15}>
+          <p className="about-emphasis">My whole philosophy is simple: if the goal is experience, you never fail.</p>
+          <p>I'm not here to be your therapist or your hype person. I'm here to share what I know - the same advice I give my friends and family when they call me (and they always call me) about work, careers, and figuring out what's next.</p>
+          <p>Specific. Honest. Practical. No corporate fluff.</p>
         </Section>
 
-        <Section label="the moment">
-          <p>One day I found myself writing my own redundancy letter.</p>
-          <p>I'd spent years fighting for everyone else's careers. And there I was, making the case for my own exit.</p>
-          <p>It was bittersweet. And I thought: if not now, when?</p>
-          <p>So I started building.</p>
-        </Section>
-
-        <Section label="why I built this">
-          <p>Most career advice is generic. Vague. Written for everyone, which means it actually helps no one.</p>
-          <p>I built not ur regular hr because I wanted to give people the advice I wish I'd had - specific, honest, tailored to your actual situation. The kind of advice you'd get from a friend who happens to know exactly how hiring works from the inside.</p>
-          <p>Not the corporate version. The real version.</p>
-          <p>This is just the start. I'm building tools for every stage of the career journey - because whether you're trying to get in the room, navigate what happens once you're there, or figure out when it's time to leave, you deserve more than a Google search and a LinkedIn post.</p>
+        <Section delay={0.2}>
+          <p>I'm building tools for every stage of the working life - not just getting the job, but navigating what happens once you're in it.</p>
+          <p>Because whether you're job hunting, managing a team, trying to get promoted, or figuring out if it's time to leave - you deserve more than generic advice written for everyone and useful to no one.</p>
         </Section>
 
         <motion.div
           className="about-signoff"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
+          transition={{ duration: 0.4, delay: 0.25 }}
         >
           <div className="about-signoff__name">Farzana Khan</div>
           <div className="about-signoff__brand">not ur regular hr</div>
@@ -86,7 +69,7 @@ export default function About({ onNavigate }) {
           className="about-cta"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
         >
           <button className="btn btn--primary" onClick={() => onNavigate('/')}>
             Try the career reality check →

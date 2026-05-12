@@ -1048,6 +1048,12 @@ ul { list-style: none; }
   line-height: 1.85;
   color: var(--text);
 }
+.about-emphasis {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
 .about-pull {
   border-left: 4px solid var(--accent);
   padding: 1rem 1.5rem;

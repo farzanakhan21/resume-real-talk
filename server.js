@@ -196,17 +196,7 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
     return;
   }
 
-  const score = data.scores?.overall ?? '-';
-  const headline = data.firstImpression?.headline ?? '';
-  const verdict = data.firstImpression?.hirabilityVerdict ?? '';
-  const coreDisconnect = data.hardTruth?.coreDisconnect ?? '';
-  const linkedinHeadline = data.positioningStrategy?.linkedinHeadline ?? '';
-  const keywordsToOwn = (data.positioningStrategy?.keywordsToOwn ?? []).slice(0, 5).join(', ');
-  const atsRisk = data.atsRisk?.riskLevel ?? '';
-  const quickFixes = (data.atsRisk?.quickFixes ?? []).slice(0, 3);
-  const appUrl = config.APP_URL || 'https://resume-real-talk.vercel.app';
-
-  const scoreColor = score >= 80 ? '#2D5016' : score >= 65 ? '#4A7228' : score >= 50 ? '#8B6914' : '#8B3A2E';
+  const firstName = extractFirstName(to) || 'there';
 
   const html = `<!DOCTYPE html>
 <html>
@@ -218,66 +208,20 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
 
         <!-- Header -->
         <tr><td style="background:#0A0A0A;border-radius:12px 12px 0 0;padding:28px 36px;">
-          <p style="margin:0;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#7A6020;font-family:monospace;">career positioning analysis</p>
-          <p style="margin:6px 0 0;font-size:22px;font-weight:700;color:#FFFFFF;letter-spacing:-0.02em;">not ur regular hr</p>
+          <p style="margin:0;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#C85C3A;font-family:monospace;">not ur regular hr</p>
+          <p style="margin:6px 0 0;font-size:18px;font-weight:700;color:#FFFFFF;letter-spacing:-0.02em;">career reality check</p>
         </td></tr>
 
-        <!-- Score block -->
-        <tr><td style="background:#FFFFFF;padding:36px 36px 28px;border-left:1px solid #E8E8E4;border-right:1px solid #E8E8E4;">
-          <p style="margin:0 0 6px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#9C9C96;">your overall score</p>
-          <table cellpadding="0" cellspacing="0"><tr>
-            <td style="font-size:56px;font-weight:700;color:${scoreColor};letter-spacing:-0.04em;line-height:1;">${score}</td>
-            <td style="font-size:18px;color:#9C9C96;padding:28px 0 0 4px;">/100</td>
-          </tr></table>
-          <p style="margin:12px 0 0;font-size:15px;font-weight:600;color:#0A0A0A;">${headline}</p>
-          ${verdict ? `<p style="margin:8px 0 0;font-size:14px;color:#5C5C58;line-height:1.6;">${verdict}</p>` : ''}
-        </td></tr>
-
-        <!-- Hard truth -->
-        ${coreDisconnect ? `<tr><td style="background:#FFFFFF;padding:0 36px 28px;border-left:1px solid #E8E8E4;border-right:1px solid #E8E8E4;">
-          <div style="background:#F7F7F5;border-left:3px solid #8B3A2E;border-radius:0 8px 8px 0;padding:16px 18px;">
-            <p style="margin:0 0 6px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#8B3A2E;font-weight:600;">the hard truth</p>
-            <p style="margin:0;font-size:13px;color:#0A0A0A;line-height:1.65;">${coreDisconnect}</p>
-          </div>
-        </td></tr>` : ''}
-
-        <!-- ATS risk + quick fixes -->
-        ${quickFixes.length ? `<tr><td style="background:#FFFFFF;padding:0 36px 28px;border-left:1px solid #E8E8E4;border-right:1px solid #E8E8E4;">
-          <p style="margin:0 0 12px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#9C9C96;">ats risk: <span style="color:${atsRisk === 'Low' ? '#2D5016' : atsRisk === 'Medium' ? '#8B6914' : '#8B3A2E'};font-weight:700;">${atsRisk}</span></p>
-          <p style="margin:0 0 8px;font-size:12px;font-weight:600;color:#5C5C58;">Quick fixes:</p>
-          <ul style="margin:0;padding-left:18px;">
-            ${quickFixes.map(f => `<li style="font-size:13px;color:#0A0A0A;line-height:1.6;margin-bottom:4px;">${f}</li>`).join('')}
-          </ul>
-        </td></tr>` : ''}
-
-        <!-- LinkedIn headline -->
-        ${linkedinHeadline ? `<tr><td style="background:#FFFFFF;padding:0 36px 28px;border-left:1px solid #E8E8E4;border-right:1px solid #E8E8E4;">
-          <p style="margin:0 0 8px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#9C9C96;">rewrite your linkedin headline to:</p>
-          <p style="margin:0;font-size:15px;font-weight:700;color:#7A6020;">${linkedinHeadline}</p>
-        </td></tr>` : ''}
-
-        <!-- Keywords -->
-        ${keywordsToOwn ? `<tr><td style="background:#FFFFFF;padding:0 36px 28px;border-left:1px solid #E8E8E4;border-right:1px solid #E8E8E4;">
-          <p style="margin:0 0 10px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#9C9C96;">keywords to own for ${jobTitle}</p>
-          <p style="margin:0;font-size:13px;color:#0A0A0A;">${keywordsToOwn}</p>
-        </td></tr>` : ''}
-
-        <!-- CTA -->
-        <tr><td style="background:#FFFFFF;padding:0 36px 36px;border-left:1px solid #E8E8E4;border-right:1px solid #E8E8E4;border-bottom:1px solid #E8E8E4;border-radius:0 0 12px 12px;">
-          ${!isPaid ? `<div style="background:#F7F7F5;border:1px solid #E8E8E4;border-radius:10px;padding:20px 24px;margin-bottom:20px;">
-            <p style="margin:0 0 4px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#7A6020;font-weight:600;">want the full breakdown?</p>
-            <p style="margin:0 0 14px;font-size:13px;color:#5C5C58;line-height:1.6;">LinkedIn rewrite, 30-day visibility plan, 5 targeted rewrites - $39 AUD one-time.</p>
-            <a href="${appUrl}" style="display:inline-block;background:#0A0A0A;color:#FFFFFF;font-size:13px;font-weight:600;text-decoration:none;padding:10px 20px;border-radius:8px;">Unlock full report →</a>
-          </div>` : `<div style="background:#F0F4EC;border:1px solid rgba(45,80,22,0.2);border-radius:10px;padding:16px 24px;margin-bottom:20px;">
-            <p style="margin:0;font-size:13px;color:#2D5016;font-weight:600;">You have the full paid report - check your results for the complete LinkedIn rewrite and 30-day plan.</p>
-          </div>`}
-          <a href="${appUrl}" style="font-size:12px;color:#9C9C96;">View your full analysis at noturegularhr.com</a>
-        </td></tr>
-
-        <!-- Footer -->
-        <tr><td style="padding:24px 0;text-align:center;">
-          <p style="margin:0 0 6px;font-size:11px;color:#9C9C96;">not ur regular hr - on your side, not lying to you about it.</p>
-          <p style="margin:0;font-size:10px;color:#C8BCB0;letter-spacing:0.04em;">built different. because you deserve better than a template.</p>
+        <!-- Body -->
+        <tr><td style="background:#FFFFFF;padding:40px 36px 36px;border-left:1px solid #E8E8E4;border-right:1px solid #E8E8E4;border-bottom:1px solid #E8E8E4;border-radius:0 0 12px 12px;">
+          <p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">hey ${firstName},</p>
+          <p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">I built this tool because most career advice is generic. vague. written for everyone, which means it helps no one.</p>
+          <p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">this is the advice I'd give you if you were my friend.</p>
+          <p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">what did the feedback bring up for you? anything you're going to change?</p>
+          <p style="margin:0 0 36px;font-size:15px;color:#0A0A0A;line-height:1.75;">hit reply - I read and respond to every single one.</p>
+          <p style="margin:0 0 2px;font-size:15px;font-weight:700;color:#0A0A0A;letter-spacing:-0.01em;">farzana</p>
+          <p style="margin:0 0 36px;font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:#C85C3A;font-family:monospace;">not ur regular hr</p>
+          <p style="margin:0;font-size:11px;color:#C8BCB0;letter-spacing:0.04em;border-top:1px solid #F0EDE8;padding-top:24px;">built different. because you deserve better than a template.</p>
         </td></tr>
 
       </table>
@@ -291,7 +235,7 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
     const result = await resend.emails.send({
       from: config.RESEND_FROM,
       to,
-      subject: `Your resume positioning report - ${jobTitle} (Score: ${score}/100)`,
+      subject: `real talk - what did you think? 👀`,
       html,
     });
     console.log('[Email] Resend response:', JSON.stringify(result));

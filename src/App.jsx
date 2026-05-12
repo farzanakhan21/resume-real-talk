@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import Header from './components/Header'
 import Hero from './components/Hero'
 import FounderIntro from './components/FounderIntro'
 import HowItWorks from './components/HowItWorks'
+import About from './components/About'
 import MultiStepForm from './components/MultiStepForm'
 import EmailGate from './components/EmailGate'
 import LoadingScreen from './components/LoadingScreen'
@@ -12,7 +13,7 @@ import RewriteModal from './components/RewriteModal'
 import PaywallModal from './components/PaywallModal'
 
 export default function App() {
-  const [view, setView] = useState('home') // 'home' | 'loading' | 'results'
+  const [view, setView] = useState('home') // 'home' | 'loading' | 'results' | 'about'
   const [emailGateOpen, setEmailGateOpen] = useState(false)
   const [paywallOpen, setPaywallOpen] = useState(false)
   const [pendingData, setPendingData] = useState(null)
@@ -23,8 +24,20 @@ export default function App() {
   const [userEmail, setUserEmail] = useState('')
   const [checkoutLoading, setCheckoutLoading] = useState(false)
 
-  // Handle payment redirect back from Stripe + restore sessionStorage on back navigation
+  const navigateTo = (path) => {
+    window.history.pushState({}, '', path)
+    setView(path === '/about' ? 'about' : 'home')
+    window.scrollTo({ top: 0 })
+  }
+
+  // Handle payment redirect, /about direct load, session restore, and back/forward
   useEffect(() => {
+    // Direct load of /about
+    if (window.location.pathname === '/about') {
+      setView('about')
+      return
+    }
+
     const params = new URLSearchParams(window.location.search)
     const payment = params.get('payment')
     const sessionId = params.get('session_id')
@@ -39,7 +52,6 @@ export default function App() {
             const resolvedEmail = data.email || email || ''
             setIsPaid(true)
             setUserEmail(resolvedEmail)
-            // Restore results from session and mark as paid
             const saved = sessionStorage.getItem('nrhr_session')
             if (saved) {
               try {
@@ -71,6 +83,13 @@ export default function App() {
         } catch {}
       }
     }
+
+    const handlePopState = () => {
+      setView(window.location.pathname === '/about' ? 'about' : 'home')
+      window.scrollTo({ top: 0 })
+    }
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
   }, [])
 
   const handleFormSubmit = (formData) => {
@@ -151,18 +170,22 @@ export default function App() {
 
   return (
     <>
-      <Header />
+      <Header view={view} onNavigate={navigateTo} />
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         {view === 'home' && (
-          <>
+          <motion.div key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
             <Hero />
             <FounderIntro />
             <HowItWorks />
             <div className="container--narrow" style={{ paddingBottom: '6rem' }}>
               <MultiStepForm onSubmit={handleFormSubmit} error={globalError} />
             </div>
-          </>
+          </motion.div>
+        )}
+
+        {view === 'about' && (
+          <About key="about" onNavigate={navigateTo} />
         )}
 
         {view === 'loading' && <LoadingScreen key="loading" />}
@@ -212,6 +235,9 @@ export default function App() {
       {view !== 'results' && (
         <footer className="footer">
           <p>not ur regular hr &copy; 2026 · built different. because you deserve better than a template.</p>
+          <p className="footer__links">
+            <button className="footer__link" onClick={() => navigateTo('/about')}>About</button>
+          </p>
         </footer>
       )}
     </>

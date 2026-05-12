@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import Header from './components/Header'
 import Hero from './components/Hero'
+import FounderIntro from './components/FounderIntro'
+import HowItWorks from './components/HowItWorks'
 import MultiStepForm from './components/MultiStepForm'
 import EmailGate from './components/EmailGate'
 import LoadingScreen from './components/LoadingScreen'
@@ -155,6 +157,8 @@ export default function App() {
         {view === 'home' && (
           <>
             <Hero />
+            <FounderIntro />
+            <HowItWorks />
             <div className="container--narrow" style={{ paddingBottom: '6rem' }}>
               <MultiStepForm onSubmit={handleFormSubmit} error={globalError} />
             </div>

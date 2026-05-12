@@ -24,14 +24,26 @@ export default function App() {
   const [userEmail, setUserEmail] = useState('')
   const [checkoutLoading, setCheckoutLoading] = useState(false)
 
+  const trackPageView = (path) => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'page_view', { page_path: path })
+    }
+  }
+
   const navigateTo = (path) => {
     window.history.pushState({}, '', path)
     setView(path === '/about' ? 'about' : 'home')
     window.scrollTo({ top: 0 })
+    trackPageView(path)
   }
 
   // Handle payment redirect, /about direct load, session restore, and back/forward
   useEffect(() => {
+    // Fire initial page view
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'page_view', { page_path: window.location.pathname })
+    }
+
     // Direct load of /about
     if (window.location.pathname === '/about') {
       setView('about')

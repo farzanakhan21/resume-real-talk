@@ -16,7 +16,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 let fileConfig = {};
 try {
   fileConfig = JSON.parse(readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
-} catch { /* no config.json in production — using env vars */ }
+} catch { /* no config.json in production - using env vars */ }
 
 const config = {
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || fileConfig.ANTHROPIC_API_KEY || '',
@@ -73,7 +73,7 @@ function writeEmails(data) {
   try {
     writeFileSync(EMAILS_PATH, JSON.stringify(data, null, 2));
   } catch {
-    // Vercel serverless: filesystem is read-only — email tracking is in-memory only
+    // Vercel serverless: filesystem is read-only - email tracking is in-memory only
   }
 }
 
@@ -190,13 +190,13 @@ async function addToAudience(email) {
 
 // ── Email helper ──────────────────────────────────────────────────────────
 async function sendResultsEmail(to, jobTitle, data, isPaid) {
-  console.log(`[Email] sendResultsEmail called — to: ${to}, jobTitle: ${jobTitle}, isPaid: ${isPaid}`);
+  console.log(`[Email] sendResultsEmail called - to: ${to}, jobTitle: ${jobTitle}, isPaid: ${isPaid}`);
   if (!resend) {
-    console.log('[Email] Resend client is null — RESEND_API_KEY not set or invalid. Skipping email.');
+    console.log('[Email] Resend client is null - RESEND_API_KEY not set or invalid. Skipping email.');
     return;
   }
 
-  const score = data.scores?.overall ?? '—';
+  const score = data.scores?.overall ?? '-';
   const headline = data.firstImpression?.headline ?? '';
   const verdict = data.firstImpression?.hirabilityVerdict ?? '';
   const coreDisconnect = data.hardTruth?.coreDisconnect ?? '';
@@ -266,17 +266,18 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
         <tr><td style="background:#FFFFFF;padding:0 36px 36px;border-left:1px solid #E8E8E4;border-right:1px solid #E8E8E4;border-bottom:1px solid #E8E8E4;border-radius:0 0 12px 12px;">
           ${!isPaid ? `<div style="background:#F7F7F5;border:1px solid #E8E8E4;border-radius:10px;padding:20px 24px;margin-bottom:20px;">
             <p style="margin:0 0 4px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#7A6020;font-weight:600;">want the full breakdown?</p>
-            <p style="margin:0 0 14px;font-size:13px;color:#5C5C58;line-height:1.6;">LinkedIn rewrite, 30-day visibility plan, 5 targeted rewrites — $39 AUD one-time.</p>
+            <p style="margin:0 0 14px;font-size:13px;color:#5C5C58;line-height:1.6;">LinkedIn rewrite, 30-day visibility plan, 5 targeted rewrites - $39 AUD one-time.</p>
             <a href="${appUrl}" style="display:inline-block;background:#0A0A0A;color:#FFFFFF;font-size:13px;font-weight:600;text-decoration:none;padding:10px 20px;border-radius:8px;">Unlock full report →</a>
           </div>` : `<div style="background:#F0F4EC;border:1px solid rgba(45,80,22,0.2);border-radius:10px;padding:16px 24px;margin-bottom:20px;">
-            <p style="margin:0;font-size:13px;color:#2D5016;font-weight:600;">You have the full paid report — check your results for the complete LinkedIn rewrite and 30-day plan.</p>
+            <p style="margin:0;font-size:13px;color:#2D5016;font-weight:600;">You have the full paid report - check your results for the complete LinkedIn rewrite and 30-day plan.</p>
           </div>`}
           <a href="${appUrl}" style="font-size:12px;color:#9C9C96;">View your full analysis at noturegularhr.com</a>
         </td></tr>
 
         <!-- Footer -->
         <tr><td style="padding:24px 0;text-align:center;">
-          <p style="margin:0;font-size:11px;color:#9C9C96;">not ur regular hr &mdash; on your side, not lying to you about it.</p>
+          <p style="margin:0 0 6px;font-size:11px;color:#9C9C96;">not ur regular hr - on your side, not lying to you about it.</p>
+          <p style="margin:0;font-size:10px;color:#C8BCB0;letter-spacing:0.04em;">built different. because you deserve better than a template.</p>
         </td></tr>
 
       </table>
@@ -315,7 +316,7 @@ app.post('/api/analyze', upload.single('resume'), async (req, res) => {
     if (!email) return res.status(400).json({ error: 'Email is required.' });
 
     const isTestPaid = testPaid === 'true';
-    if (isTestPaid) console.log('[Test] test=paid flag active — bypassing paywall and generating full paid report');
+    if (isTestPaid) console.log('[Test] test=paid flag active - bypassing paywall and generating full paid report');
 
     const normalised = email.toLowerCase().trim();
     const emails = readEmails();
@@ -343,8 +344,8 @@ app.post('/api/analyze', upload.single('resume'), async (req, res) => {
     const paidSections = isPaid ? `
   "linkedInRewrite": {
     "headline": "<rewritten LinkedIn headline targeting ${jobTitle}, punchy and keyword-rich>",
-    "aboutSection": "<full rewritten About section — 3-4 paragraphs, first-person, strategic, specific to this person's background and target role. No cliches.>",
-    "experienceFraming": "<how to reframe 2-3 key roles on their LinkedIn to land for a ${jobTitle} reader — specific to their actual experience>",
+    "aboutSection": "<full rewritten About section - 3-4 paragraphs, first-person, strategic, specific to this person's background and target role. No cliches.>",
+    "experienceFraming": "<how to reframe 2-3 key roles on their LinkedIn to land for a ${jobTitle} reader - specific to their actual experience>",
     "featuredSection": "<specific recommendation for what to pin in the LinkedIn Featured section and why>"
   },
   "thirtyDayPlan": {
@@ -354,7 +355,7 @@ app.post('/api/analyze', upload.single('resume'), async (req, res) => {
     "week4": { "title": "<week 4 focus theme>", "tasks": ["<specific action>", "<specific action>", "<specific action>"] }
   },` : '';
 
-    const prompt = `You are the AI powering "not ur regular hr" — a career positioning and hiring perception tool used by ambitious professionals, founders, operators, and senior leaders. You think like an elite recruiter who has seen 10,000 resumes, a seasoned hiring manager who makes split-second decisions, and a strategic advisor who genuinely wants this person to win.
+    const prompt = `You are the AI powering "not ur regular hr" - a career positioning and hiring perception tool used by ambitious professionals, founders, operators, and senior leaders. You think like an elite recruiter who has seen 10,000 resumes, a seasoned hiring manager who makes split-second decisions, and a strategic advisor who genuinely wants this person to win.
 
 Your feedback is high-context, specific, psychologically sharp, and honest without being cruel. You explain WHY things hurt, what signal they send, and how to fix them. You never give generic resume advice.
 
@@ -373,31 +374,31 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
 
 {
   "scores": {
-    "atsCompatibility": { "score": <0-100>, "insight": "<one sentence — specific to their resume, not generic>" },
+    "atsCompatibility": { "score": <0-100>, "insight": "<one sentence - specific to their resume, not generic>" },
     "executivePresence": { "score": <0-100>, "insight": "<one sentence>" },
     "clarity": { "score": <0-100>, "insight": "<one sentence>" },
     "strategicPositioning": { "score": <0-100>, "insight": "<one sentence>" },
     "credibilitySignals": { "score": <0-100>, "insight": "<one sentence>" },
     "impactEvidence": { "score": <0-100>, "insight": "<one sentence>" },
     "industryTranslation": { "score": <0-100>, "insight": "<one sentence>" },
-    "overall": <integer — SCORING CALIBRATION: most real-world resumes score 40-65. Truly exceptional resumes score 75-85. Above 85 is extremely rare and only for near-perfect resumes. Weight executivePresence and strategicPositioning higher for senior roles>,
-    "brutalOneLiner": "<a punchy, specific one-liner that captures the single core problem with this resume — e.g. 'Strong experience, invisible on paper' or 'Reads like a job description, not a career story' or 'Ten years of impact buried under generic language' — must be specific to this person, never generic>"
+    "overall": <integer - SCORING CALIBRATION: most real-world resumes score 40-65. Truly exceptional resumes score 75-85. Above 85 is extremely rare and only for near-perfect resumes. Weight executivePresence and strategicPositioning higher for senior roles>,
+    "brutalOneLiner": "<a punchy, specific one-liner that captures the single core problem with this resume - e.g. 'Strong experience, invisible on paper' or 'Reads like a job description, not a career story' or 'Ten years of impact buried under generic language' - must be specific to this person, never generic>"
   },
   "topIssues": [
-    "<5-8 word headline of the most critical issue with this resume — specific, no explanation, no solution>",
+    "<5-8 word headline of the most critical issue with this resume - specific, no explanation, no solution>",
     "<second most critical issue>",
     "<third most critical issue>"
   ],
   "firstImpression": {
     "headline": "<4-7 word phrase capturing the recruiter's immediate read>",
-    "sixSecondRead": "<What a hiring manager actually thinks in their first 6 seconds — specific, written in first person as the hiring manager, 2-3 sentences>",
+    "sixSecondRead": "<What a hiring manager actually thinks in their first 6 seconds - specific, written in first person as the hiring manager, 2-3 sentences>",
     "immediateSignals": ["<specific positive signal from the resume>", "<another specific positive signal>"],
     "visualGaps": ["<specific structural or formatting gap>", "<another>"],
     "hirabilityVerdict": "<one punchy, honest sentence on first-impression hireability for this specific role>"
   },
   "executivePresence": {
     "presenceRating": "<Strong | Developing | Weak>",
-    "languageAnalysis": "<how their specific language choices signal — or fail to signal — seniority and strategic thinking, 2-3 sentences>",
+    "languageAnalysis": "<how their specific language choices signal - or fail to signal - seniority and strategic thinking, 2-3 sentences>",
     "presenceSignals": ["<specific thing in their resume that signals leadership>", "<another>"],
     "presenceGaps": ["<specific absence that would signal executive presence>", "<another>"],
     "repositioningAdvice": "<specific, actionable advice on elevating language and positioning for this exact role, 2-3 sentences>"
@@ -406,16 +407,16 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
     "riskLevel": "<Low | Medium | High | Critical>",
     "keywordGaps": ["<specific keyword missing for a ${jobTitle} role>", "<another>", "<another>"],
     "formattingIssues": ["<specific formatting problem>", "<another>"],
-    "quickFixes": ["<specific fix — actionable, not vague>", "<another>", "<another>"]
+    "quickFixes": ["<specific fix - actionable, not vague>", "<another>", "<another>"]
   },
   "hardTruth": {
-    "coreDisconnect": "<The main gap between what this resume signals and what a ${jobTitle} role demands — specific, 2-3 sentences, no filler>",
+    "coreDisconnect": "<The main gap between what this resume signals and what a ${jobTitle} role demands - specific, 2-3 sentences, no filler>",
     "whatRecruitersActuallySee": "<First person recruiter perspective on this specific resume, 2-3 sentences>",
     "unintentionalSignals": ["<something this resume signals that the candidate almost certainly doesn't intend>", "<another>"],
-    "whereExperienceGetsLost": "<specific explanation of where strong experience is being undersold or lost in translation — explain the psychological reason, 2-3 sentences>"
+    "whereExperienceGetsLost": "<specific explanation of where strong experience is being undersold or lost in translation - explain the psychological reason, 2-3 sentences>"
   },
   "hiddenAdvantages": {
-    "overlookedStrengths": ["<specific strength being undersold — quote or reference something real from the resume>", "<another>", "<another>"],
+    "overlookedStrengths": ["<specific strength being undersold - quote or reference something real from the resume>", "<another>", "<another>"],
     "uniquePositioning": "<what makes this person genuinely differentiated that isn't coming through clearly, 2-3 sentences>",
     "howToAmplify": ["<specific action to amplify overlooked strength 1>", "<specific action 2>"]
   },
@@ -444,10 +445,10 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
     "approachStrategy": "<specific, non-generic warm outreach strategy for this exact role and context, 2-3 sentences>",
     "communities": ["<specific Slack/Discord/LinkedIn community for this role or industry>", "<another>"],
     "events": ["<specific type of recurring event or conference to attend>", "<another>"],
-    "connectionTemplate": "<ready-to-send LinkedIn connection request message — under 280 characters, sounds human not salesy, specific to a ${jobTitle} role>"
+    "connectionTemplate": "<ready-to-send LinkedIn connection request message - under 280 characters, sounds human not salesy, specific to a ${jobTitle} role>"
   },
   "positioningStrategy": {
-    "narrativeAngle": "<the specific positioning angle this person should own for a ${jobTitle} role — what their unique story is, 2-3 sentences>",
+    "narrativeAngle": "<the specific positioning angle this person should own for a ${jobTitle} role - what their unique story is, 2-3 sentences>",
     "linkedinHeadline": "<specific rewritten LinkedIn headline targeting this role>",
     "elevatorPitch": "<a tight 2-sentence elevator pitch for this person for this role>",
     "keywordsToOwn": ["<keyword 1>", "<keyword 2>", "<keyword 3>", "<keyword 4>", "<keyword 5>"]
@@ -457,7 +458,7 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
     const message = await client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: isPaid ? 12000 : 8000,
-      system: 'You are an elite career positioning analyst. Return only valid JSON — no markdown, no preamble, no explanation. SCORING CALIBRATION: most real-world resumes score 40-65 out of 100. Truly exceptional resumes score 75-85. Scores above 85 are extremely rare.',
+      system: 'You are an elite career positioning analyst. Return only valid JSON - no markdown, no preamble, no explanation. SCORING CALIBRATION: most real-world resumes score 40-65 out of 100. Truly exceptional resumes score 75-85. Scores above 85 are extremely rare.',
       messages: [{ role: 'user', content: prompt }],
     });
 
@@ -476,10 +477,10 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
       writeEmails(emails);
     }
 
-    // Add to Resend audience — fire and forget
+    // Add to Resend audience - fire and forget
     addToAudience(normalised);
 
-    // Send results email — fire and forget, never block the response
+    // Send results email - fire and forget, never block the response
     sendResultsEmail(normalised, jobTitle, parsed, isPaid).catch(err =>
       console.error('[Email] Fire-and-forget failed:', err.message, err.statusCode, JSON.stringify(err))
     );
@@ -506,10 +507,10 @@ GOAL: ${direction}
 
 Return exactly this JSON (no markdown, no extra text):
 {
-  "ats": "<ATS-optimized version — strong action verb + quantified outcome + relevant keywords. Clean, scannable, metric-driven.>",
-  "executive": "<Executive-level version — strategic framing, outcome-focused, signals ownership and authority. Board-room language.>",
-  "startup": "<Startup/founder-style version — punchy, results-obsessed, zero corporate fluff. Direct and credible.>",
-  "concise": "<Ultra-concise version — maximum signal in minimum words. Under 20 words. No filler.>"
+  "ats": "<ATS-optimised version - strong action verb + quantified outcome + relevant keywords. Clean, scannable, metric-driven.>",
+  "executive": "<Executive-level version - strategic framing, outcome-focused, signals ownership and authority. Board-room language.>",
+  "startup": "<Startup/founder-style version - punchy, results-obsessed, zero corporate fluff. Direct and credible.>",
+  "concise": "<Ultra-concise version - maximum signal in minimum words. Under 20 words. No filler.>"
 }`;
 
     const message = await client.messages.create({
@@ -542,7 +543,7 @@ if (isProd && !process.env.VERCEL) {
   });
 }
 
-// ── Start server (local dev / self-hosted only — Vercel uses export default) ──
+// ── Start server (local dev / self-hosted only - Vercel uses export default) ──
 if (!process.env.VERCEL) {
   app.listen(config.PORT, () => console.log(`not ur regular hr API on http://localhost:${config.PORT}`));
 }

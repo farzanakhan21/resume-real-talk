@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion'
 
 const OFFERINGS = [
-  { icon: '🔍', title: 'Hard Truth + Core Disconnect', desc: 'What\'s actually blocking you — not what you want to hear, what you need to' },
+  { icon: '🔍', title: 'Hard Truth + Core Disconnect', desc: 'What\'s actually blocking you - not what you want to hear, what you need to' },
   { icon: '✏️', title: 'Rewrite Suggestions', desc: 'Copy-paste replacements for your weakest sections' },
   { icon: '🎖️', title: 'Executive Presence Analysis', desc: 'Why you might be underselling seniority without realising it' },
   { icon: '✦', title: 'Hidden Competitive Advantages', desc: 'What makes you different that isn\'t coming through on paper' },
-  { icon: '💼', title: 'LinkedIn Profile Rewrite', desc: 'Headline, about section, and experience framing — ready to paste' },
+  { icon: '💼', title: 'LinkedIn Profile Rewrite', desc: 'Headline, about section, and experience framing - ready to paste' },
   { icon: '📈', title: '30-Day Visibility Sprint', desc: 'Exact moves, week by week, to get noticed before you even apply' },
 ]
 

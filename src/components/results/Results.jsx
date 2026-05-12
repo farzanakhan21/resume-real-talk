@@ -63,7 +63,7 @@ export default function Results({ data, isPaid, userEmail, onRewrite, onReset, o
 
         <ScoreDashboard scores={data.scores} isPaid={isPaid} />
 
-        {/* Top 3 issues — free teaser */}
+        {/* Top 3 issues - free teaser */}
         {data.topIssues?.length > 0 && (
           <motion.div
             className="card result-block"

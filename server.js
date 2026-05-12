@@ -282,15 +282,18 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
 app.post('/api/analyze', upload.single('resume'), async (req, res) => {
   if (!client) return res.status(503).json({ error: 'ANTHROPIC_API_KEY is not configured. Add it to Vercel Environment Variables.' });
   try {
-    const { jobTitle, roleCategory, company, email } = req.body;
+    const { jobTitle, roleCategory, company, email, testPaid } = req.body;
     if (!req.file) return res.status(400).json({ error: 'No resume uploaded.' });
     if (!jobTitle) return res.status(400).json({ error: 'Job title is required.' });
     if (!email) return res.status(400).json({ error: 'Email is required.' });
 
+    const isTestPaid = testPaid === 'true';
+    if (isTestPaid) console.log('[Test] test=paid flag active — bypassing paywall and generating full paid report');
+
     const normalised = email.toLowerCase().trim();
     const emails = readEmails();
     const alreadyUsed = emails.used.includes(normalised);
-    const isPaid = emails.paid.includes(normalised);
+    const isPaid = isTestPaid || emails.paid.includes(normalised);
 
     if (alreadyUsed && !isPaid) {
       return res.json({ paywalled: true });

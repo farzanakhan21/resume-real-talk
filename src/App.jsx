@@ -86,6 +86,9 @@ export default function App() {
       const fd = new FormData()
       fd.append('resume', pendingData.file)
       fd.append('jobTitle', pendingData.jobTitle)
+      if (new URLSearchParams(window.location.search).get('test') === 'paid') {
+        fd.append('testPaid', 'true')
+      }
       fd.append('roleCategory', pendingData.roleCategory)
       fd.append('company', pendingData.company || '')
       fd.append('email', email)

@@ -133,6 +133,9 @@ export default function MultiStepForm({ onSubmit, error }) {
                   {!file && <span className="drop-zone__sub">PDF only · max 10MB</span>}
                   {file && <span className="drop-zone__file">Locked and loaded ✓</span>}
                 </div>
+                <p className="privacy-note">
+                  Your resume is processed securely by AI and never stored or shared. I only keep your email address to send you your results.
+                </p>
               </div>
 
               <div className="field">

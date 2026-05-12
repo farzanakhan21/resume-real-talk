@@ -5,6 +5,7 @@ import Hero from './components/Hero'
 import FounderIntro from './components/FounderIntro'
 import HowItWorks from './components/HowItWorks'
 import About from './components/About'
+import FAQ from './components/FAQ'
 import MultiStepForm from './components/MultiStepForm'
 import EmailGate from './components/EmailGate'
 import LoadingScreen from './components/LoadingScreen'
@@ -190,6 +191,7 @@ export default function App() {
             <Hero />
             <FounderIntro />
             <HowItWorks />
+            <FAQ />
             <div className="container--narrow" style={{ paddingBottom: '6rem' }}>
               <MultiStepForm onSubmit={handleFormSubmit} error={globalError} />
             </div>

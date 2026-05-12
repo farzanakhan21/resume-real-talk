@@ -1,26 +1,27 @@
 /* ── Design tokens ── */
 :root {
   /* Backgrounds */
-  --bg: #FAF8F4;
-  --bg-card: #F0E8DC;
-  --bg-elevated: #E8DDD0;
+  --bg: #FFFFFF;
+  --bg-card: #F5F3FF;
+  --bg-elevated: #EDE9FE;
   --bg-dark: #1A1A1A;
   --bg-input: #FFFFFF;
 
   /* Borders */
-  --border: #C8BCB0;
-  --border-dark: #1A1A1A;
-  --border-accent: rgba(200, 92, 58, 0.3);
+  --border: #E5E7EB;
+  --border-dark: #0A0A0A;
+  --border-accent: rgba(91, 33, 182, 0.25);
   --border-amber: rgba(196, 138, 16, 0.3);
 
   /* Text */
-  --text: #1A1A1A;
-  --text-secondary: #52473E;
-  --text-tertiary: #9A8F84;
-  --text-on-dark: #FAF8F4;
+  --text: #0A0A0A;
+  --text-secondary: #6B7280;
+  --text-tertiary: #9CA3AF;
+  --text-on-dark: #F9FAFB;
 
   /* Brand */
-  --accent: #C85C3A;
+  --accent: #5B21B6;
+  --accent-hover: #4C1D95;
   --amber: #C48A10;
   --green: #2A6B3A;
   --red: #B33A2A;
@@ -315,7 +316,7 @@ ul { list-style: none; }
 .card:hover { border-color: var(--border-dark); }
 .card--accent {
   border-color: var(--accent);
-  background: rgba(200, 92, 58, 0.04);
+  background: rgba(91, 33, 182, 0.04);
 }
 .card--amber {
   border-color: var(--amber);
@@ -357,7 +358,7 @@ ul { list-style: none; }
 }
 .input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(200, 92, 58, 0.12);
+  box-shadow: 0 0 0 3px rgba(91, 33, 182, 0.12);
 }
 .input::placeholder { color: var(--text-tertiary); }
 
@@ -389,7 +390,7 @@ ul { list-style: none; }
 .role-btn.selected {
   border-color: var(--accent);
   color: var(--accent);
-  background: rgba(200, 92, 58, 0.06);
+  background: rgba(91, 33, 182, 0.06);
   font-weight: 700;
   box-shadow: 2px 2px 0 var(--accent);
 }
@@ -737,7 +738,7 @@ ul { list-style: none; }
 .insight-block {
   padding: 1.25rem 1.5rem;
   border-left: 4px solid var(--accent);
-  background: rgba(200, 92, 58, 0.05);
+  background: rgba(91, 33, 182, 0.05);
   border-radius: 0 var(--radius) var(--radius) 0;
   font-size: 0.95rem;
   line-height: 1.75;
@@ -952,8 +953,8 @@ ul { list-style: none; }
 
 /* ── Connection message ── */
 .message-box {
-  background: rgba(200, 92, 58, 0.06);
-  border: 2px solid rgba(200, 92, 58, 0.25);
+  background: rgba(91, 33, 182, 0.06);
+  border: 2px solid rgba(91, 33, 182, 0.25);
   border-radius: var(--radius);
   padding: 1.5rem;
   font-size: 0.95rem;

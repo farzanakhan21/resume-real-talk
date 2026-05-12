@@ -208,7 +208,7 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
 
         <!-- Header -->
         <tr><td style="background:#0A0A0A;border-radius:12px 12px 0 0;padding:28px 36px;">
-          <p style="margin:0;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#C85C3A;font-family:monospace;">not ur regular hr</p>
+          <p style="margin:0;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#5B21B6;font-family:monospace;">not ur regular hr</p>
           <p style="margin:6px 0 0;font-size:18px;font-weight:700;color:#FFFFFF;letter-spacing:-0.02em;">career reality check</p>
         </td></tr>
 
@@ -220,8 +220,8 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
           <p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">what did the feedback bring up for you? anything you're going to change?</p>
           <p style="margin:0 0 36px;font-size:15px;color:#0A0A0A;line-height:1.75;">hit reply - I read and respond to every single one.</p>
           <p style="margin:0 0 2px;font-size:15px;font-weight:700;color:#0A0A0A;letter-spacing:-0.01em;">farzana</p>
-          <p style="margin:0 0 36px;font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:#C85C3A;font-family:monospace;">not ur regular hr</p>
-          <p style="margin:0;font-size:11px;color:#C8BCB0;letter-spacing:0.04em;border-top:1px solid #F0EDE8;padding-top:24px;">built different. because you deserve better than a template.</p>
+          <p style="margin:0 0 36px;font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:#5B21B6;font-family:monospace;">not ur regular hr</p>
+          <p style="margin:0;font-size:11px;color:#9CA3AF;letter-spacing:0.04em;border-top:1px solid #E5E7EB;padding-top:24px;">built different. because you deserve better than a template.</p>
         </td></tr>
 
       </table>

@@ -380,8 +380,14 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
     "credibilitySignals": { "score": <0-100>, "insight": "<one sentence>" },
     "impactEvidence": { "score": <0-100>, "insight": "<one sentence>" },
     "industryTranslation": { "score": <0-100>, "insight": "<one sentence>" },
-    "overall": <integer — weighted average, weight executivePresence and strategicPositioning higher for senior roles>
+    "overall": <integer — SCORING CALIBRATION: most real-world resumes score 40-65. Truly exceptional resumes score 75-85. Above 85 is extremely rare and only for near-perfect resumes. Weight executivePresence and strategicPositioning higher for senior roles>,
+    "brutalOneLiner": "<a punchy, specific one-liner that captures the single core problem with this resume — e.g. 'Strong experience, invisible on paper' or 'Reads like a job description, not a career story' or 'Ten years of impact buried under generic language' — must be specific to this person, never generic>"
   },
+  "topIssues": [
+    "<5-8 word headline of the most critical issue with this resume — specific, no explanation, no solution>",
+    "<second most critical issue>",
+    "<third most critical issue>"
+  ],
   "firstImpression": {
     "headline": "<4-7 word phrase capturing the recruiter's immediate read>",
     "sixSecondRead": "<What a hiring manager actually thinks in their first 6 seconds — specific, written in first person as the hiring manager, 2-3 sentences>",
@@ -451,7 +457,7 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
     const message = await client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: isPaid ? 12000 : 8000,
-      system: 'You are an elite career positioning analyst. Return only valid JSON — no markdown, no preamble, no explanation.',
+      system: 'You are an elite career positioning analyst. Return only valid JSON — no markdown, no preamble, no explanation. SCORING CALIBRATION: most real-world resumes score 40-65 out of 100. Truly exceptional resumes score 75-85. Scores above 85 are extremely rare.',
       messages: [{ role: 'user', content: prompt }],
     });
 

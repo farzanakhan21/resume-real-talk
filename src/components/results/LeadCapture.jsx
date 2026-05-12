@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion'
 
 const OFFERINGS = [
-  { icon: '📄', title: 'Downloadable PDF Report', desc: 'Full analysis formatted for sharing or saving' },
-  { icon: '💼', title: 'LinkedIn Profile Rewrite', desc: 'Headline, about section, experience framing - copy-paste ready' },
-  { icon: '📈', title: '30-Day Visibility Sprint', desc: 'Week-by-week plan to get noticed before you apply' },
-  { icon: '🎯', title: '5 Rewrite Suggestions', desc: 'Two extra targeted rewrites beyond the free tier' },
-  { icon: '✦', title: 'Personal Brand Audit', desc: 'How you show up online across every surface' },
-  { icon: '🤝', title: 'Tailored Networking Plan', desc: 'Specific people, companies, and outreach sequences' },
+  { icon: '🔍', title: 'Hard Truth + Core Disconnect', desc: 'What\'s actually blocking you — not what you want to hear, what you need to' },
+  { icon: '✏️', title: 'Rewrite Suggestions', desc: 'Copy-paste replacements for your weakest sections' },
+  { icon: '🎖️', title: 'Executive Presence Analysis', desc: 'Why you might be underselling seniority without realising it' },
+  { icon: '✦', title: 'Hidden Competitive Advantages', desc: 'What makes you different that isn\'t coming through on paper' },
+  { icon: '💼', title: 'LinkedIn Profile Rewrite', desc: 'Headline, about section, and experience framing — ready to paste' },
+  { icon: '📈', title: '30-Day Visibility Sprint', desc: 'Exact moves, week by week, to get noticed before you even apply' },
 ]
 
 export default function LeadCapture({ onUpgrade }) {
@@ -17,10 +17,10 @@ export default function LeadCapture({ onUpgrade }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
     >
-      <div className="lead-label">want the unfair advantage version?</div>
-      <h2>Get the full breakdown.</h2>
+      <div className="lead-label">you've seen the problem. here's the fix.</div>
+      <h2>Get the full report for $39 AUD →</h2>
       <p className="lead-sub">
-        This is the free version. Unlock everything for $39 AUD - LinkedIn rewrite, 30-day visibility sprint, PDF download, and more rewrite suggestions.
+        You know something is off. The full report tells you exactly what, why, and precisely what to do about it.
       </p>
 
       <div className="lead-grid">
@@ -36,7 +36,7 @@ export default function LeadCapture({ onUpgrade }) {
       </div>
 
       <button className="btn--dark-primary" onClick={onUpgrade}>
-        Unlock for $39 AUD <span>→</span>
+        Unlock everything for $39 AUD →
       </button>
       <p className="lead-price-note">
         One-time payment · Secure checkout via Stripe · Instant access

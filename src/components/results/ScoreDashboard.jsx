@@ -11,7 +11,7 @@ const DIMENSIONS = [
   { key: 'industryTranslation', label: 'Industry Translation' },
 ]
 
-export default function ScoreDashboard({ scores }) {
+export default function ScoreDashboard({ scores, isPaid }) {
   const overall = scores.overall
   const color = scoreColor(overall)
 
@@ -30,14 +30,16 @@ export default function ScoreDashboard({ scores }) {
             {overall}
           </motion.div>
           <div className="score-big-label" style={{ marginTop: '0.25rem' }}>out of 100</div>
-          <div className="score-big-verdict muted">{scoreLabel(overall)}</div>
+          {scores.brutalOneLiner && (
+            <div className="score-brutal-liner">{scores.brutalOneLiner}</div>
+          )}
         </div>
         <div style={{ flex: 1, minWidth: 220 }}>
           <div className="score-dimensions">
             {DIMENSIONS.map(({ key, label }, i) => {
               const dim = scores[key]
               const sc = dim?.score ?? 0
-              const color = scoreColor(sc)
+              const c = scoreColor(sc)
               return (
                 <div key={key}>
                   <div className="score-dim">
@@ -45,15 +47,15 @@ export default function ScoreDashboard({ scores }) {
                     <div className="score-dim__bar-wrap">
                       <motion.div
                         className="score-dim__bar"
-                        style={{ background: color }}
+                        style={{ background: c }}
                         initial={{ width: 0 }}
                         animate={{ width: `${sc}%` }}
                         transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1], delay: 0.2 + i * 0.07 }}
                       />
                     </div>
-                    <div className="score-dim__num" style={{ color }}>{sc}</div>
+                    <div className="score-dim__num" style={{ color: c }}>{sc}</div>
                   </div>
-                  {dim?.insight && (
+                  {isPaid && dim?.insight && (
                     <div className="score-dim__insight">{dim.insight}</div>
                   )}
                 </div>

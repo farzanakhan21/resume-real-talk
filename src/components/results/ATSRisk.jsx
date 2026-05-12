@@ -1,8 +1,42 @@
 import { motion } from 'framer-motion'
 import { riskColor } from '../../utils'
 
-export default function ATSRisk({ data }) {
+export default function ATSRisk({ data, isPaid }) {
   const color = riskColor(data.riskLevel)
+  const passed = data.riskLevel === 'Low'
+
+  if (!isPaid) {
+    return (
+      <motion.div
+        className="card result-block"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, delay: 0.08 }}
+      >
+        <div className="card-header" style={{ marginBottom: 0 }}>
+          <div className="card-header__icon">🤖</div>
+          <div style={{ flex: 1 }}>
+            <div className="card-header__title">ATS Compatibility Check</div>
+            <div className="card-header__sub">Will automated systems filter you out before a human sees you?</div>
+          </div>
+          <span
+            className="rating-badge"
+            style={{
+              background: passed ? 'rgba(42,107,58,0.1)' : 'rgba(179,58,42,0.1)',
+              color: passed ? 'var(--green)' : 'var(--red)',
+              border: `2px solid ${passed ? 'var(--green)' : 'var(--red)'}`,
+              flexShrink: 0,
+              fontSize: '0.75rem',
+              padding: '0.35rem 0.9rem',
+            }}
+          >
+            {passed ? '✓ Pass' : '✗ At Risk'}
+          </span>
+        </div>
+      </motion.div>
+    )
+  }
+
   return (
     <motion.div
       className="card result-block"

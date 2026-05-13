@@ -257,6 +257,8 @@ app.post('/api/analyze', upload.single('resume'), async (req, res) => {
     const { jobTitle, roleCategory, industry, company, email, testPaid } = req.body;
     if (!req.file) return res.status(400).json({ error: 'No resume uploaded.' });
     if (!jobTitle) return res.status(400).json({ error: 'Job title is required.' });
+    if (!industry) return res.status(400).json({ error: 'Industry is required.' });
+    if (!company) return res.status(400).json({ error: 'Target company is required.' });
     if (!email) return res.status(400).json({ error: 'Email is required.' });
 
     const isTestPaid = testPaid === 'true';
@@ -281,7 +283,7 @@ app.post('/api/analyze', upload.single('resume'), async (req, res) => {
       return res.status(400).json({ error: 'Could not extract text from this PDF. Make sure it is not a scanned image.' });
     }
 
-    const companyCtx = company ? `Target Company: ${company}` : 'No specific company specified.';
+    const companyCtx = `Target Company: ${company}`;
     const roleCtx = roleCategory && roleCategory !== 'custom' ? `Role Category: ${roleCategory}` : '';
     const industryCtx = industry ? `Industry: ${industry}` : '';
     const rewriteCount = isPaid ? 5 : 3;

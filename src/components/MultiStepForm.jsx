@@ -57,6 +57,8 @@ export default function MultiStepForm({ onSubmit, error }) {
     e.preventDefault()
     if (!file) return setFormError('Drop your resume in first.')
     if (!jobTitle.trim()) return setFormError('We need the exact job title you\'re targeting.')
+    if (!industry) return setFormError('Select your industry so we can tailor the feedback.')
+    if (!company.trim()) return setFormError('Tell us what company or type of company you\'re targeting.')
     setFormError('')
     onSubmit({
       file,
@@ -168,10 +170,11 @@ export default function MultiStepForm({ onSubmit, error }) {
                   placeholder="e.g. Head of People, Senior Product Manager"
                   required
                 />
+                <p className="field__hint">Be specific — not just 'manager' but 'People &amp; Culture Manager at a scaling startup'.</p>
               </div>
 
               <div className="field">
-                <label className="field__label">YOUR INDUSTRY <em>(optional)</em></label>
+                <label className="field__label">YOUR INDUSTRY <span>*</span></label>
                 <select
                   className="input"
                   value={industry}
@@ -182,19 +185,19 @@ export default function MultiStepForm({ onSubmit, error }) {
                     <option key={ind} value={ind}>{ind}</option>
                   ))}
                 </select>
-                <p className="field__hint">The more specific you are, the more tailored your feedback.</p>
+                <p className="field__hint">This helps us tailor your feedback to how hiring actually works in your industry.</p>
               </div>
 
               <div className="field">
-                <label className="field__label">
-                  Who are you trying to impress? <em>(optional - makes the analysis sharper)</em>
-                </label>
+                <label className="field__label">Target company <span>*</span></label>
                 <input
                   className="input"
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
                   placeholder="e.g. Atlassian, Canva, a Series B fintech"
+                  required
                 />
+                <p className="field__hint">Don't have a specific company? Enter the type of company you're targeting — e.g. 'Series B tech startup' or 'large hospitality group'.</p>
               </div>
 
               {(formError || error) && <div className="error-msg">{formError || error}</div>}

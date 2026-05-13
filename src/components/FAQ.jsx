@@ -16,7 +16,7 @@ const FAQS = [
   },
   {
     q: 'Who built this?',
-    a: "Me - Farzana. I'm an HR director and people & culture leader who got tired of watching talented people get overlooked because their resume wasn't telling the right story - and because nobody talks about the other ways to get noticed. So I built the tool I'd use as if I was talking to a friend.",
+    a: "Me - Farzana. I got tired of watching talented people get overlooked because their resume wasn't telling the right story - and because nobody talks about the other ways to get noticed. So I built the tool I'd use if I was talking to a friend.",
   },
   {
     q: 'Can I use this for any role or industry?',

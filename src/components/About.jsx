@@ -45,15 +45,24 @@ export default function About({ onNavigate }) {
         </Section>
 
         <Section delay={0.15}>
-          <p className="about-emphasis">My whole philosophy is simple: if the goal is experience, you never fail.</p>
-          <p>I'm not here to be your therapist or your hype person. I'm here to share what I know - the same advice I give my friends and family when they call me about work, careers, and figuring out what's next.</p>
-          <p>Specific. Honest. Practical. No corporate BS.</p>
+          <p>If you're a founder or operator building something from scratch - or scaling faster than your people processes can keep up - I work with businesses directly as a fractional HR and people &amp; culture leader. I've built HR functions from the ground up, navigated the chaos of hypergrowth, and helped founders make people decisions that don't come back to bite them later. I make complex legislation simple and difficult conversations easy. No full-time hire needed.</p>
         </Section>
 
         <Section delay={0.2}>
-          <p>I'm building tools for every stage of the working life - not just getting the job, but navigating what happens once you're in it.</p>
-          <p>Because whether you're job hunting, managing a team, trying to get promoted, or figuring out if it's time to leave - you deserve more than generic advice written for everyone and useful to no one.</p>
+          <p>Helping people figure out how to use your voice is what I do - and the different roles I play let me do that across every type of person and problem.</p>
+          <p>I've been the employee figuring it out. I've been the most senior HR person in the room watching how decisions actually get made. I've been the founder building from scratch with no rulebook.</p>
+          <p>I know where the gaps are. I know the patterns. And I've turned what I've learned into systems that actually work in real life - not theory, not generic advice, not what sounds good in a LinkedIn post.</p>
+          <p>This is what I'd tell you if you were my friend and you needed real answers.</p>
         </Section>
+
+        <motion.div
+          className="about-photo-wrap"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.25 }}
+        >
+          <img src="/farzana.png" alt="Farzana Khan" className="about-photo" />
+        </motion.div>
 
         <motion.div
           className="about-signoff"

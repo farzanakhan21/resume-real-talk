@@ -1171,6 +1171,20 @@ select.input { cursor: pointer; appearance: none; background-image: url("data:im
   color: var(--text);
   font-style: normal;
 }
+.about-photo-wrap {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 2.5rem;
+}
+.about-photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--border-dark);
+  box-shadow: var(--shadow-sm);
+}
+
 .about-signoff {
   border-top: 2px solid var(--border-dark);
   padding-top: 2.5rem;

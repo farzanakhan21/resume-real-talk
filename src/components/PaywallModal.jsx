@@ -19,10 +19,10 @@ export default function PaywallModal({ email, onClose, onUpgrade, loading }) {
           transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         >
           <button className="modal__close" onClick={onClose}>✕</button>
-          <div className="modal__badge">you've been here before</div>
+          <div className="modal__badge">you've been roasted before</div>
           <h2>Once is free. Twice is $39.</h2>
           <p>
-            You've already used your free reality check. Unlock the full report - LinkedIn rewrite, 30-day visibility plan, PDF download, and more.
+            You've already had your free roast. Unlock the full report - LinkedIn rewrite, 30-day visibility plan, PDF download, and more.
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', marginBottom: '1.75rem' }}>

@@ -9,7 +9,7 @@ export default function Hero() {
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
     >
-      <span className="hero__badge">✦ career positioning</span>
+      <span className="hero__badge">✦ roast my resume</span>
       <h1 className="hero__h1">
         Your resume<br />
         is <em>lying</em><br />

@@ -81,7 +81,7 @@ export default function About({ onNavigate }) {
           transition={{ duration: 0.4, delay: 0.3 }}
         >
           <button className="btn btn--primary" onClick={() => onNavigate('/')}>
-            Try the career reality check →
+            Get your resume roasted →
           </button>
         </motion.div>
 

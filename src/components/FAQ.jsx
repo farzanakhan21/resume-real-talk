@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 const FAQS = [
   {
     q: 'Is the first analysis really free?',
-    a: 'Yes. No credit card needed. Upload your resume and get your score instantly.',
+    a: 'Yes. No credit card needed. Upload your resume, fill in the role details, and get your roast instantly.',
   },
   {
     q: 'Is my resume safe?',

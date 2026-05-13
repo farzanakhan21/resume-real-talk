@@ -30,7 +30,7 @@ export default function LoadingScreen() {
     >
       <div className="loading__eyebrow">not ur regular hr</div>
       <h2 className="loading__title">
-        Working on your<br />reality check.
+        Roasting your<br />resume.
       </h2>
       <div className="loading__spinner" />
       <AnimatePresence mode="wait">

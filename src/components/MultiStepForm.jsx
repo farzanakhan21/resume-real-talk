@@ -203,7 +203,7 @@ export default function MultiStepForm({ onSubmit, error }) {
               {(formError || error) && <div className="error-msg">{formError || error}</div>}
 
               <button type="submit" className="btn btn--primary" style={{ marginTop: '1.5rem' }}>
-                Show me the truth <span className="btn-arrow">→</span>
+                Roast My Resume <span className="btn-arrow">→</span>
               </button>
             </form>
           </motion.div>

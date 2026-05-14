@@ -98,7 +98,7 @@ export default function MultiStepForm({ onSubmit, error }) {
       <AnimatePresence mode="wait">
         {step === 1 && (
           <motion.div key="step1" {...slide}>
-            <p style={{ marginBottom: '1.75rem', fontSize: '1.15rem', fontWeight: 700, color: '#6D28D9' }}>
+            <p style={{ marginBottom: '1.75rem', fontSize: '1.15rem', fontWeight: 700, color: '#2D1B69' }}>
               Tell us exactly where you work. We'll calibrate every bit of feedback to your industry, department and role.
             </p>
 

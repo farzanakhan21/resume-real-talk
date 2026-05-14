@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+﻿import { motion } from 'framer-motion'
 import ScoreDashboard from './ScoreDashboard'
 import FirstImpression from './FirstImpression'
 import HardTruth from './HardTruth'
@@ -105,7 +105,7 @@ export default function Results({ data, isPaid, userEmail, onRewrite, onReset, o
                     fontSize: '0.75rem',
                     fontWeight: 700,
                     color: 'var(--accent)',
-                    background: 'rgba(124,58,237,0.1)',
+                    background: 'rgba(109,40,217,0.1)',
                     border: '2px solid var(--accent)',
                     borderRadius: '50%',
                     width: '24px',

@@ -1,4 +1,4 @@
-export const ROLE_CATEGORIES = [
+﻿export const ROLE_CATEGORIES = [
   { id: 'consulting', label: 'Consulting / Advisory' },
   { id: 'data', label: 'Data & Analytics Lead' },
   { id: 'engineering', label: 'Engineering Lead / CTO' },
@@ -19,7 +19,7 @@ export const ROLE_CATEGORIES = [
 ];
 
 export const scoreColor = (score) => {
-  if (score >= 80) return '#7C3AED';
+  if (score >= 80) return '#6D28D9';
   if (score >= 65) return '#8B5CF6';
   if (score >= 50) return '#C48A10';
   return '#B33A2A';
@@ -34,7 +34,7 @@ export const scoreLabel = (score) => {
 };
 
 export const riskColor = (level) => {
-  const map = { Low: '#7C3AED', Medium: '#C48A10', High: '#B33A2A', Critical: '#B33A2A' };
+  const map = { Low: '#6D28D9', Medium: '#C48A10', High: '#B33A2A', Critical: '#B33A2A' };
   return map[level] || 'var(--text-tertiary)';
 };
 

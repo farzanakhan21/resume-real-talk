@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+﻿import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { INDUSTRIES, getDepartments, getRoles } from '../roleData'
 import SearchableSelect from './SearchableSelect'
@@ -56,9 +56,9 @@ export default function MultiStepForm({ onSubmit, error }) {
 
   // ── Step 1 → Step 2 ──────────────────────────────────────────────────────
   const handleRoleNext = () => {
-    if (!industry) return setFormError('Select your industry — we need this to calibrate the whole analysis.')
+    if (!industry) return setFormError('Select your industry - we need this to calibrate the whole analysis.')
     if (!department) return setFormError('Select your department so we can narrow the feedback.')
-    if (!role) return setFormError('Pick your role — this is the last step before the real stuff.')
+    if (!role) return setFormError('Pick your role - this is the last step before the real stuff.')
     if (isOtherRole && !customRole.trim()) return setFormError('Tell us what role you\'re going for.')
     setFormError('')
     setStep(2)
@@ -66,7 +66,7 @@ export default function MultiStepForm({ onSubmit, error }) {
 
   // ── File handling ────────────────────────────────────────────────────────
   const handleFile = (f) => {
-    if (!f || f.type !== 'application/pdf') return setFormError('PDF only please — we can\'t read anything else.')
+    if (!f || f.type !== 'application/pdf') return setFormError('PDF only please - we can\'t read anything else.')
     setFile(f)
     setFormError('')
   }
@@ -98,7 +98,7 @@ export default function MultiStepForm({ onSubmit, error }) {
       <AnimatePresence mode="wait">
         {step === 1 && (
           <motion.div key="step1" {...slide}>
-            <p style={{ marginBottom: '1.75rem', fontSize: '1.15rem', fontWeight: 700, color: '#7C3AED' }}>
+            <p style={{ marginBottom: '1.75rem', fontSize: '1.15rem', fontWeight: 700, color: '#6D28D9' }}>
               Tell us exactly where you work. We'll calibrate every bit of feedback to your industry, department and role.
             </p>
 
@@ -117,7 +117,7 @@ export default function MultiStepForm({ onSubmit, error }) {
               </select>
             </div>
 
-            {/* Department — appears once industry is selected */}
+            {/* Department - appears once industry is selected */}
             <AnimatePresence>
               {industry && (
                 <motion.div
@@ -142,7 +142,7 @@ export default function MultiStepForm({ onSubmit, error }) {
               )}
             </AnimatePresence>
 
-            {/* Role — appears once department is selected */}
+            {/* Role - appears once department is selected */}
             <AnimatePresence>
               {department && (
                 <motion.div
@@ -165,7 +165,7 @@ export default function MultiStepForm({ onSubmit, error }) {
               )}
             </AnimatePresence>
 
-            {/* Custom role — appears if "Other / Describe my role" is selected */}
+            {/* Custom role - appears if "Other / Describe my role" is selected */}
             <AnimatePresence>
               {isOtherRole && (
                 <motion.div
@@ -247,7 +247,7 @@ export default function MultiStepForm({ onSubmit, error }) {
                   placeholder="e.g. Head of People, Senior Product Manager"
                   required
                 />
-                <p className="field__hint">Be specific — not just 'manager' but 'People &amp; Culture Manager at a scaling startup'.</p>
+                <p className="field__hint">Be specific - not just 'manager' but 'People &amp; Culture Manager at a scaling startup'.</p>
               </div>
 
               <div className="field">
@@ -259,7 +259,7 @@ export default function MultiStepForm({ onSubmit, error }) {
                   placeholder="e.g. Atlassian, Canva, a Series B fintech"
                   required
                 />
-                <p className="field__hint">Don't have a specific company? Enter the type of company you're targeting — e.g. 'Series B tech startup' or 'large hospitality group'.</p>
+                <p className="field__hint">Don't have a specific company? Enter the type of company you're targeting - e.g. 'Series B tech startup' or 'large hospitality group'.</p>
               </div>
 
               {(formError || error) && <div className="error-msg">{formError || error}</div>}

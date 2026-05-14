@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+﻿import { useState, useRef } from 'react'
 
 export default function SearchableSelect({ value, onChange, options, placeholder, disabled }) {
   const [open, setOpen] = useState(false)
@@ -62,7 +62,7 @@ export default function SearchableSelect({ value, onChange, options, placeholder
               </li>
             ))
           ) : (
-            <li className="ss__empty">No matches — try a different search</li>
+            <li className="ss__empty">No matches - try a different search</li>
           )}
         </ul>
       )}

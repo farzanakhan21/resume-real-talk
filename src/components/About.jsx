@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+﻿import { motion } from 'framer-motion'
 
 function Section({ children, delay = 0 }) {
   return (
@@ -39,26 +39,26 @@ export default function About({ onNavigate }) {
         </motion.div>
 
         <Section delay={0.1}>
-          <p>10+ years building HR from the ground up — in hospitality, events, and high-growth environments. And now building products to fix the problems I keep seeing from the inside.</p>
+          <p>10+ years building HR from the ground up - in hospitality, events, and high-growth environments. And now building products to fix the problems I keep seeing from the inside.</p>
 
           <h3 className="about-receipts-heading">the receipts.</h3>
 
           <ul className="about-receipts">
-            <li>Reviewed <strong>thousands of resumes</strong> — and know exactly what makes hiring managers stop scrolling</li>
+            <li>Reviewed <strong>thousands of resumes</strong> - and know exactly what makes hiring managers stop scrolling</li>
             <li>Helped secure <strong>100+ interviews</strong> through strategic positioning</li>
             <li>Reduced turnover from <strong>75% to 19%</strong></li>
             <li>Improved engagement scores from <strong>6.9 to 8.1</strong></li>
             <li>Achieved <strong>$0 workers' comp premium</strong></li>
             <li>Reduced recruitment spend from <strong>$20,000 to $0</strong></li>
             <li>Built HR functions from scratch for businesses that <strong>had never had one</strong></li>
-            <li>Worked with the systems, and against them — <strong>I know both sides</strong></li>
+            <li>Worked with the systems, and against them - <strong>I know both sides</strong></li>
           </ul>
 
-          <p className="about-and-yes">And yes — I've also been the one writing my own redundancy letter, navigating toxic workplaces, and figuring it out from scratch. Which is exactly why I know this stuff works.</p>
+          <p className="about-and-yes">And yes - I've also been the one writing my own redundancy letter, navigating toxic workplaces, and figuring it out from scratch. Which is exactly why I know this stuff works.</p>
 
-          <p>I believe great HR doesn't take sides — not the employee's, not the business's. We sit at the intersection. Everyone deserves to be heard. And there's always a way to figure out how to use your voice — whether you're trying to get in the room, run the room, or redesign what happens inside it.</p>
+          <p>I believe great HR doesn't take sides - not the employee's, not the business's. We sit at the intersection. Everyone deserves to be heard. And there's always a way to figure out how to use your voice - whether you're trying to get in the room, run the room, or redesign what happens inside it.</p>
 
-          <p>If you're a founder or operator — I make complex legislation simple and difficult conversations easy. This is what I'd tell you if you were my friend and you needed real answers.</p>
+          <p>If you're a founder or operator - I make complex legislation simple and difficult conversations easy. This is what I'd tell you if you were my friend and you needed real answers.</p>
         </Section>
 
         {/* Sign-off: photo inline with name */}
@@ -83,7 +83,7 @@ export default function About({ onNavigate }) {
           transition={{ duration: 0.4, delay: 0.25 }}
         >
           <button className="btn btn--primary" onClick={() => onNavigate('/')}>
-            Try Roast My Resume — it's free →
+            Try Roast My Resume - it's free →
           </button>
         </motion.div>
 

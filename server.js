@@ -1,4 +1,4 @@
-import express from 'express';
+﻿import express from 'express';
 import multer from 'multer';
 import { createRequire } from 'module';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
@@ -208,7 +208,7 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
 
         <!-- Header -->
         <tr><td style="background:#0A0A0A;border-radius:12px 12px 0 0;padding:28px 36px;">
-          <p style="margin:0;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#7C3AED;font-family:monospace;">not ur regular hr</p>
+          <p style="margin:0;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6D28D9;font-family:monospace;">not ur regular hr</p>
           <p style="margin:6px 0 0;font-size:18px;font-weight:700;color:#FFFFFF;letter-spacing:-0.02em;">roast my resume</p>
         </td></tr>
 
@@ -220,7 +220,7 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
           <p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">what did the feedback bring up for you? anything you're going to change?</p>
           <p style="margin:0 0 36px;font-size:15px;color:#0A0A0A;line-height:1.75;">hit reply - I read and respond to every single one.</p>
           <p style="margin:0 0 2px;font-size:15px;font-weight:700;color:#0A0A0A;letter-spacing:-0.01em;">farzana</p>
-          <p style="margin:0 0 36px;font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:#7C3AED;font-family:monospace;">not ur regular hr</p>
+          <p style="margin:0 0 36px;font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:#6D28D9;font-family:monospace;">not ur regular hr</p>
           <p style="margin:0;font-size:11px;color:#9CA3AF;letter-spacing:0.04em;border-top:1px solid #E5E7EB;padding-top:24px;">built different. because you deserve better than a template.</p>
         </td></tr>
 
@@ -305,11 +305,11 @@ app.post('/api/analyze', upload.single('resume'), async (req, res) => {
 
     const prompt = `You are the AI powering "Roast My Resume" by not ur regular hr. You think like a recruiter who has seen 10,000 resumes and has no patience for mediocrity, a hiring manager who makes decisions in 6 seconds and won't apologise for it, and a brutally honest advisor who respects the person enough to tell them the truth nobody else will.
 
-Your feedback is uncomfortably specific. You name the exact problem, not a softened version of it. You call out weak language by quoting it directly. You explain the psychological damage — what signal it sends, what it makes a recruiter assume, why it costs them the shortlist. You do not encourage. You do not motivate. You diagnose.
+Your feedback is uncomfortably specific. You name the exact problem, not a softened version of it. You call out weak language by quoting it directly. You explain the psychological damage - what signal it sends, what it makes a recruiter assume, why it costs them the shortlist. You do not encourage. You do not motivate. You diagnose.
 
-The free report exists to make people uncomfortable enough to want the full fix. It should sting — not cruelly, but with the specific sting of recognising something true that you've been avoiding. Think: a friend who works in hiring who finally tells you what everyone has been thinking but not saying.
+The free report exists to make people uncomfortable enough to want the full fix. It should sting - not cruelly, but with the specific sting of recognising something true that you've been avoiding. Think: a friend who works in hiring who finally tells you what everyone has been thinking but not saying.
 
-NEVER soften the truth. NEVER say "while there are strengths..." NEVER end a criticism with a compliment. If something is weak, say it is weak and explain exactly why. If the resume would get binned in 6 seconds, say that. Quote the actual language from their resume when calling it out — don't be vague.
+NEVER soften the truth. NEVER say "while there are strengths..." NEVER end a criticism with a compliment. If something is weak, say it is weak and explain exactly why. If the resume would get binned in 6 seconds, say that. Quote the actual language from their resume when calling it out - don't be vague.
 
 RESUME TEXT:
 ---
@@ -336,19 +336,19 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
     "impactEvidence": { "score": <0-100>, "insight": "<one sentence>" },
     "industryTranslation": { "score": <0-100>, "insight": "<one sentence>" },
     "overall": <integer - SCORING CALIBRATION: most real-world resumes score 40-65. Truly exceptional resumes score 75-85. Above 85 is extremely rare and only for near-perfect resumes. Weight executivePresence and strategicPositioning higher for senior roles>,
-    "brutalOneLiner": "<a sharp, specific one-liner naming the single most damaging truth about this resume — written to sting with recognition, not cruelty. Quote or reference something real from the resume. Make it feel personal. e.g. 'Ten years of impact buried under job descriptions nobody asked for' or 'Every bullet reads like a duty list — zero evidence you've ever moved a number' or 'Looks like a CV written for a role you already left, not the one you're chasing'. NEVER generic. NEVER encouraging.>"
+    "brutalOneLiner": "<a sharp, specific one-liner naming the single most damaging truth about this resume - written to sting with recognition, not cruelty. Quote or reference something real from the resume. Make it feel personal. e.g. 'Ten years of impact buried under job descriptions nobody asked for' or 'Every bullet reads like a duty list - zero evidence you've ever moved a number' or 'Looks like a CV written for a role you already left, not the one you're chasing'. NEVER generic. NEVER encouraging.>"
   },
   "topIssues": [
-    "<5-8 word headline naming the most critical issue — specific and uncomfortable, quote resume language where possible, no softening, no solution>",
-    "<second most critical issue — name the exact problem, not a category of problem>",
-    "<third most critical issue — must be specific to this resume, not generic advice>"
+    "<5-8 word headline naming the most critical issue - specific and uncomfortable, quote resume language where possible, no softening, no solution>",
+    "<second most critical issue - name the exact problem, not a category of problem>",
+    "<third most critical issue - must be specific to this resume, not generic advice>"
   ],
   "firstImpression": {
     "headline": "<4-7 word phrase capturing the recruiter's immediate read>",
-    "sixSecondRead": "<What a hiring manager actually thinks in their first 6 seconds — written in first person as a busy, skeptical hiring manager. Be specific about what they see, what they assume, and what makes them hesitate or scroll past. Do not be kind. 2-3 sentences.>",
+    "sixSecondRead": "<What a hiring manager actually thinks in their first 6 seconds - written in first person as a busy, skeptical hiring manager. Be specific about what they see, what they assume, and what makes them hesitate or scroll past. Do not be kind. 2-3 sentences.>",
     "immediateSignals": ["<specific positive signal from the resume>", "<another specific positive signal>"],
     "visualGaps": ["<specific structural or formatting gap>", "<another>"],
-    "hirabilityVerdict": "<one blunt sentence on first-impression hireability for this specific role — no hedging, no 'potential', no encouragement. If it's not there yet, say so directly.>"
+    "hirabilityVerdict": "<one blunt sentence on first-impression hireability for this specific role - no hedging, no 'potential', no encouragement. If it's not there yet, say so directly.>"
   },
   "executivePresence": {
     "presenceRating": "<Strong | Developing | Weak>",
@@ -364,10 +364,10 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
     "quickFixes": ["<specific fix - actionable, not vague>", "<another>", "<another>"]
   },
   "hardTruth": {
-    "coreDisconnect": "<The main gap between what this resume signals and what a ${jobTitle} role demands — be direct about what's missing or misaligned. Name it, don't dance around it. 2-3 sentences, no filler, no softening.>",
-    "whatRecruitersActuallySee": "<First person recruiter perspective on this specific resume — what they assume about this person, what red flags they clock, what questions it raises. Written as internal monologue, not as advice. 2-3 sentences.>",
-    "unintentionalSignals": ["<something this resume unintentionally signals — quote the specific language or structure causing it>", "<another unintentional signal with the specific evidence from the resume>"],
-    "whereExperienceGetsLost": "<specific explanation of where strong experience is being buried, diluted, or mistranslated — name the exact section or pattern, explain the psychological damage it does, 2-3 sentences>"
+    "coreDisconnect": "<The main gap between what this resume signals and what a ${jobTitle} role demands - be direct about what's missing or misaligned. Name it, don't dance around it. 2-3 sentences, no filler, no softening.>",
+    "whatRecruitersActuallySee": "<First person recruiter perspective on this specific resume - what they assume about this person, what red flags they clock, what questions it raises. Written as internal monologue, not as advice. 2-3 sentences.>",
+    "unintentionalSignals": ["<something this resume unintentionally signals - quote the specific language or structure causing it>", "<another unintentional signal with the specific evidence from the resume>"],
+    "whereExperienceGetsLost": "<specific explanation of where strong experience is being buried, diluted, or mistranslated - name the exact section or pattern, explain the psychological damage it does, 2-3 sentences>"
   },
   "hiddenAdvantages": {
     "overlookedStrengths": ["<specific strength being undersold - quote or reference something real from the resume>", "<another>", "<another>"],
@@ -412,7 +412,7 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
     const message = await client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: isPaid ? 12000 : 8000,
-      system: 'You are a brutally honest career analyst powering "Roast My Resume". Return only valid JSON - no markdown, no preamble, no explanation. Be specific, uncomfortable, and direct — name exact problems, quote actual resume language, never soften. SCORING CALIBRATION: most real-world resumes score 40-65 out of 100. Truly exceptional resumes score 75-85. Scores above 85 are extremely rare.',
+      system: 'You are a brutally honest career analyst powering "Roast My Resume". Return only valid JSON - no markdown, no preamble, no explanation. Be specific, uncomfortable, and direct - name exact problems, quote actual resume language, never soften. SCORING CALIBRATION: most real-world resumes score 40-65 out of 100. Truly exceptional resumes score 75-85. Scores above 85 are extremely rare.',
       messages: [{ role: 'user', content: prompt }],
     });
 

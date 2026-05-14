@@ -5,7 +5,7 @@ import Hero from './components/Hero'
 import FounderIntro from './components/FounderIntro'
 import HowItWorks from './components/HowItWorks'
 import About from './components/About'
-import FAQ from './components/FAQ'
+import FAQPage from './components/FAQPage'
 import MultiStepForm from './components/MultiStepForm'
 import EmailGate from './components/EmailGate'
 import LoadingScreen from './components/LoadingScreen'
@@ -14,7 +14,7 @@ import RewriteModal from './components/RewriteModal'
 import PaywallModal from './components/PaywallModal'
 
 export default function App() {
-  const [view, setView] = useState('home') // 'home' | 'loading' | 'results' | 'about'
+  const [view, setView] = useState('home') // 'home' | 'loading' | 'results' | 'about' | 'faq'
   const [emailGateOpen, setEmailGateOpen] = useState(false)
   const [paywallOpen, setPaywallOpen] = useState(false)
   const [pendingData, setPendingData] = useState(null)
@@ -33,7 +33,9 @@ export default function App() {
 
   const navigateTo = (path) => {
     window.history.pushState({}, '', path)
-    setView(path === '/about' ? 'about' : 'home')
+    if (path === '/about') setView('about')
+    else if (path === '/faq') setView('faq')
+    else setView('home')
     window.scrollTo({ top: 0 })
     trackPageView(path)
   }
@@ -45,11 +47,9 @@ export default function App() {
       window.gtag('event', 'page_view', { page_path: window.location.pathname })
     }
 
-    // Direct load of /about
-    if (window.location.pathname === '/about') {
-      setView('about')
-      return
-    }
+    // Direct load of /about or /faq
+    if (window.location.pathname === '/about') { setView('about'); return }
+    if (window.location.pathname === '/faq') { setView('faq'); return }
 
     const params = new URLSearchParams(window.location.search)
     const payment = params.get('payment')
@@ -98,7 +98,10 @@ export default function App() {
     }
 
     const handlePopState = () => {
-      setView(window.location.pathname === '/about' ? 'about' : 'home')
+      const p = window.location.pathname
+      if (p === '/about') setView('about')
+      else if (p === '/faq') setView('faq')
+      else setView('home')
       window.scrollTo({ top: 0 })
     }
     window.addEventListener('popstate', handlePopState)
@@ -192,11 +195,14 @@ export default function App() {
             <Hero />
             <FounderIntro />
             <HowItWorks />
-            <FAQ />
             <div className="container--narrow" style={{ paddingBottom: '6rem' }}>
               <MultiStepForm onSubmit={handleFormSubmit} error={globalError} />
             </div>
           </motion.div>
+        )}
+
+        {view === 'faq' && (
+          <FAQPage key="faq" onNavigate={navigateTo} />
         )}
 
         {view === 'about' && (
@@ -251,6 +257,7 @@ export default function App() {
         <footer className="footer">
           <p>not ur regular hr &copy; 2026 · built different. because you deserve better than a template.</p>
           <p className="footer__links">
+            <button className="footer__link" onClick={() => navigateTo('/faq')}>FAQs</button>
             <button className="footer__link" onClick={() => navigateTo('/about')}>About</button>
           </p>
         </footer>

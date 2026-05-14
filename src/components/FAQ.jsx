@@ -44,7 +44,6 @@ export default function FAQ() {
   return (
     <section className="faq">
       <div className="faq__inner">
-        <h2 className="faq__title">questions I get asked.</h2>
         <div className="faq__list">
           {FAQS.map(({ q, a }, i) => (
             <div key={i} className="faq-item">

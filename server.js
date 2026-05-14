@@ -118,11 +118,26 @@ app.post('/api/create-checkout', async (req, res) => {
   if (!stripe) {
     return res.status(503).json({ error: 'Payment not configured. Add Stripe keys to config.json.' });
   }
-  const { email } = req.body;
+  const { email, promoCode } = req.body;
   if (!email) return res.status(400).json({ error: 'Email required.' });
 
   try {
-    const session = await stripe.checkout.sessions.create({
+    // Resolve promo code to a Stripe promotion code ID if provided
+    let discounts;
+    if (promoCode && promoCode.trim()) {
+      const promoCodes = await stripe.promotionCodes.list({
+        code: promoCode.trim().toUpperCase(),
+        active: true,
+        limit: 1,
+      });
+      if (promoCodes.data.length === 0) {
+        return res.status(400).json({ error: 'Invalid or expired promo code. Please check and try again.' });
+      }
+      discounts = [{ promotion_code: promoCodes.data[0].id }];
+      console.log(`[Promo] Applied code "${promoCode.trim()}" → ${promoCodes.data[0].id}`);
+    }
+
+    const sessionParams = {
       payment_method_types: ['card'],
       customer_email: email.toLowerCase().trim(),
       line_items: [{ price: config.STRIPE_PRICE_ID, quantity: 1 }],
@@ -130,7 +145,16 @@ app.post('/api/create-checkout', async (req, res) => {
       success_url: `${config.APP_URL}?payment=success&session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(email)}`,
       cancel_url: `${config.APP_URL}?payment=cancelled`,
       metadata: { email: email.toLowerCase().trim() },
-    });
+    };
+
+    // discounts and allow_promotion_codes are mutually exclusive in Stripe
+    if (discounts) {
+      sessionParams.discounts = discounts;
+    } else {
+      sessionParams.allow_promotion_codes = true;
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
     res.json({ url: session.url });
   } catch (err) {
     console.error(err);
@@ -255,7 +279,7 @@ app.post('/api/analyze', upload.single('resume'), async (req, res) => {
   if (!client) return res.status(503).json({ error: 'ANTHROPIC_API_KEY is not configured. Add it to Vercel Environment Variables.' });
   try {
     const { jobTitle, roleCategory, industry, department, company, email, testPaid } = req.body;
-    if (!req.file) return res.status(400).json({ error: 'No resume uploaded.' });
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
     if (!jobTitle) return res.status(400).json({ error: 'Job title is required.' });
     if (!industry) return res.status(400).json({ error: 'Industry is required.' });
     if (!company) return res.status(400).json({ error: 'Target company is required.' });
@@ -274,14 +298,18 @@ app.post('/api/analyze', upload.single('resume'), async (req, res) => {
     }
 
     const pdfData = await pdf(req.file.buffer);
-    const resumeText = pdfData.text
+    const documentText = pdfData.text
       .trim()
       .replace(/[ --]/g, ' ')
       .replace(/\r\n/g, '\n')
       .slice(0, 8000);
-    if (!resumeText || resumeText.length < 50) {
+    if (!documentText || documentText.length < 50) {
       return res.status(400).json({ error: 'Could not extract text from this PDF. Make sure it is not a scanned image.' });
     }
+
+    // Detect whether this is a LinkedIn profile PDF or a traditional resume
+    const isLinkedIn = /linkedin\.com|linkedin profile|connections|followers|about\s*\n/i.test(documentText.slice(0, 1000));
+    const documentType = isLinkedIn ? 'LinkedIn profile PDF' : 'resume';
 
     const companyCtx = `Target Company: ${company}`;
     const roleCtx = roleCategory && roleCategory !== 'custom' ? `Role: ${roleCategory}` : '';
@@ -309,11 +337,13 @@ Your feedback is uncomfortably specific. You name the exact problem, not a softe
 
 The free report exists to make people uncomfortable enough to want the full fix. It should sting - not cruelly, but with the specific sting of recognising something true that you've been avoiding. Think: a friend who works in hiring who finally tells you what everyone has been thinking but not saying.
 
-NEVER soften the truth. NEVER say "while there are strengths..." NEVER end a criticism with a compliment. If something is weak, say it is weak and explain exactly why. If the resume would get binned in 6 seconds, say that. Quote the actual language from their resume when calling it out - don't be vague.
+NEVER soften the truth. NEVER say "while there are strengths..." NEVER end a criticism with a compliment. If something is weak, say it is weak and explain exactly why. If the resume would get binned in 6 seconds, say that. Quote the actual language from the document when calling it out - don't be vague.
 
-RESUME TEXT:
+The document being analysed is a ${documentType}. If it is a LinkedIn profile PDF, apply all the same rigour - evaluate the structure, language, positioning, keyword density, and how well it would land for the target role. LinkedIn profiles are often weaker than resumes because people treat them as passive. Call that out if it's true.
+
+DOCUMENT TEXT (${documentType}):
 ---
-${resumeText}
+${documentText}
 ---
 
 TARGET JOB TITLE: ${jobTitle}
@@ -322,7 +352,7 @@ ${departmentCtx}
 ${roleCtx}
 ${companyCtx}
 
-Analyse this resume through the lens of a hiring decision-maker evaluating a ${jobTitle} candidate${industry ? ` in the ${industry} industry` : ''}${department ? ` (${department} department)` : ''}.
+Analyse this ${documentType} through the lens of a hiring decision-maker evaluating a ${jobTitle} candidate${industry ? ` in the ${industry} industry` : ''}${department ? ` (${department} department)` : ''}. Treat a LinkedIn PDF with the same rigour as a resume - weak positioning is weak positioning regardless of format.
 
 Return EXACTLY this JSON structure. No markdown fences, no extra text, only valid JSON:
 

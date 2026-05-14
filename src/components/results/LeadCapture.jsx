@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 
 const OFFERINGS = [
@@ -10,6 +11,15 @@ const OFFERINGS = [
 ]
 
 export default function LeadCapture({ onUpgrade }) {
+  const [promoCode, setPromoCode] = useState('')
+  const [promoError, setPromoError] = useState('')
+
+  const handlePay = async () => {
+    setPromoError('')
+    const err = await onUpgrade(promoCode)
+    if (err) setPromoError(err)
+  }
+
   return (
     <motion.div
       className="lead-capture-dark"
@@ -35,7 +45,28 @@ export default function LeadCapture({ onUpgrade }) {
         ))}
       </div>
 
-      <button className="btn--dark-primary" onClick={onUpgrade}>
+      {/* Promo code field */}
+      <div style={{ marginBottom: '1rem' }}>
+        <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(250,248,244,0.5)', marginBottom: '0.45rem' }}>
+          Got a promo code?
+        </label>
+        <input
+          className="input"
+          style={{ background: 'rgba(250,248,244,0.08)', border: '2px solid rgba(250,248,244,0.15)', color: 'var(--text-on-dark)', fontSize: '0.9rem' }}
+          value={promoCode}
+          onChange={e => { setPromoCode(e.target.value); setPromoError('') }}
+          placeholder="Enter code"
+          autoComplete="off"
+          spellCheck={false}
+        />
+        {promoError && (
+          <p style={{ fontSize: '0.78rem', color: '#F87171', marginTop: '0.4rem', fontWeight: 600 }}>
+            {promoError}
+          </p>
+        )}
+      </div>
+
+      <button className="btn--dark-primary" onClick={handlePay}>
         Unlock everything for $79 AUD →
       </button>
       <p className="lead-price-note">

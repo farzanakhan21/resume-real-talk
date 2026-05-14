@@ -154,24 +154,25 @@ export default function App() {
     }
   }
 
-  const handleUpgrade = async () => {
+  const handleUpgrade = async (promoCode = '') => {
     setCheckoutLoading(true)
     try {
       const res = await fetch('/api/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail }),
+        body: JSON.stringify({ email: userEmail, promoCode: promoCode.trim() }),
       })
       const json = await res.json()
       if (json.url) {
         window.location.href = json.url
+        return null
       } else {
-        alert(json.error || 'Could not start checkout. Please try again.')
         setCheckoutLoading(false)
+        return json.error || 'Could not start checkout. Please try again.'
       }
     } catch {
-      alert('Could not connect to payment service. Please try again.')
       setCheckoutLoading(false)
+      return 'Could not connect to payment service. Please try again.'
     }
   }
 

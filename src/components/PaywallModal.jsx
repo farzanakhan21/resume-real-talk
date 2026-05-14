@@ -1,6 +1,16 @@
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function PaywallModal({ email, onClose, onUpgrade, loading }) {
+  const [promoCode, setPromoCode] = useState('')
+  const [promoError, setPromoError] = useState('')
+
+  const handlePay = async () => {
+    setPromoError('')
+    const err = await onUpgrade(promoCode)
+    if (err) setPromoError(err)
+  }
+
   return (
     <AnimatePresence>
       <motion.div
@@ -39,11 +49,30 @@ export default function PaywallModal({ email, onClose, onUpgrade, loading }) {
             ))}
           </div>
 
+          {/* Promo code field */}
+          <div className="field" style={{ marginBottom: '1.25rem' }}>
+            <label className="field__label" style={{ fontSize: '0.72rem' }}>Got a promo code?</label>
+            <input
+              className="input"
+              style={{ fontSize: '0.9rem' }}
+              value={promoCode}
+              onChange={e => { setPromoCode(e.target.value); setPromoError('') }}
+              placeholder="Enter code"
+              autoComplete="off"
+              spellCheck={false}
+            />
+            {promoError && (
+              <p style={{ fontSize: '0.78rem', color: 'var(--red)', marginTop: '0.4rem', fontWeight: 600 }}>
+                {promoError}
+              </p>
+            )}
+          </div>
+
           <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
             <button
               className="btn btn--primary"
               style={{ flex: 1, minWidth: 180 }}
-              onClick={onUpgrade}
+              onClick={handlePay}
               disabled={loading}
             >
               {loading ? 'Redirecting...' : 'Unlock for $79 AUD →'}

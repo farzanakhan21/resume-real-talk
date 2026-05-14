@@ -211,7 +211,7 @@ export default function MultiStepForm({ onSubmit, error }) {
 
             <form onSubmit={handleSubmit} noValidate>
               <div className="field">
-                <label className="field__label">Your resume <span>*</span></label>
+                <label className="field__label">Upload your resume or LinkedIn profile PDF <span>*</span></label>
                 <div
                   className={`drop-zone ${dragOver ? 'over' : ''}`}
                   onClick={() => fileInputRef.current.click()}
@@ -228,13 +228,16 @@ export default function MultiStepForm({ onSubmit, error }) {
                   />
                   <span className="drop-zone__icon">{file ? '✓' : '📄'}</span>
                   <span className="drop-zone__text">
-                    {file ? file.name : 'Drop your resume here. We won\'t sugarcoat it.'}
+                    {file ? file.name : 'Drop your resume or LinkedIn PDF here.'}
                   </span>
                   {!file && <span className="drop-zone__sub">PDF only · max 10MB</span>}
                   {file && <span className="drop-zone__file">Locked and loaded ✓</span>}
                 </div>
+                <p className="field__hint" style={{ marginTop: '0.5rem' }}>
+                  To download your LinkedIn profile as a PDF - go to your LinkedIn profile - click 'More' - select 'Save to PDF'.
+                </p>
                 <p className="privacy-note">
-                  Your resume is processed securely by AI and never stored or shared. I only keep your email address to send you your results.
+                  Your document is processed securely by AI and never stored or shared. I only keep your email address to send you your results.
                 </p>
               </div>
 

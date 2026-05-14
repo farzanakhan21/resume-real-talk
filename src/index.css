@@ -1291,17 +1291,17 @@ select.input { cursor: pointer; appearance: none; background-image: url("data:im
   gap: 1.75rem;
 }
 .about-photo {
-  width: 160px;
-  height: 160px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
   border: 3px solid var(--border-dark);
   box-shadow: var(--shadow-sm);
 }
-.about-signoff__text { display: flex; flex-direction: column; gap: 0.4rem; }
+.about-signoff__text { display: flex; flex-direction: column; gap: 0.5rem; }
 .about-signoff__name {
-  font-size: 1.5rem;
+  font-size: 1.65rem;
   font-weight: 700;
   font-style: italic;
   letter-spacing: -0.03em;
@@ -1310,13 +1310,37 @@ select.input { cursor: pointer; appearance: none; background-image: url("data:im
 }
 .about-signoff__brand {
   font-family: var(--mono);
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--accent);
   font-weight: 700;
 }
-.about-cta { margin-top: 1rem; }
+/* "And yes" italic note in receipts */
+.about-and-yes {
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-top: 0.5rem;
+}
+.about-cta { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+.about-cta__email {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.about-cta__email-link {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-accent);
+  transition: color 0.15s, border-color 0.15s;
+}
+.about-cta__email-link:hover {
+  color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
 
 /* ── Error ── */
 .error-msg {

@@ -79,7 +79,7 @@ export default function MultiStepForm({ onSubmit, error }) {
       <AnimatePresence mode="wait">
         {step === 1 && (
           <motion.div key="step1" {...slide}>
-            <p className="muted small mb-3" style={{ marginBottom: '1.25rem', fontWeight: 500 }}>
+            <p style={{ marginBottom: '1.25rem', fontSize: '1.15rem', fontWeight: 700, color: '#7C3AED' }}>
               Pick the bucket you belong in. We'll calibrate the whole analysis to it.
             </p>
             <div className="role-grid mb-4" style={{ marginBottom: '1.5rem' }}>

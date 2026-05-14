@@ -66,10 +66,11 @@ export default function Results({ data, isPaid, userEmail, onRewrite, onReset, o
       <div className="results">
 
         {isPaid && (
-          <div className="no-print" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
+          <div className="no-print" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.4rem', marginBottom: '1.5rem' }}>
             <button className="btn btn--ghost" onClick={handlePrint} style={{ fontSize: '0.85rem' }}>
               Download PDF report
             </button>
+            <p className="pdf-hint">When saving as PDF, uncheck 'Headers and footers' in your print dialog for the cleanest result.</p>
           </div>
         )}
 

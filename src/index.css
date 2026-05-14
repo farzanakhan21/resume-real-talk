@@ -363,6 +363,7 @@ ul { list-style: none; }
 .input::placeholder { color: var(--text-tertiary); }
 select.input { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%230A0A0A' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; }
 .field__hint { font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.45rem; }
+.pdf-hint { font-size: 0.72rem; color: var(--text-tertiary); line-height: 1.5; }
 
 /* ── Role grid ── */
 .role-grid {

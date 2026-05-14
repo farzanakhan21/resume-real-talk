@@ -33,6 +33,7 @@ export default function FAQPage({ onNavigate }) {
           <button className="btn btn--primary" onClick={() => onNavigate('/')}>
             Get your resume roasted →
           </button>
+          <p className="pdf-hint" style={{ marginTop: '1rem' }}>When saving as PDF, uncheck 'Headers and footers' in your print dialog for the cleanest result.</p>
         </motion.div>
       </div>
     </motion.div>

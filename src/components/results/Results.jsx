@@ -191,7 +191,7 @@ export default function Results({ data, isPaid, userEmail, onRewrite, onReset, o
 
         <div className="no-print" style={{ textAlign: 'center', marginTop: '4rem' }}>
           <button className="btn btn--ghost" onClick={onReset}>
-            Analyse another resume
+            Roast another resume →
           </button>
         </div>
       </div>

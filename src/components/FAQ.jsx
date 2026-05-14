@@ -32,7 +32,7 @@ const FAQS = [
   },
   {
     q: 'What is your refund policy?',
-    a: "All sales are final. Because this is a digital product delivered instantly, I'm unable to offer refunds once the report has been generated. If you have any issues with your report, reach out to farzana@noturregularhr.com and I'll make it right.",
+    a: "All sales are final. Because this is a digital product delivered instantly, I'm unable to offer refunds once the report has been generated. If you have any questions, just hit reply on the email we sent you with your report and we can talk it through.",
   },
 ]
 

@@ -1259,15 +1259,87 @@ select.input { cursor: pointer; appearance: none; background-image: url("data:im
 .section-gap-lg { margin-top: 7rem; }
 
 /* ── Print ── */
+/* ── Print-only cover page (hidden on screen) ── */
+.print-cover { display: none; }
+
+@page {
+  size: A4;
+  margin: 1.5cm 1.8cm;
+}
+
 @media print {
-  .no-print { display: none !important; }
-  .header { position: static; background: #fff; border: none; }
-  body { font-size: 13px; background: #fff; }
-  .results { padding: 0; }
-  .card { box-shadow: none; break-inside: avoid; }
-  .modal-overlay { display: none !important; }
-  .btn { display: none !important; }
+  /* Hide all browser UI helpers */
+  .no-print,
+  .header,
+  .footer,
+  .modal-overlay,
+  .btn,
+  .lead-capture-dark,
+  .about-cta,
+  .faq-page__cta { display: none !important; }
+
+  body { font-size: 13px; background: #fff; color: #0A0A0A; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* Cover page */
+  .print-cover {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 0;
+    page-break-after: always;
+    break-after: page;
+  }
+  .print-cover__brand {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #7C3AED;
+    margin-bottom: 3rem;
+  }
+  .print-cover__title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    color: #0A0A0A;
+    margin-bottom: 1rem;
+  }
+  .print-cover__subtitle {
+    font-size: 1.1rem;
+    color: #6B7280;
+    margin-bottom: 3rem;
+    font-weight: 400;
+  }
+  .print-cover__email {
+    font-size: 0.85rem;
+    color: #6B7280;
+    margin-bottom: 0.25rem;
+  }
+  .print-cover__date {
+    font-size: 0.85rem;
+    color: #9CA3AF;
+  }
+
+  /* Results layout */
+  .results { padding: 0; max-width: 100%; }
+
+  /* Prevent orphaned headings and broken cards */
+  .card { box-shadow: none !important; break-inside: avoid; border: 1px solid #E5E7EB !important; }
+  .section-gap { break-after: avoid; margin-top: 2rem; }
+  .section-title { break-after: avoid; }
+  .score-grid { break-inside: avoid; }
+  .score-card { break-inside: avoid; }
+  .result-block { break-inside: avoid; }
+  .hard-truth-block { break-inside: avoid; }
+  .rewrite-version { break-inside: avoid; }
+  .lead-item { break-inside: avoid; }
+  .insight-block { break-inside: avoid; }
+  .networking-item { break-inside: avoid; }
+  .plan-week { break-inside: avoid; }
+  .locked-section { display: none !important; }
+
   a { color: inherit; text-decoration: none; }
-  .section-gap { margin-top: 2rem; }
-  .lead-capture-dark { display: none; }
 }

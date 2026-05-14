@@ -39,7 +39,13 @@ function SectionHeader({ num, title, amberAccent }) {
 export default function Results({ data, isPaid, userEmail, onRewrite, onReset, onUpgrade }) {
   const jobTitle = data.positioningStrategy?.linkedinHeadline || ''
   const roleCategory = ''
-  const handlePrint = () => window.print()
+
+  const handlePrint = () => {
+    const prev = document.title
+    document.title = 'resume-roast-report'
+    window.print()
+    document.title = prev
+  }
 
   return (
     <motion.div
@@ -48,6 +54,15 @@ export default function Results({ data, isPaid, userEmail, onRewrite, onReset, o
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
+      {/* Print-only cover page */}
+      <div className="print-cover">
+        <div className="print-cover__brand">not ur regular hr</div>
+        <div className="print-cover__title">Roast My Resume</div>
+        <div className="print-cover__subtitle">Full Analysis Report</div>
+        {userEmail && <div className="print-cover__email">{userEmail}</div>}
+        <div className="print-cover__date">{new Date().toLocaleDateString('en-AU', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+      </div>
+
       <div className="results">
 
         {isPaid && (

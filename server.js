@@ -424,6 +424,20 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
       parsed = JSON.parse(match[0]);
     }
 
+    // Decode HTML entities the AI sometimes includes in string values
+    const decodeEntities = (s) => typeof s === 'string'
+      ? s.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+          .replace(/&quot;/g, '"').replace(/&#x27;/g, "'").replace(/&#39;/g, "'")
+          .replace(/&apos;/g, "'").replace(/&nbsp;/g, ' ')
+      : s;
+    const decodeDeep = (v) => {
+      if (typeof v === 'string') return decodeEntities(v);
+      if (Array.isArray(v)) return v.map(decodeDeep);
+      if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, val]) => [k, decodeDeep(val)]));
+      return v;
+    };
+    parsed = decodeDeep(parsed);
+
     if (!alreadyUsed) {
       emails.used.push(normalised);
       writeEmails(emails);

@@ -38,14 +38,13 @@ export default function About({ onNavigate }) {
         </motion.div>
 
         <Section delay={0.1}>
-          <p>I'm not on the employee's side. I'm not on the employer's side.</p>
-          <p className="about-emphasis">I'm at the intersection.</p>
-          <p>After 10+ years across HR, recruitment, and people &amp; culture - in startups, hospitality, and everything in between - I've sat in every seat at the table. I've been the one making the decisions, and I've been the one affected by them.</p>
-          <p>What I've learned: everyone deserves to be heard. Employees, managers, founders, operators. And there's always a way to figure out how to use your voice - whether you're trying to get in the room, run the room, or redesign what happens inside it.</p>
+          <p>I believe great HR doesn't take sides - not the employee's, not the employer's. We sit at the intersection.</p>
+          <p>After 10+ years across HR, recruitment, and people &amp; culture - in startups, hospitality, and everything in between - the biggest thing I've learned is that everyone is just figuring it out as they go.</p>
+          <p>Everyone deserves to be heard. And there's always a way to figure out how to use your voice - whether you're trying to get in the room, run the room, or redesign what happens inside it.</p>
         </Section>
 
         <Section delay={0.15}>
-          <p>If you're a founder or operator building something from scratch - or scaling faster than your people processes can keep up - I work with businesses directly as a fractional HR and people &amp; culture leader. I've built HR functions from the ground up, navigated the chaos of hypergrowth, and helped founders make people decisions that don't come back to bite them later. I make complex legislation simple and difficult conversations easy. No full-time hire needed.</p>
+          <p>If you're a founder or operator building something from scratch - or scaling faster than your people processes can keep up - I work with businesses directly as a fractional HR and people &amp; culture leader. I've built HR functions from the ground up, navigated the chaos of hypergrowth, and helped founders make people decisions that don't come back to bite them later. I make complex legislation simple and difficult conversations easy.</p>
         </Section>
 
         <Section delay={0.2}>

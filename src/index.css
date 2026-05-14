@@ -1143,10 +1143,19 @@ select.input { cursor: pointer; appearance: none; background-image: url("data:im
   letter-spacing: -0.04em;
   color: var(--text);
   margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
 }
 .about-headline em {
   color: var(--accent);
   font-style: italic;
+}
+.about-subheadline {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.5;
 }
 .about-section {
   border-top: 2px solid var(--border-dark);
@@ -1190,26 +1199,65 @@ select.input { cursor: pointer; appearance: none; background-image: url("data:im
   color: var(--text);
   font-style: normal;
 }
-.about-photo-wrap {
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 2.5rem;
+/* receipts section */
+.about-receipts-heading {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  line-height: 1;
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
 }
-.about-photo {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid var(--border-dark);
-  box-shadow: var(--shadow-sm);
+.about-receipts {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-left: 0;
+}
+.about-receipts li {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--text);
+  padding-left: 1.25rem;
+  position: relative;
+}
+.about-receipts li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--text-tertiary);
+}
+.about-receipts strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+.about-section__body strong {
+  color: var(--accent);
+  font-weight: 700;
 }
 
+/* photo + signoff side-by-side */
 .about-signoff {
   border-top: 2px solid var(--border-dark);
   padding-top: 2.5rem;
   margin-top: 1rem;
   margin-bottom: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
 }
+.about-photo {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 3px solid var(--border-dark);
+  box-shadow: var(--shadow-sm);
+}
+.about-signoff__text { display: flex; flex-direction: column; gap: 0.4rem; }
 .about-signoff__name {
   font-size: 1.5rem;
   font-weight: 700;
@@ -1217,7 +1265,6 @@ select.input { cursor: pointer; appearance: none; background-image: url("data:im
   letter-spacing: -0.03em;
   color: var(--text);
   line-height: 1;
-  margin-bottom: 0.4rem;
 }
 .about-signoff__brand {
   font-family: var(--mono);

@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ROLE_CATEGORIES } from '../utils'
+import { INDUSTRIES, getDepartments, getRoles } from '../roleData'
+import SearchableSelect from './SearchableSelect'
 
 const slide = {
   initial: { opacity: 0, x: 24 },
@@ -9,62 +10,80 @@ const slide = {
   transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] },
 }
 
-const INDUSTRIES = [
-  'Construction & Engineering',
-  'Creative & Design',
-  'Education',
-  'Finance & Banking',
-  'Government & Public Sector',
-  'Healthcare & Medical',
-  'Hospitality & Tourism',
-  'HR & People & Culture',
-  'Legal & Professional Services',
-  'Marketing & Media',
-  'Not-for-Profit & Social Impact',
-  'Operations & Logistics',
-  'Retail & E-commerce',
-  'Sales & Business Development',
-  'Technology & Startups',
-  'Other (I\'ll describe below)',
-]
-
 export default function MultiStepForm({ onSubmit, error }) {
   const [step, setStep] = useState(1)
-  const [roleCategory, setRoleCategory] = useState('')
+
+  // Step 1: cascading role selection
+  const [industry, setIndustry] = useState('')
+  const [department, setDepartment] = useState('')
+  const [role, setRole] = useState('')
   const [customRole, setCustomRole] = useState('')
+
+  // Step 2: resume details
   const [file, setFile] = useState(null)
   const [jobTitle, setJobTitle] = useState('')
-  const [industry, setIndustry] = useState('')
   const [company, setCompany] = useState('')
   const [dragOver, setDragOver] = useState(false)
+
   const [formError, setFormError] = useState('')
   const fileInputRef = useRef()
 
+  const departments = industry ? getDepartments(industry) : []
+  const roles = department ? getRoles(department) : []
+  const isOtherRole = role === 'Other / Describe my role'
+
+  // ── Cascading clear handlers ─────────────────────────────────────────────
+  const handleIndustryChange = (val) => {
+    setIndustry(val)
+    setDepartment('')
+    setRole('')
+    setCustomRole('')
+    setFormError('')
+  }
+
+  const handleDepartmentChange = (val) => {
+    setDepartment(val)
+    setRole('')
+    setCustomRole('')
+    setFormError('')
+  }
+
+  const handleRoleChange = (val) => {
+    setRole(val)
+    setCustomRole('')
+    setFormError('')
+  }
+
+  // ── Step 1 → Step 2 ──────────────────────────────────────────────────────
   const handleRoleNext = () => {
-    if (!roleCategory) return setFormError('Pick a category first - we need this to calibrate the whole analysis.')
-    if (roleCategory === 'custom' && !customRole.trim()) return setFormError('Tell us what role you\'re going for.')
+    if (!industry) return setFormError('Select your industry — we need this to calibrate the whole analysis.')
+    if (!department) return setFormError('Select your department so we can narrow the feedback.')
+    if (!role) return setFormError('Pick your role — this is the last step before the real stuff.')
+    if (isOtherRole && !customRole.trim()) return setFormError('Tell us what role you\'re going for.')
     setFormError('')
     setStep(2)
   }
 
+  // ── File handling ────────────────────────────────────────────────────────
   const handleFile = (f) => {
-    if (!f || f.type !== 'application/pdf') return setFormError('PDF only please - we can\'t read anything else.')
+    if (!f || f.type !== 'application/pdf') return setFormError('PDF only please — we can\'t read anything else.')
     setFile(f)
     setFormError('')
   }
 
+  // ── Final submit ─────────────────────────────────────────────────────────
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!file) return setFormError('Drop your resume in first.')
     if (!jobTitle.trim()) return setFormError('We need the exact job title you\'re targeting.')
-    if (!industry) return setFormError('Select your industry so we can tailor the feedback.')
     if (!company.trim()) return setFormError('Tell us what company or type of company you\'re targeting.')
     setFormError('')
     onSubmit({
       file,
       jobTitle: jobTitle.trim(),
-      roleCategory: roleCategory === 'custom' ? customRole.trim() : roleCategory,
-      industry: industry.trim(),
+      industry,
+      department,
+      roleCategory: isOtherRole ? customRole.trim() : role,
       company: company.trim(),
     })
   }
@@ -79,44 +98,102 @@ export default function MultiStepForm({ onSubmit, error }) {
       <AnimatePresence mode="wait">
         {step === 1 && (
           <motion.div key="step1" {...slide}>
-            <p style={{ marginBottom: '1.25rem', fontSize: '1.15rem', fontWeight: 700, color: '#7C3AED' }}>
-              Pick the bucket you belong in. We'll calibrate the whole analysis to it.
+            <p style={{ marginBottom: '1.75rem', fontSize: '1.15rem', fontWeight: 700, color: '#7C3AED' }}>
+              Tell us exactly where you work. We'll calibrate every bit of feedback to your industry, department and role.
             </p>
-            <div className="role-grid mb-4" style={{ marginBottom: '1.5rem' }}>
-              {ROLE_CATEGORIES.map((r) => (
-                <button
-                  key={r.id}
-                  type="button"
-                  className={`role-btn ${roleCategory === r.id ? 'selected' : ''}`}
-                  onClick={() => { setRoleCategory(r.id); setFormError('') }}
-                >
-                  {r.label}
-                </button>
-              ))}
+
+            {/* Industry */}
+            <div className="field">
+              <label className="field__label">Industry <span>*</span></label>
+              <select
+                className="input"
+                value={industry}
+                onChange={(e) => handleIndustryChange(e.target.value)}
+              >
+                <option value="">Select your industry</option>
+                {INDUSTRIES.map((ind) => (
+                  <option key={ind} value={ind}>{ind}</option>
+                ))}
+              </select>
             </div>
 
-            {roleCategory === 'custom' && (
-              <motion.div
-                className="field"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                transition={{ duration: 0.25 }}
-                style={{ marginBottom: '1.5rem' }}
-              >
-                <label className="field__label">Tell us what you're going for</label>
-                <input
-                  className="input"
-                  value={customRole}
-                  onChange={(e) => setCustomRole(e.target.value)}
-                  placeholder="e.g. Head of People at a Series B startup"
-                />
-              </motion.div>
-            )}
+            {/* Department — appears once industry is selected */}
+            <AnimatePresence>
+              {industry && (
+                <motion.div
+                  className="field"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.22 }}
+                >
+                  <label className="field__label">Department <span>*</span></label>
+                  <select
+                    className="input"
+                    value={department}
+                    onChange={(e) => handleDepartmentChange(e.target.value)}
+                  >
+                    <option value="">Select your department</option>
+                    {departments.map((d) => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
+                  </select>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Role — appears once department is selected */}
+            <AnimatePresence>
+              {department && (
+                <motion.div
+                  className="field"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.22 }}
+                >
+                  <label className="field__label">Role <span>*</span></label>
+                  <SearchableSelect
+                    value={role}
+                    onChange={handleRoleChange}
+                    options={roles}
+                    placeholder="Search or select your role…"
+                    disabled={!department}
+                  />
+                  <p className="field__hint">Start typing to filter the list.</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Custom role — appears if "Other / Describe my role" is selected */}
+            <AnimatePresence>
+              {isOtherRole && (
+                <motion.div
+                  className="field"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.22 }}
+                >
+                  <label className="field__label">Describe your role <span>*</span></label>
+                  <input
+                    className="input"
+                    value={customRole}
+                    onChange={(e) => { setCustomRole(e.target.value); setFormError('') }}
+                    placeholder="e.g. Head of People at a Series B startup"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {formError && <div className="error-msg">{formError}</div>}
 
-            <button className="btn btn--primary" style={{ marginTop: '1.5rem' }} onClick={handleRoleNext}>
-              Let's go <span className="btn-arrow">→</span>
+            <button
+              className="btn btn--primary"
+              style={{ marginTop: '1.5rem' }}
+              onClick={handleRoleNext}
+            >
+              Next <span className="btn-arrow">→</span>
             </button>
           </motion.div>
         )}
@@ -171,21 +248,6 @@ export default function MultiStepForm({ onSubmit, error }) {
                   required
                 />
                 <p className="field__hint">Be specific — not just 'manager' but 'People &amp; Culture Manager at a scaling startup'.</p>
-              </div>
-
-              <div className="field">
-                <label className="field__label">YOUR INDUSTRY <span>*</span></label>
-                <select
-                  className="input"
-                  value={industry}
-                  onChange={(e) => setIndustry(e.target.value)}
-                >
-                  <option value="">Select your industry</option>
-                  {INDUSTRIES.map((ind) => (
-                    <option key={ind} value={ind}>{ind}</option>
-                  ))}
-                </select>
-                <p className="field__hint">This helps us tailor your feedback to how hiring actually works in your industry.</p>
               </div>
 
               <div className="field">

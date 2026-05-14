@@ -254,7 +254,7 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
 app.post('/api/analyze', upload.single('resume'), async (req, res) => {
   if (!client) return res.status(503).json({ error: 'ANTHROPIC_API_KEY is not configured. Add it to Vercel Environment Variables.' });
   try {
-    const { jobTitle, roleCategory, industry, company, email, testPaid } = req.body;
+    const { jobTitle, roleCategory, industry, department, company, email, testPaid } = req.body;
     if (!req.file) return res.status(400).json({ error: 'No resume uploaded.' });
     if (!jobTitle) return res.status(400).json({ error: 'Job title is required.' });
     if (!industry) return res.status(400).json({ error: 'Industry is required.' });
@@ -284,8 +284,9 @@ app.post('/api/analyze', upload.single('resume'), async (req, res) => {
     }
 
     const companyCtx = `Target Company: ${company}`;
-    const roleCtx = roleCategory && roleCategory !== 'custom' ? `Role Category: ${roleCategory}` : '';
+    const roleCtx = roleCategory && roleCategory !== 'custom' ? `Role: ${roleCategory}` : '';
     const industryCtx = industry ? `Industry: ${industry}` : '';
+    const departmentCtx = department ? `Department: ${department}` : '';
     const rewriteCount = isPaid ? 5 : 3;
 
     const paidSections = isPaid ? `
@@ -316,11 +317,12 @@ ${resumeText}
 ---
 
 TARGET JOB TITLE: ${jobTitle}
-${roleCtx}
 ${industryCtx}
+${departmentCtx}
+${roleCtx}
 ${companyCtx}
 
-Analyse this resume through the lens of a hiring decision-maker evaluating a ${jobTitle} candidate${industry ? ` in the ${industry} industry` : ''}.
+Analyse this resume through the lens of a hiring decision-maker evaluating a ${jobTitle} candidate${industry ? ` in the ${industry} industry` : ''}${department ? ` (${department} department)` : ''}.
 
 Return EXACTLY this JSON structure. No markdown fences, no extra text, only valid JSON:
 

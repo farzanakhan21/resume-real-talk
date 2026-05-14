@@ -128,6 +128,7 @@ export default function App() {
       }
       fd.append('roleCategory', pendingData.roleCategory)
       fd.append('industry', pendingData.industry || '')
+      fd.append('department', pendingData.department || '')
       fd.append('company', pendingData.company || '')
       fd.append('email', email)
 

@@ -228,7 +228,7 @@ export default function Results({ data, isPaid, userEmail, onRewrite, onReset, o
       <Disclaimer />
 
       <footer className="footer no-print">
-        <p>not ur regular hr &copy; 2026 · built different. because you deserve better than a template.</p>
+        <p>not ur regular hr — est. 2016 &copy; 2026 · built different. because you deserve better than a template.</p>
       </footer>
     </motion.div>
   )

@@ -35,11 +35,11 @@ export default function About({ onNavigate }) {
           <h1 className="about-headline">
             I didn't plan to work in HR.<br />HR found me.
           </h1>
-          <p className="about-subheadline">here's what 10+ years on the inside taught me.</p>
+          <p className="about-subheadline">here's what being on the inside since 2016 has taught me.</p>
         </motion.div>
 
         <Section delay={0.1}>
-          <p>10+ years building HR from the ground up - in hospitality, events, and high-growth environments. And now building products to fix the problems I keep seeing from the inside.</p>
+          <p>Building HR from the ground up since 2016 - in hospitality, events, and high-growth environments. And now building products to fix the problems I keep seeing from the inside.</p>
 
           <h3 className="about-receipts-heading">the receipts.</h3>
 
@@ -72,6 +72,7 @@ export default function About({ onNavigate }) {
           <div className="about-signoff__text">
             <div className="about-signoff__name">Farzana Khan</div>
             <div className="about-signoff__brand">not ur regular hr</div>
+            <div className="about-signoff__est">est. 2016</div>
           </div>
         </motion.div>
 

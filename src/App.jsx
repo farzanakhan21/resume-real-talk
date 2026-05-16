@@ -259,7 +259,7 @@ export default function App() {
 
       {view !== 'results' && (
         <footer className="footer">
-          <p>not ur regular hr &copy; 2026 · built different. because you deserve better than a template.</p>
+          <p>not ur regular hr — est. 2016 &copy; 2026 · built different. because you deserve better than a template.</p>
           <p className="footer__links">
             <button className="footer__link" onClick={() => navigateTo('/faq')}>FAQs</button>
             <button className="footer__link" onClick={() => navigateTo('/about')}>About</button>

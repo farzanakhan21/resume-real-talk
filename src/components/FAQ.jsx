@@ -12,7 +12,7 @@ const FAQS = [
   },
   {
     q: 'How accurate is the feedback?',
-    a: "I've spent 10+ years reviewing resumes across hospitality, tech and startups. I've built that experience into this tool so it gives you the same honest, specific advice I'd give you if you were my friend. It's a strong starting point - not a guarantee - but it's a lot more useful than generic career tips.",
+    a: "I've been reviewing resumes since 2016 across hospitality, tech and startups. I've built that experience into this tool so it gives you the same honest, specific advice I'd give you if you were my friend. It's a strong starting point - not a guarantee - but it's a lot more useful than generic career tips.",
   },
   {
     q: 'Who built this?',

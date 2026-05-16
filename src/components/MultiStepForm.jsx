@@ -1,4 +1,4 @@
-﻿import { useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { INDUSTRIES, getDepartments, getRoles } from '../roleData'
 import SearchableSelect from './SearchableSelect'
@@ -10,16 +10,51 @@ const slide = {
   transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] },
 }
 
+const CAREER_SITUATIONS = [
+  'Employed and looking',
+  'Unemployed and actively searching',
+  'Exploring my options',
+  'Pivoting industries',
+  'Recently made redundant',
+  'Returning to the workforce',
+]
+
+const TIMEFRAMES = [
+  'I need a role ASAP (1-3 months)',
+  'I\'m being strategic (3-6 months)',
+  'I\'m planning ahead (6-12 months)',
+  'I\'m not sure yet',
+]
+
+function OptionCard({ label, selected, onClick }) {
+  return (
+    <button
+      type="button"
+      className={`option-card${selected ? ' option-card--selected' : ''}`}
+      onClick={onClick}
+    >
+      <span className="option-card__check">{selected ? '✓' : ''}</span>
+      <span className="option-card__label">{label}</span>
+    </button>
+  )
+}
+
 export default function MultiStepForm({ onSubmit, error }) {
   const [step, setStep] = useState(1)
 
-  // Step 1: cascading role selection
+  // Step 1: career situation
+  const [careerSituation, setCareerSituation] = useState('')
+
+  // Step 2: timeframe
+  const [timeframe, setTimeframe] = useState('')
+
+  // Step 3: cascading role selection
   const [industry, setIndustry] = useState('')
   const [department, setDepartment] = useState('')
   const [role, setRole] = useState('')
   const [customRole, setCustomRole] = useState('')
 
-  // Step 2: resume details
+  // Step 4: resume details
   const [file, setFile] = useState(null)
   const [jobTitle, setJobTitle] = useState('')
   const [company, setCompany] = useState('')
@@ -34,41 +69,38 @@ export default function MultiStepForm({ onSubmit, error }) {
 
   // ── Cascading clear handlers ─────────────────────────────────────────────
   const handleIndustryChange = (val) => {
-    setIndustry(val)
-    setDepartment('')
-    setRole('')
-    setCustomRole('')
-    setFormError('')
+    setIndustry(val); setDepartment(''); setRole(''); setCustomRole(''); setFormError('')
   }
-
   const handleDepartmentChange = (val) => {
-    setDepartment(val)
-    setRole('')
-    setCustomRole('')
-    setFormError('')
+    setDepartment(val); setRole(''); setCustomRole(''); setFormError('')
   }
-
   const handleRoleChange = (val) => {
-    setRole(val)
-    setCustomRole('')
-    setFormError('')
+    setRole(val); setCustomRole(''); setFormError('')
   }
 
-  // ── Step 1 → Step 2 ──────────────────────────────────────────────────────
+  // ── Navigation ───────────────────────────────────────────────────────────
+  const handleSituationNext = () => {
+    if (!careerSituation) return setFormError('Let us know where you\'re at right now.')
+    setFormError(''); setStep(2)
+  }
+
+  const handleTimeframeNext = () => {
+    if (!timeframe) return setFormError('Tell us how soon you\'re looking to move.')
+    setFormError(''); setStep(3)
+  }
+
   const handleRoleNext = () => {
     if (!industry) return setFormError('Select your industry - we need this to calibrate the whole analysis.')
     if (!department) return setFormError('Select your department so we can narrow the feedback.')
     if (!role) return setFormError('Pick your role - this is the last step before the real stuff.')
     if (isOtherRole && !customRole.trim()) return setFormError('Tell us what role you\'re going for.')
-    setFormError('')
-    setStep(2)
+    setFormError(''); setStep(4)
   }
 
   // ── File handling ────────────────────────────────────────────────────────
   const handleFile = (f) => {
     if (!f || f.type !== 'application/pdf') return setFormError('PDF only please - we can\'t read anything else.')
-    setFile(f)
-    setFormError('')
+    setFile(f); setFormError('')
   }
 
   // ── Final submit ─────────────────────────────────────────────────────────
@@ -81,6 +113,8 @@ export default function MultiStepForm({ onSubmit, error }) {
     onSubmit({
       file,
       jobTitle: jobTitle.trim(),
+      careerSituation,
+      timeframe,
       industry,
       department,
       roleCategory: isOtherRole ? customRole.trim() : role,
@@ -88,16 +122,83 @@ export default function MultiStepForm({ onSubmit, error }) {
     })
   }
 
+  const totalSteps = 4
+
   return (
     <div>
+      {/* Step indicator */}
       <div className="step-indicator" style={{ marginBottom: '2.5rem' }}>
-        <div className={`step-dot ${step >= 1 ? (step > 1 ? 'done' : 'active') : ''}`} />
-        <div className={`step-dot ${step >= 2 ? 'active' : ''}`} />
+        {Array.from({ length: totalSteps }, (_, i) => (
+          <div
+            key={i}
+            className={`step-dot ${step > i + 1 ? 'done' : step === i + 1 ? 'active' : ''}`}
+          />
+        ))}
       </div>
 
       <AnimatePresence mode="wait">
+
+        {/* ── Step 1: Career Situation ── */}
         {step === 1 && (
           <motion.div key="step1" {...slide}>
+            <p className="form-step-label">WHERE ARE YOU RIGHT NOW?</p>
+            <p className="form-step-hint">This helps us tailor your feedback to your actual situation.</p>
+
+            <div className="option-grid">
+              {CAREER_SITUATIONS.map(opt => (
+                <OptionCard
+                  key={opt}
+                  label={opt}
+                  selected={careerSituation === opt}
+                  onClick={() => { setCareerSituation(opt); setFormError('') }}
+                />
+              ))}
+            </div>
+
+            {formError && <div className="error-msg" style={{ marginTop: '1rem' }}>{formError}</div>}
+
+            <button className="btn btn--primary" style={{ marginTop: '1.5rem' }} onClick={handleSituationNext}>
+              Next <span className="btn-arrow">→</span>
+            </button>
+          </motion.div>
+        )}
+
+        {/* ── Step 2: Timeframe ── */}
+        {step === 2 && (
+          <motion.div key="step2" {...slide}>
+            <button type="button" className="btn btn--ghost" style={{ marginBottom: '1.75rem', fontSize: '0.8rem' }} onClick={() => setStep(1)}>
+              ← Back
+            </button>
+
+            <p className="form-step-label">HOW SOON ARE YOU LOOKING TO MAKE A MOVE?</p>
+            <p className="form-step-hint">We'll adjust the urgency and strategy of your feedback accordingly.</p>
+
+            <div className="option-grid">
+              {TIMEFRAMES.map(opt => (
+                <OptionCard
+                  key={opt}
+                  label={opt}
+                  selected={timeframe === opt}
+                  onClick={() => { setTimeframe(opt); setFormError('') }}
+                />
+              ))}
+            </div>
+
+            {formError && <div className="error-msg" style={{ marginTop: '1rem' }}>{formError}</div>}
+
+            <button className="btn btn--primary" style={{ marginTop: '1.5rem' }} onClick={handleTimeframeNext}>
+              Next <span className="btn-arrow">→</span>
+            </button>
+          </motion.div>
+        )}
+
+        {/* ── Step 3: Industry / Department / Role ── */}
+        {step === 3 && (
+          <motion.div key="step3" {...slide}>
+            <button type="button" className="btn btn--ghost" style={{ marginBottom: '1.75rem', fontSize: '0.8rem' }} onClick={() => setStep(2)}>
+              ← Back
+            </button>
+
             <p style={{ marginBottom: '1.75rem', fontSize: '1.15rem', fontWeight: 700, color: '#2D1B69' }}>
               Tell us exactly where you work. We'll calibrate every bit of feedback to your industry, department and role.
             </p>
@@ -105,11 +206,7 @@ export default function MultiStepForm({ onSubmit, error }) {
             {/* Industry */}
             <div className="field">
               <label className="field__label">Industry <span>*</span></label>
-              <select
-                className="input"
-                value={industry}
-                onChange={(e) => handleIndustryChange(e.target.value)}
-              >
+              <select className="input" value={industry} onChange={(e) => handleIndustryChange(e.target.value)}>
                 <option value="">Select your industry</option>
                 {INDUSTRIES.map((ind) => (
                   <option key={ind} value={ind}>{ind}</option>
@@ -120,19 +217,9 @@ export default function MultiStepForm({ onSubmit, error }) {
             {/* Department - appears once industry is selected */}
             <AnimatePresence>
               {industry && (
-                <motion.div
-                  className="field"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.22 }}
-                >
+                <motion.div className="field" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.22 }}>
                   <label className="field__label">Department <span>*</span></label>
-                  <select
-                    className="input"
-                    value={department}
-                    onChange={(e) => handleDepartmentChange(e.target.value)}
-                  >
+                  <select className="input" value={department} onChange={(e) => handleDepartmentChange(e.target.value)}>
                     <option value="">Select your department</option>
                     {departments.map((d) => (
                       <option key={d} value={d}>{d}</option>
@@ -145,13 +232,7 @@ export default function MultiStepForm({ onSubmit, error }) {
             {/* Role - appears once department is selected */}
             <AnimatePresence>
               {department && (
-                <motion.div
-                  className="field"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.22 }}
-                >
+                <motion.div className="field" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.22 }}>
                   <label className="field__label">Role <span>*</span></label>
                   <SearchableSelect
                     value={role}
@@ -165,16 +246,10 @@ export default function MultiStepForm({ onSubmit, error }) {
               )}
             </AnimatePresence>
 
-            {/* Custom role - appears if "Other / Describe my role" is selected */}
+            {/* Custom role */}
             <AnimatePresence>
               {isOtherRole && (
-                <motion.div
-                  className="field"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.22 }}
-                >
+                <motion.div className="field" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.22 }}>
                   <label className="field__label">Describe your role <span>*</span></label>
                   <input
                     className="input"
@@ -188,24 +263,16 @@ export default function MultiStepForm({ onSubmit, error }) {
 
             {formError && <div className="error-msg">{formError}</div>}
 
-            <button
-              className="btn btn--primary"
-              style={{ marginTop: '1.5rem' }}
-              onClick={handleRoleNext}
-            >
+            <button className="btn btn--primary" style={{ marginTop: '1.5rem' }} onClick={handleRoleNext}>
               Next <span className="btn-arrow">→</span>
             </button>
           </motion.div>
         )}
 
-        {step === 2 && (
-          <motion.div key="step2" {...slide}>
-            <button
-              type="button"
-              className="btn btn--ghost"
-              style={{ marginBottom: '1.75rem', fontSize: '0.8rem' }}
-              onClick={() => setStep(1)}
-            >
+        {/* ── Step 4: File + Details ── */}
+        {step === 4 && (
+          <motion.div key="step4" {...slide}>
+            <button type="button" className="btn btn--ghost" style={{ marginBottom: '1.75rem', fontSize: '0.8rem' }} onClick={() => setStep(3)}>
               ← Back
             </button>
 
@@ -219,13 +286,7 @@ export default function MultiStepForm({ onSubmit, error }) {
                   onDragLeave={() => setDragOver(false)}
                   onDrop={(e) => { e.preventDefault(); setDragOver(false); handleFile(e.dataTransfer.files[0]) }}
                 >
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept=".pdf"
-                    hidden
-                    onChange={(e) => handleFile(e.target.files[0])}
-                  />
+                  <input ref={fileInputRef} type="file" accept=".pdf" hidden onChange={(e) => handleFile(e.target.files[0])} />
                   <span className="drop-zone__icon">{file ? '✓' : '📄'}</span>
                   <span className="drop-zone__text">
                     {file ? file.name : 'Drop your resume or LinkedIn PDF here.'}
@@ -273,6 +334,7 @@ export default function MultiStepForm({ onSubmit, error }) {
             </form>
           </motion.div>
         )}
+
       </AnimatePresence>
     </div>
   )

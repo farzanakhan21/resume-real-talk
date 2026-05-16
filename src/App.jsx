@@ -126,6 +126,8 @@ export default function App() {
       if (new URLSearchParams(window.location.search).get('test') === 'paid') {
         fd.append('testPaid', 'true')
       }
+      fd.append('careerSituation', pendingData.careerSituation || '')
+      fd.append('timeframe', pendingData.timeframe || '')
       fd.append('roleCategory', pendingData.roleCategory)
       fd.append('industry', pendingData.industry || '')
       fd.append('department', pendingData.department || '')

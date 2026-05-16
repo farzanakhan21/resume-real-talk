@@ -278,7 +278,7 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
 app.post('/api/analyze', upload.single('resume'), async (req, res) => {
   if (!client) return res.status(503).json({ error: 'ANTHROPIC_API_KEY is not configured. Add it to Vercel Environment Variables.' });
   try {
-    const { jobTitle, roleCategory, industry, department, company, email, testPaid } = req.body;
+    const { jobTitle, roleCategory, industry, department, company, email, testPaid, careerSituation, timeframe } = req.body;
     if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
     if (!jobTitle) return res.status(400).json({ error: 'Job title is required.' });
     if (!industry) return res.status(400).json({ error: 'Industry is required.' });
@@ -315,6 +315,30 @@ app.post('/api/analyze', upload.single('resume'), async (req, res) => {
     const roleCtx = roleCategory && roleCategory !== 'custom' ? `Role: ${roleCategory}` : '';
     const industryCtx = industry ? `Industry: ${industry}` : '';
     const departmentCtx = department ? `Department: ${department}` : '';
+    const situationCtx = careerSituation ? `Career Situation: ${careerSituation}` : '';
+    const timeframeCtx = timeframe ? `Job Search Timeframe: ${timeframe}` : '';
+
+    // Build strategic tone guidance based on situation + timeframe combination
+    const buildStrategyCtx = () => {
+      const s = (careerSituation || '').toLowerCase();
+      const t = (timeframe || '').toLowerCase();
+      const urgent = t.includes('asap') || t.includes('1-3');
+      const strategic = t.includes('strategic') || t.includes('3-6');
+      const planning = t.includes('planning') || t.includes('6-12');
+
+      if (s.includes('redundant') && urgent) return 'STRATEGIC TONE: This person was recently made redundant and needs a role urgently. Lead with tactically actionable advice. Address how to handle the redundancy gap confidently on the resume. Prioritise fast networking moves, quick-win fixes, and immediate visibility tactics. Do not hedge.';
+      if (s.includes('redundant')) return 'STRATEGIC TONE: This person was recently made redundant. Address the gap head-on - how to frame it, what to lead with, how to prevent it becoming a red flag. Include morale-aware but brutally honest advice.';
+      if (s.includes('returning') && urgent) return 'STRATEGIC TONE: This person is returning to the workforce and needs a role quickly. Focus on how to address the gap confidently, what experience to lead with, and how to reframe the return as a strength not an apology.';
+      if (s.includes('returning')) return 'STRATEGIC TONE: This person is returning to the workforce. Help them lead with confidence, address the gap directly, and position re-entry as intentional rather than defensive.';
+      if (s.includes('pivot') && urgent) return 'STRATEGIC TONE: This person is pivoting industries and needs to move fast. Prioritise identifying and surfacing transferable skills, reframing experience for the new industry, and what to cut that anchors them to their old sector.';
+      if (s.includes('pivot')) return 'STRATEGIC TONE: This person is pivoting industries. The core challenge is translation - what transfers, what needs to be reframed, and what will signal "wrong fit" to hiring managers in the target industry. Be specific about what to lead with and what to downplay.';
+      if ((s.includes('unemployed') || s.includes('actively')) && urgent) return 'STRATEGIC TONE: This person is unemployed and actively searching urgently. Prioritise high-impact, fast-to-implement changes. Every point should move them closer to an interview, not just "better positioning".';
+      if (s.includes('employed') && planning) return 'STRATEGIC TONE: This person is employed and planning ahead with no urgency. Lean into strategic positioning, passive discoverability (LinkedIn, thought leadership), and long-game brand building. Urgency is not the issue - positioning and patience are.';
+      if (s.includes('employed') && strategic) return 'STRATEGIC TONE: This person is employed and being strategic. Blend immediate polish with medium-term positioning moves. They have leverage - their current role - so focus on using it.';
+      if (s.includes('exploring')) return 'STRATEGIC TONE: This person is exploring options and not fully committed to a specific move. Help them understand what their resume signals about them, what doors it opens and which it closes, and what they would need to change if they decided to move.';
+      return '';
+    };
+    const strategyCtx = buildStrategyCtx();
     const rewriteCount = isPaid ? 5 : 3;
 
     const paidSections = isPaid ? `
@@ -351,8 +375,13 @@ ${industryCtx}
 ${departmentCtx}
 ${roleCtx}
 ${companyCtx}
+${situationCtx}
+${timeframeCtx}
+${strategyCtx}
 
 Analyse this ${documentType} through the lens of a hiring decision-maker evaluating a ${jobTitle} candidate${industry ? ` in the ${industry} industry` : ''}${department ? ` (${department} department)` : ''}. Treat a LinkedIn PDF with the same rigour as a resume - weak positioning is weak positioning regardless of format.
+
+Let the career situation and timeframe shape the TONE and FOCUS of every section - not just a mention, but the actual strategic direction of the advice. Someone who needs a role in 30 days needs different advice to someone who is planning a move in 12 months.
 
 Return EXACTLY this JSON structure. No markdown fences, no extra text, only valid JSON:
 

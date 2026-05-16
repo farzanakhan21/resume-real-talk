@@ -17,6 +17,7 @@ const CAREER_SITUATIONS = [
   'Pivoting industries',
   'Recently made redundant',
   'Returning to the workforce',
+  'Other',
 ]
 
 const TIMEFRAMES = [
@@ -44,6 +45,8 @@ export default function MultiStepForm({ onSubmit, error }) {
 
   // Step 1: career situation
   const [careerSituation, setCareerSituation] = useState('')
+  const [otherSituation, setOtherSituation] = useState('')
+  const isOtherSituation = careerSituation === 'Other'
 
   // Step 2: timeframe
   const [timeframe, setTimeframe] = useState('')
@@ -81,6 +84,7 @@ export default function MultiStepForm({ onSubmit, error }) {
   // ── Navigation ───────────────────────────────────────────────────────────
   const handleSituationNext = () => {
     if (!careerSituation) return setFormError('Let us know where you\'re at right now.')
+    if (isOtherSituation && !otherSituation.trim()) return setFormError('Tell us a bit about your situation.')
     setFormError(''); setStep(2)
   }
 
@@ -113,7 +117,7 @@ export default function MultiStepForm({ onSubmit, error }) {
     onSubmit({
       file,
       jobTitle: jobTitle.trim(),
-      careerSituation,
+      careerSituation: isOtherSituation ? otherSituation.trim() : careerSituation,
       timeframe,
       industry,
       department,
@@ -150,10 +154,32 @@ export default function MultiStepForm({ onSubmit, error }) {
                   key={opt}
                   label={opt}
                   selected={careerSituation === opt}
-                  onClick={() => { setCareerSituation(opt); setFormError('') }}
+                  onClick={() => { setCareerSituation(opt); setOtherSituation(''); setFormError('') }}
                 />
               ))}
             </div>
+
+            <AnimatePresence>
+              {isOtherSituation && (
+                <motion.div
+                  className="field"
+                  style={{ marginTop: '0.75rem' }}
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.22 }}
+                >
+                  <label className="field__label">Describe your situation <span>*</span></label>
+                  <input
+                    className="input"
+                    value={otherSituation}
+                    onChange={(e) => { setOtherSituation(e.target.value); setFormError('') }}
+                    placeholder="e.g. Freelancing and looking to go back in-house"
+                    autoFocus
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {formError && <div className="error-msg" style={{ marginTop: '1rem' }}>{formError}</div>}
 
@@ -199,9 +225,8 @@ export default function MultiStepForm({ onSubmit, error }) {
               ← Back
             </button>
 
-            <p style={{ marginBottom: '1.75rem', fontSize: '1.15rem', fontWeight: 700, color: '#2D1B69' }}>
-              Tell us exactly where you work. We'll calibrate every bit of feedback to your industry, department and role.
-            </p>
+            <p className="form-step-label">WHAT'S YOUR INDUSTRY &amp; ROLE?</p>
+            <p className="form-step-hint">We'll calibrate every bit of feedback to your industry, department and role.</p>
 
             {/* Industry */}
             <div className="field">
@@ -275,6 +300,9 @@ export default function MultiStepForm({ onSubmit, error }) {
             <button type="button" className="btn btn--ghost" style={{ marginBottom: '1.75rem', fontSize: '0.8rem' }} onClick={() => setStep(3)}>
               ← Back
             </button>
+
+            <p className="form-step-label">UPLOAD YOUR RESUME</p>
+            <p className="form-step-hint">Drop your resume or LinkedIn PDF and tell us exactly what you're targeting.</p>
 
             <form onSubmit={handleSubmit} noValidate>
               <div className="field">

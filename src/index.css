@@ -367,12 +367,13 @@ select.input { cursor: pointer; appearance: none; background-image: url("data:im
 
 /* ── Option cards (career situation / timeframe steps) ── */
 .form-step-label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.13em;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text);
   margin-bottom: 0.4rem;
+  line-height: 1.3;
 }
 .form-step-hint {
   font-size: 0.88rem;

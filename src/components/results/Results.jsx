@@ -1,4 +1,5 @@
-﻿import { motion } from 'framer-motion'
+﻿import { useState } from 'react'
+import { motion } from 'framer-motion'
 import ScoreDashboard from './ScoreDashboard'
 import FirstImpression from './FirstImpression'
 import HardTruth from './HardTruth'
@@ -39,6 +40,7 @@ function SectionHeader({ num, title, amberAccent }) {
 export default function Results({ data, isPaid, userEmail, onRewrite, onReset, onUpgrade }) {
   const jobTitle = data.positioningStrategy?.linkedinHeadline || ''
   const roleCategory = ''
+  const [bannerDismissed, setBannerDismissed] = useState(false)
 
   const handlePrint = () => {
     const prev = document.title
@@ -64,6 +66,17 @@ export default function Results({ data, isPaid, userEmail, onRewrite, onReset, o
       </div>
 
       <div className="results">
+
+        {/* Dismissible AI context banner */}
+        {!bannerDismissed && (
+          <div className="ai-banner no-print">
+            <p className="ai-banner__text">
+              <span className="ai-banner__label">AI-generated insight</span>
+              This report is based on patterns from thousands of resumes and hiring decisions. It's a strong starting point, not a guarantee. Use it as a guide, not gospel.
+            </p>
+            <button className="ai-banner__close" onClick={() => setBannerDismissed(true)} aria-label="Dismiss">✕</button>
+          </div>
+        )}
 
         {isPaid && (
           <div className="no-print" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.4rem', marginBottom: '1.5rem' }}>

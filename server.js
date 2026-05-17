@@ -28,6 +28,7 @@ const config = {
   RESEND_AUDIENCE_ID: process.env.RESEND_AUDIENCE_ID || fileConfig.RESEND_AUDIENCE_ID || '13acb378-9a32-45c8-b256-64a3875581d6',
   APP_URL: process.env.APP_URL || fileConfig.APP_URL || 'http://localhost:5173',
   PORT: process.env.PORT || fileConfig.PORT || 3001,
+  ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || fileConfig.ADMIN_PASSWORD || '',
 };
 
 // ── Startup validation ────────────────────────────────────────────────────
@@ -77,6 +78,55 @@ function writeEmails(data) {
   }
 }
 
+// ── Analysis tracking helpers ──────────────────────────────────────────────
+const ANALYSES_PATH = path.join(__dirname, 'analyses.json');
+
+function readAnalyses() {
+  try {
+    return JSON.parse(readFileSync(ANALYSES_PATH, 'utf8'));
+  } catch {
+    return [];
+  }
+}
+
+function writeAnalysis(entry) {
+  try {
+    const list = readAnalyses();
+    list.push(entry);
+    writeFileSync(ANALYSES_PATH, JSON.stringify(list, null, 2));
+  } catch {
+    // Vercel serverless: filesystem is read-only
+  }
+}
+
+// ── Admin auth helpers ─────────────────────────────────────────────────────
+function parseCookies(req) {
+  const cookies = {};
+  const header = req.headers.cookie;
+  if (!header) return cookies;
+  header.split(';').forEach(part => {
+    const [key, ...vals] = part.trim().split('=');
+    cookies[key.trim()] = decodeURIComponent(vals.join('='));
+  });
+  return cookies;
+}
+
+function isAdminAuthed(req) {
+  const pw = config.ADMIN_PASSWORD;
+  if (!pw) return false;
+  const cookies = parseCookies(req);
+  return cookies['nrhr_admin'] === pw;
+}
+
+function escHtml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+
 // ── Stripe webhook MUST be before express.json() ───────────────────────────
 app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   if (!stripe || !config.STRIPE_WEBHOOK_SECRET || config.STRIPE_WEBHOOK_SECRET.includes('YOUR')) {
@@ -106,6 +156,7 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
 });
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 const isProd = process.env.NODE_ENV === 'production';
 if (isProd && !process.env.VERCEL) {
@@ -523,6 +574,17 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
       console.error('[Email] Fire-and-forget failed:', err.message, err.statusCode, JSON.stringify(err))
     );
 
+    // Record analysis for admin dashboard
+    writeAnalysis({
+      email: normalised,
+      date: new Date().toISOString(),
+      jobTitle: jobTitle || '',
+      industry: industry || '',
+      careerSituation: careerSituation || '',
+      timeframe: timeframe || '',
+      isPaid,
+    });
+
     res.json({ success: true, data: parsed, isPaid });
   } catch (err) {
     console.error(err);
@@ -573,6 +635,195 @@ Return exactly this JSON (no markdown, no extra text):
     res.status(500).json({ error: err.message || 'Rewrite failed.' });
   }
 });
+
+
+// ── Admin dashboard ────────────────────────────────────────────────────────
+function adminLoginPage(errorMsg) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin Login — not ur regular hr</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f1;display:flex;align-items:center;justify-content:center;min-height:100vh}
+    .card{background:#fff;border-radius:12px;border:1px solid #e5e3df;padding:2.5rem;width:100%;max-width:360px;box-shadow:0 4px 24px rgba(0,0,0,0.06)}
+    .brand{font-family:monospace;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:#2D1B69;margin-bottom:0.75rem;font-weight:700}
+    h1{font-size:1.3rem;font-weight:800;margin-bottom:1.75rem;color:#0a0a0a}
+    label{display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#555;margin-bottom:0.4rem}
+    input{width:100%;padding:0.75rem 1rem;border:2px solid #e5e3df;border-radius:8px;font-size:0.95rem;outline:none;font-family:inherit}
+    input:focus{border-color:#2D1B69}
+    button{width:100%;margin-top:1rem;padding:0.85rem;background:#2D1B69;color:#fff;border:none;border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:inherit}
+    button:hover{background:#1E1247}
+    .error{color:#dc2626;font-size:0.82rem;margin-top:0.75rem}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="brand">not ur regular hr</div>
+    <h1>Admin</h1>
+    <form method="POST" action="/admin/login">
+      <label for="pw">Password</label>
+      <input type="password" id="pw" name="password" autofocus required>
+      ${errorMsg ? `<p class="error">${errorMsg}</p>` : ''}
+      <button type="submit">Sign in &#8594;</button>
+    </form>
+  </div>
+</body>
+</html>`;
+}
+
+function adminDashboardPage(analyses) {
+  const total = analyses.length;
+  const paid = analyses.filter(a => a.isPaid).length;
+  const free = total - paid;
+  const convRate = total > 0 ? ((paid / total) * 100).toFixed(1) : '0.0';
+
+  const roleCounts = {};
+  const industryCounts = {};
+  analyses.forEach(a => {
+    if (a.jobTitle) roleCounts[a.jobTitle] = (roleCounts[a.jobTitle] || 0) + 1;
+    if (a.industry) industryCounts[a.industry] = (industryCounts[a.industry] || 0) + 1;
+  });
+  const topRoles = Object.entries(roleCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  const topIndustries = Object.entries(industryCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  const sorted = [...analyses].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  const barRow = ([label, n], max) => `
+    <div class="bar">
+      <div class="bar__label" title="${escHtml(label)}">${escHtml(label)}</div>
+      <div class="bar__track"><div class="bar__fill" style="width:${Math.round((n / max) * 100)}%"></div></div>
+      <div class="bar__count">${n}</div>
+    </div>`;
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin Dashboard — not ur regular hr</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f1;color:#0a0a0a;min-height:100vh}
+    .hdr{background:#2D1B69;color:#fff;padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between}
+    .hdr__brand{font-size:0.7rem;font-family:monospace;letter-spacing:0.1em;text-transform:uppercase;opacity:0.6;margin-bottom:0.2rem}
+    .hdr__title{font-size:1.1rem;font-weight:800}
+    .logout{font-size:0.75rem;color:rgba(255,255,255,0.65);text-decoration:none;padding:0.4rem 0.75rem;border:1px solid rgba(255,255,255,0.2);border-radius:6px}
+    .logout:hover{background:rgba(255,255,255,0.1)}
+    .main{max-width:1200px;margin:0 auto;padding:2rem}
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem}
+    .stat{background:#fff;border-radius:10px;padding:1.25rem 1.5rem;border:1px solid #e5e3df}
+    .stat__label{font-size:0.67rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#888;margin-bottom:0.35rem}
+    .stat__value{font-size:2.1rem;font-weight:800;color:#2D1B69;line-height:1}
+    .stat__sub{font-size:0.72rem;color:#aaa;margin-top:0.2rem}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+    @media(max-width:700px){.two-col{grid-template-columns:1fr}}
+    .panel{background:#fff;border-radius:10px;border:1px solid #e5e3df;overflow:hidden}
+    .panel__head{padding:0.9rem 1.5rem;border-bottom:1px solid #e5e3df;font-weight:700;font-size:0.85rem}
+    .bar{display:flex;align-items:center;gap:0.75rem;padding:0.55rem 1.5rem;border-bottom:1px solid #f0ede8;font-size:0.82rem}
+    .bar:last-child{border-bottom:none}
+    .bar__label{width:190px;flex-shrink:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bar__track{flex:1;height:6px;background:#f0ede8;border-radius:3px;overflow:hidden}
+    .bar__fill{height:100%;background:#2D1B69;border-radius:3px}
+    .bar__count{width:28px;text-align:right;font-size:0.75rem;color:#888;font-weight:600}
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:0.81rem}
+    th{padding:0.6rem 1rem;text-align:left;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#888;background:#faf9f7;border-bottom:1px solid #e5e3df;white-space:nowrap}
+    td{padding:0.65rem 1rem;border-bottom:1px solid #f0ede8;vertical-align:top}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:#faf9f7}
+    .badge{display:inline-block;padding:0.15rem 0.55rem;border-radius:20px;font-size:0.67rem;font-weight:700;letter-spacing:0.04em}
+    .paid{background:rgba(45,27,105,0.1);color:#2D1B69}
+    .free{background:#f0ede8;color:#888}
+    .empty{padding:2rem;text-align:center;color:#aaa;font-size:0.85rem}
+    .ts{white-space:nowrap;color:#aaa;font-size:0.78rem}
+    .dim{color:#aaa;font-size:0.78rem}
+  </style>
+</head>
+<body>
+  <div class="hdr">
+    <div>
+      <div class="hdr__brand">not ur regular hr</div>
+      <div class="hdr__title">Admin Dashboard</div>
+    </div>
+    <a class="logout" href="/admin/logout">Log out</a>
+  </div>
+  <div class="main">
+    <div class="stats">
+      <div class="stat"><div class="stat__label">Total Analyses</div><div class="stat__value">${total}</div></div>
+      <div class="stat"><div class="stat__label">Free Reports</div><div class="stat__value">${free}</div></div>
+      <div class="stat"><div class="stat__label">Paid Conversions</div><div class="stat__value">${paid}</div></div>
+      <div class="stat"><div class="stat__label">Conversion Rate</div><div class="stat__value">${convRate}%</div><div class="stat__sub">free &rarr; paid</div></div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel__head">Top Target Roles</div>
+        ${topRoles.length ? topRoles.map(r => barRow(r, topRoles[0][1])).join('') : '<div class="empty">No data yet</div>'}
+      </div>
+      <div class="panel">
+        <div class="panel__head">Top Industries</div>
+        ${topIndustries.length ? topIndustries.map(r => barRow(r, topIndustries[0][1])).join('') : '<div class="empty">No data yet</div>'}
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel__head">All Users (${total})</div>
+      ${sorted.length ? `
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Email</th>
+              <th>Target Role</th>
+              <th>Industry</th>
+              <th>Situation</th>
+              <th>Timeframe</th>
+              <th>Plan</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sorted.map(a => `
+            <tr>
+              <td class="ts">${new Date(a.date).toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+              <td>${escHtml(a.email)}</td>
+              <td>${escHtml(a.jobTitle)}</td>
+              <td>${escHtml(a.industry)}</td>
+              <td>${escHtml(a.careerSituation)}</td>
+              <td class="dim">${escHtml(a.timeframe)}</td>
+              <td><span class="badge ${a.isPaid ? 'paid' : 'free'}">${a.isPaid ? 'Paid' : 'Free'}</span></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>` : '<div class="empty">No analyses recorded yet.</div>'}
+    </div>
+  </div>
+</body>
+</html>`;
+}
+
+app.get('/admin', (req, res) => {
+  if (!config.ADMIN_PASSWORD) return res.status(500).send('ADMIN_PASSWORD not configured.');
+  if (!isAdminAuthed(req)) return res.send(adminLoginPage());
+  res.send(adminDashboardPage(readAnalyses()));
+});
+
+app.post('/admin/login', (req, res) => {
+  const { password } = req.body || {};
+  if (password === config.ADMIN_PASSWORD) {
+    res.setHeader('Set-Cookie', `nrhr_admin=${encodeURIComponent(password)}; Path=/; HttpOnly; SameSite=Lax`);
+    return res.redirect('/admin');
+  }
+  res.send(adminLoginPage('Incorrect password. Try again.'));
+});
+
+app.get('/admin/logout', (req, res) => {
+  res.setHeader('Set-Cookie', 'nrhr_admin=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0');
+  res.redirect('/admin');
+});
+
 
 // ── SPA fallback (self-hosted production only) ────────────────────────────
 if (isProd && !process.env.VERCEL) {

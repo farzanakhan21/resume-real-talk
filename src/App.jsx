@@ -132,6 +132,7 @@ export default function App() {
       fd.append('industry', pendingData.industry || '')
       fd.append('department', pendingData.department || '')
       fd.append('company', pendingData.company || '')
+      fd.append('previousIndustry', pendingData.previousIndustry || '')
       fd.append('email', email)
 
       const res = await fetch('/api/analyze', { method: 'POST', body: fd })

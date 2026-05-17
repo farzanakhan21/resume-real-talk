@@ -46,7 +46,9 @@ export default function MultiStepForm({ onSubmit, error }) {
   // Step 1: career situation
   const [careerSituation, setCareerSituation] = useState('')
   const [otherSituation, setOtherSituation] = useState('')
+  const [previousIndustry, setPreviousIndustry] = useState('')
   const isOtherSituation = careerSituation === 'Other'
+  const isPivoting = careerSituation === 'Pivoting industries'
 
   // Step 2: timeframe
   const [timeframe, setTimeframe] = useState('')
@@ -85,6 +87,7 @@ export default function MultiStepForm({ onSubmit, error }) {
   const handleSituationNext = () => {
     if (!careerSituation) return setFormError('Let us know where you\'re at right now.')
     if (isOtherSituation && !otherSituation.trim()) return setFormError('Tell us a bit about your situation.')
+    if (isPivoting && !previousIndustry) return setFormError('Tell us which industry you\'re coming from - this shapes the whole analysis.')
     setFormError(''); setStep(2)
   }
 
@@ -123,6 +126,7 @@ export default function MultiStepForm({ onSubmit, error }) {
       department,
       roleCategory: isOtherRole ? customRole.trim() : role,
       company: company.trim(),
+      previousIndustry: isPivoting ? previousIndustry : '',
     })
   }
 
@@ -154,7 +158,7 @@ export default function MultiStepForm({ onSubmit, error }) {
                   key={opt}
                   label={opt}
                   selected={careerSituation === opt}
-                  onClick={() => { setCareerSituation(opt); setOtherSituation(''); setFormError('') }}
+                  onClick={() => { setCareerSituation(opt); setOtherSituation(''); setPreviousIndustry(''); setFormError('') }}
                 />
               ))}
             </div>
@@ -177,6 +181,32 @@ export default function MultiStepForm({ onSubmit, error }) {
                     placeholder="e.g. Freelancing and looking to go back in-house"
                     autoFocus
                   />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+              {isPivoting && (
+                <motion.div
+                  className="field pivot-industry-field"
+                  style={{ marginTop: '0.75rem' }}
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <p className="form-step-label" style={{ fontSize: '0.82rem', marginBottom: '0.3rem' }}>WHAT INDUSTRY ARE YOU COMING FROM?</p>
+                  <p className="field__hint" style={{ marginBottom: '0.75rem' }}>This helps us identify your transferable skills and how to reframe your experience for your target industry.</p>
+                  <select
+                    className="input"
+                    value={previousIndustry}
+                    onChange={(e) => { setPreviousIndustry(e.target.value); setFormError('') }}
+                  >
+                    <option value="">Select your current industry</option>
+                    {INDUSTRIES.map((ind) => (
+                      <option key={ind} value={ind}>{ind}</option>
+                    ))}
+                  </select>
                 </motion.div>
               )}
             </AnimatePresence>

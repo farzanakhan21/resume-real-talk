@@ -278,7 +278,7 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
 app.post('/api/analyze', upload.single('resume'), async (req, res) => {
   if (!client) return res.status(503).json({ error: 'ANTHROPIC_API_KEY is not configured. Add it to Vercel Environment Variables.' });
   try {
-    const { jobTitle, roleCategory, industry, department, company, email, testPaid, careerSituation, timeframe } = req.body;
+    const { jobTitle, roleCategory, industry, department, company, email, testPaid, careerSituation, timeframe, previousIndustry } = req.body;
     if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
     if (!jobTitle) return res.status(400).json({ error: 'Job title is required.' });
     if (!industry) return res.status(400).json({ error: 'Industry is required.' });
@@ -317,6 +317,8 @@ app.post('/api/analyze', upload.single('resume'), async (req, res) => {
     const departmentCtx = department ? `Department: ${department}` : '';
     const situationCtx = careerSituation ? `Career Situation: ${careerSituation}` : '';
     const timeframeCtx = timeframe ? `Job Search Timeframe: ${timeframe}` : '';
+    const isPivot = (careerSituation || '').toLowerCase().includes('pivot');
+    const previousIndustryCtx = isPivot && previousIndustry ? `Previous Industry (pivoting from): ${previousIndustry}` : '';
 
     // Build strategic tone guidance based on situation + timeframe combination
     const buildStrategyCtx = () => {
@@ -330,8 +332,16 @@ app.post('/api/analyze', upload.single('resume'), async (req, res) => {
       if (s.includes('redundant')) return 'STRATEGIC TONE: This person was recently made redundant. Address the gap head-on - how to frame it, what to lead with, how to prevent it becoming a red flag. Include morale-aware but brutally honest advice.';
       if (s.includes('returning') && urgent) return 'STRATEGIC TONE: This person is returning to the workforce and needs a role quickly. Focus on how to address the gap confidently, what experience to lead with, and how to reframe the return as a strength not an apology.';
       if (s.includes('returning')) return 'STRATEGIC TONE: This person is returning to the workforce. Help them lead with confidence, address the gap directly, and position re-entry as intentional rather than defensive.';
-      if (s.includes('pivot') && urgent) return 'STRATEGIC TONE: This person is pivoting industries and needs to move fast. Prioritise identifying and surfacing transferable skills, reframing experience for the new industry, and what to cut that anchors them to their old sector.';
-      if (s.includes('pivot')) return 'STRATEGIC TONE: This person is pivoting industries. The core challenge is translation - what transfers, what needs to be reframed, and what will signal "wrong fit" to hiring managers in the target industry. Be specific about what to lead with and what to downplay.';
+      if (s.includes('pivot') && urgent) {
+        const from = previousIndustry || 'their current industry';
+        const to = industry || 'their target industry';
+        return 'STRATEGIC TONE: This person is pivoting from ' + from + ' into ' + to + ' and needs to move fast. This is a translation exercise, not a disadvantage. In every section of the analysis: identify which skills from ' + from + ' transfer directly and are valued in ' + to + '; name what to reframe and exactly how; flag what to cut because it anchors them to their old sector; address genuine gaps honestly without dwelling on them. Position the pivot as intentional and confident - not apologetic. Prioritise speed: the highest-impact changes first.';
+      }
+      if (s.includes('pivot')) {
+        const from = previousIndustry || 'their current industry';
+        const to = industry || 'their target industry';
+        return 'STRATEGIC TONE: This person is pivoting from ' + from + ' into ' + to + '. This is primarily a translation problem - not a deficit. In every section of the analysis, specifically address: (1) which skills from ' + from + ' transfer directly and are valued in ' + to + '; (2) which experiences need to be reframed and how to do it concretely; (3) what genuine gaps exist and how to address or explain them honestly; (4) what language, metrics, or framing anchors them to ' + from + ' and needs to change; (5) how to position this pivot with confidence rather than apology - the narrative should feel intentional. Never treat their background as a liability without also showing how it becomes an asset in ' + to + '.';
+      }
       if ((s.includes('unemployed') || s.includes('actively')) && urgent) return 'STRATEGIC TONE: This person is unemployed and actively searching urgently. Prioritise high-impact, fast-to-implement changes. Every point should move them closer to an interview, not just "better positioning".';
       if (s.includes('employed') && planning) return 'STRATEGIC TONE: This person is employed and planning ahead with no urgency. Lean into strategic positioning, passive discoverability (LinkedIn, thought leadership), and long-game brand building. Urgency is not the issue - positioning and patience are.';
       if (s.includes('employed') && strategic) return 'STRATEGIC TONE: This person is employed and being strategic. Blend immediate polish with medium-term positioning moves. They have leverage - their current role - so focus on using it.';
@@ -377,6 +387,7 @@ ${roleCtx}
 ${companyCtx}
 ${situationCtx}
 ${timeframeCtx}
+${previousIndustryCtx}
 ${strategyCtx}
 
 Analyse this ${documentType} through the lens of a hiring decision-maker evaluating a ${jobTitle} candidate${industry ? ` in the ${industry} industry` : ''}${department ? ` (${department} department)` : ''}. Treat a LinkedIn PDF with the same rigour as a resume - weak positioning is weak positioning regardless of format.

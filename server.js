@@ -313,14 +313,23 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
       subject: `your resume roast is ready 🔥`,
       html,
     });
-    console.log('[Email] Resend response:', JSON.stringify(result));
     if (result.error) {
-      console.error('[Email] Resend returned an error:', JSON.stringify(result.error));
+      // Log each field separately so they appear clearly in Vercel logs
+      console.error('[Email] SEND FAILED');
+      console.error('[Email] error.name:', result.error.name);
+      console.error('[Email] error.message:', result.error.message);
+      console.error('[Email] error.statusCode:', result.error.statusCode);
+      console.error('[Email] full error:', JSON.stringify(result.error));
+      if (result.error.message && result.error.message.toLowerCase().includes('verif')) {
+        console.error('[Email] ACTION REQUIRED: Domain not verified in Resend. Go to https://resend.com/domains and verify noturregularhr.com');
+      }
     } else {
       console.log('[Email] Sent successfully, id:', result.data?.id);
     }
   } catch (err) {
-    console.error('[Email] resend.emails.send threw:', err.message, '| statusCode:', err.statusCode, '| full:', JSON.stringify(err));
+    console.error('[Email] resend.emails.send threw:', err.message);
+    console.error('[Email] statusCode:', err.statusCode);
+    console.error('[Email] full:', JSON.stringify(err));
     throw err;
   }
 }

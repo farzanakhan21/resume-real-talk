@@ -227,6 +227,10 @@ app.get('/api/verify-payment', async (req, res) => {
       if (normalised && !emails.paid.includes(normalised)) {
         emails.paid.push(normalised);
         writeEmails(emails);
+        // Send upgrade confirmation email (fire and forget)
+        sendUpgradeConfirmEmail(normalised).catch(err =>
+          console.error('[Email] Upgrade confirm failed:', err.message)
+        );
       }
       return res.json({ paid: true, email: normalised });
     }
@@ -263,73 +267,487 @@ async function addToAudience(email) {
   }
 }
 
-// ── Email helper ──────────────────────────────────────────────────────────
-async function sendResultsEmail(to, jobTitle, data, isPaid) {
-  console.log(`[Email] sendResultsEmail called - to: ${to}, jobTitle: ${jobTitle}, isPaid: ${isPaid}`);
-  if (!resend) {
-    console.log('[Email] Resend client is null - RESEND_API_KEY not set or invalid. Skipping email.');
-    return;
-  }
+// ── PDF report generator ──────────────────────────────────────────────────
+function generateReportPDF(data, jobTitle) {
+  return new Promise((resolve, reject) => {
+    const PDFDocument = require('pdfkit');
+    const doc = new PDFDocument({
+      margin: 50, size: 'A4',
+      info: { Title: 'Resume Roast Report — not ur regular hr', Author: 'not ur regular hr' },
+    });
+    const chunks = [];
+    doc.on('data', c => chunks.push(c));
+    doc.on('end', () => resolve(Buffer.concat(chunks)));
+    doc.on('error', reject);
 
+    const PURPLE = '#2D1B69';
+    const BLACK = '#0A0A0A';
+    const GREY = '#666666';
+    const W = 495;
+
+    const hdr = (title, color) => {
+      color = color || PURPLE;
+      if (doc.y > 700) doc.addPage();
+      doc.font('Helvetica-Bold').fontSize(9.5).fillColor(color).text(title, { characterSpacing: 0.8 });
+      doc.moveDown(0.15);
+      doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor(color).lineWidth(1.5).stroke();
+      doc.lineWidth(1);
+      doc.moveDown(0.75);
+    };
+    const lbl = (text) => {
+      doc.font('Helvetica-Bold').fontSize(8).fillColor(GREY).text(text.toUpperCase(), { characterSpacing: 0.5 });
+      doc.moveDown(0.15);
+    };
+    const bod = (text, size) => {
+      size = size || 10;
+      doc.font('Helvetica').fontSize(size).fillColor(BLACK).text(text, { width: W, lineGap: 2 });
+      doc.moveDown(0.55);
+    };
+    const bul = (text) => {
+      doc.font('Helvetica').fontSize(9.5).fillColor(BLACK)
+         .text('•  ' + text, { width: W - 10, indent: 10, lineGap: 1 });
+      doc.moveDown(0.2);
+    };
+    const pg = () => { if (doc.y > 700) doc.addPage(); };
+
+    // Cover header
+    doc.rect(0, 0, 595, 75).fill(PURPLE);
+    doc.fillColor('#FFFFFF').font('Helvetica').fontSize(9).text('not ur regular hr', 50, 22, { width: W });
+    doc.fillColor('#FFFFFF').font('Helvetica-Bold').fontSize(20).text('roast my resume', 50, 38, { width: W });
+    doc.y = 95;
+
+    doc.font('Helvetica').fontSize(9).fillColor(GREY)
+       .text('TARGET ROLE: ' + (jobTitle || 'Not specified'), { characterSpacing: 0.8 });
+    doc.moveDown(0.5);
+    doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor('#E5E5E5').stroke();
+    doc.moveDown(1);
+
+    // Overall score
+    const score = data.scores && data.scores.overall != null ? data.scores.overall : null;
+    if (score != null) {
+      doc.font('Helvetica-Bold').fontSize(64).fillColor(PURPLE).text(String(score), { align: 'center' });
+      doc.font('Helvetica').fontSize(13).fillColor(GREY).text('out of 100', { align: 'center' });
+      doc.moveDown(0.4);
+    }
+    if (data.scores && data.scores.brutalOneLiner) {
+      doc.font('Helvetica-Oblique').fontSize(11.5).fillColor(BLACK)
+         .text('"' + data.scores.brutalOneLiner + '"', { align: 'center', width: W });
+    }
+    doc.moveDown(1.5);
+    doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor('#E5E5E5').stroke();
+    doc.moveDown(1);
+
+    // Score breakdown
+    var cats = [
+      ['ATS Compatibility', data.scores && data.scores.atsCompatibility && data.scores.atsCompatibility.score],
+      ['Executive Presence', data.scores && data.scores.executivePresence && data.scores.executivePresence.score],
+      ['Clarity', data.scores && data.scores.clarity && data.scores.clarity.score],
+      ['Strategic Positioning', data.scores && data.scores.strategicPositioning && data.scores.strategicPositioning.score],
+      ['Credibility Signals', data.scores && data.scores.credibilitySignals && data.scores.credibilitySignals.score],
+      ['Impact Evidence', data.scores && data.scores.impactEvidence && data.scores.impactEvidence.score],
+      ['Industry Translation', data.scores && data.scores.industryTranslation && data.scores.industryTranslation.score],
+    ].filter(function(c) { return c[1] != null; });
+
+    if (cats.length) {
+      hdr('01  SCORE BREAKDOWN');
+      cats.forEach(function(c) {
+        var label = c[0], val = c[1];
+        var y = doc.y;
+        doc.font('Helvetica').fontSize(10).fillColor(BLACK).text(label, 50, y, { width: 240 });
+        doc.font('Helvetica-Bold').fontSize(10).fillColor(PURPLE).text(val + '/100', 380, y, { width: 80, align: 'right' });
+        var barY = y + 15;
+        doc.rect(50, barY, W, 4).fillColor('#F0EDE8').fill();
+        doc.rect(50, barY, Math.round((val / 100) * W), 4).fillColor(PURPLE).fill();
+        doc.y = barY + 14;
+        doc.moveDown(0.3);
+      });
+      doc.moveDown(0.5);
+    }
+
+    if (data.topIssues && data.topIssues.length) {
+      hdr('02  TOP ISSUES', '#DC2626');
+      data.topIssues.slice(0, 3).forEach(function(issue, i) {
+        doc.font('Helvetica-Bold').fontSize(9.5).fillColor('#DC2626').text((i + 1) + '.  ', { continued: true });
+        doc.font('Helvetica').fontSize(9.5).fillColor(BLACK).text(issue, { lineGap: 1 });
+        doc.moveDown(0.4);
+      });
+      doc.moveDown(0.4);
+    }
+
+    if (data.firstImpression) {
+      pg(); hdr('03  FIRST IMPRESSION');
+      var fi = data.firstImpression;
+      if (fi.headline) { doc.font('Helvetica-Bold').fontSize(13).fillColor(PURPLE).text('"' + fi.headline + '"'); doc.moveDown(0.5); }
+      if (fi.sixSecondRead) { lbl('What your recruiter actually thinks:'); bod(fi.sixSecondRead); }
+      if (fi.hirabilityVerdict) { lbl('Hireability verdict:'); bod(fi.hirabilityVerdict); }
+    }
+
+    if (data.atsRisk) {
+      pg(); hdr('04  ATS RISK');
+      var ats = data.atsRisk;
+      if (ats.riskLevel) {
+        var rc = ats.riskLevel === 'Low' ? '#16A34A' : ats.riskLevel === 'Medium' ? '#D97706' : '#DC2626';
+        doc.font('Helvetica-Bold').fontSize(12).fillColor(rc).text('Risk Level: ' + ats.riskLevel); doc.moveDown(0.5);
+      }
+      if (ats.keywordGaps && ats.keywordGaps.length) { lbl('Keyword gaps:'); ats.keywordGaps.forEach(bul); doc.moveDown(0.2); }
+      if (ats.formattingIssues && ats.formattingIssues.length) { lbl('Formatting issues:'); ats.formattingIssues.forEach(bul); doc.moveDown(0.2); }
+      if (ats.quickFixes && ats.quickFixes.length) { lbl('Quick fixes:'); ats.quickFixes.forEach(bul); }
+      doc.moveDown(0.5);
+    }
+
+    if (data.hardTruth) {
+      pg(); hdr('05  HARD TRUTH');
+      var ht = data.hardTruth;
+      if (ht.coreDisconnect) { lbl('Core disconnect:'); bod(ht.coreDisconnect); }
+      if (ht.whatRecruitersActuallySee) { lbl('What recruiters actually see:'); bod(ht.whatRecruitersActuallySee); }
+      if (ht.whereExperienceGetsLost) { lbl('Where your experience gets lost:'); bod(ht.whereExperienceGetsLost); }
+      if (ht.unintentionalSignals && ht.unintentionalSignals.length) { lbl('Unintentional signals:'); ht.unintentionalSignals.forEach(bul); }
+      doc.moveDown(0.5);
+    }
+
+    if (data.executivePresence) {
+      pg(); hdr('06  EXECUTIVE PRESENCE');
+      var ep = data.executivePresence;
+      if (ep.presenceRating) { doc.font('Helvetica-Bold').fontSize(12).fillColor(PURPLE).text('Rating: ' + ep.presenceRating); doc.moveDown(0.5); }
+      if (ep.languageAnalysis) { lbl('Language analysis:'); bod(ep.languageAnalysis); }
+      if (ep.presenceGaps && ep.presenceGaps.length) { lbl('Gaps to address:'); ep.presenceGaps.forEach(bul); doc.moveDown(0.3); }
+      if (ep.repositioningAdvice) { lbl('How to fix it:'); bod(ep.repositioningAdvice); }
+      doc.moveDown(0.5);
+    }
+
+    if (data.hiddenAdvantages) {
+      pg(); hdr('07  HIDDEN ADVANTAGES');
+      var ha = data.hiddenAdvantages;
+      if (ha.uniquePositioning) { lbl('Your unique positioning:'); bod(ha.uniquePositioning); }
+      if (ha.overlookedStrengths && ha.overlookedStrengths.length) { lbl('Overlooked strengths:'); ha.overlookedStrengths.forEach(bul); doc.moveDown(0.3); }
+      if (ha.howToAmplify && ha.howToAmplify.length) { lbl('How to amplify them:'); ha.howToAmplify.forEach(bul); }
+      doc.moveDown(0.5);
+    }
+
+    if (data.industryTranslation) {
+      pg(); hdr('08  INDUSTRY TRANSLATION GAPS');
+      var it = data.industryTranslation;
+      if (it.translationGaps && it.translationGaps.length) { lbl('Where you lose the reader:'); it.translationGaps.forEach(bul); doc.moveDown(0.3); }
+      if (it.languageToAdopt && it.languageToAdopt.length) { lbl('Language to adopt:'); it.languageToAdopt.forEach(bul); doc.moveDown(0.3); }
+      if (it.reframingSuggestions && it.reframingSuggestions.length) { lbl('How to reframe:'); it.reframingSuggestions.forEach(bul); }
+      doc.moveDown(0.5);
+    }
+
+    if (data.rewriteSuggestions && data.rewriteSuggestions.length) {
+      pg(); hdr('09  REWRITE SUGGESTIONS');
+      data.rewriteSuggestions.slice(0, 5).forEach(function(rw, i) {
+        pg();
+        doc.font('Helvetica-Bold').fontSize(10).fillColor(PURPLE).text(rw.section || ('Suggestion ' + (i + 1)));
+        doc.moveDown(0.3);
+        if (rw.originalText) {
+          lbl('Original:');
+          doc.font('Helvetica-Oblique').fontSize(9).fillColor('#555555').text('"' + rw.originalText + '"', { width: W });
+          doc.moveDown(0.3);
+        }
+        if (rw.issue) { lbl('Issue:'); bod(rw.issue, 9.5); }
+        if (rw.direction) { lbl('Direction:'); bod(rw.direction, 9.5); }
+        if (i < data.rewriteSuggestions.length - 1) {
+          doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor('#F0EDE8').stroke();
+          doc.moveDown(0.6);
+        }
+      });
+      doc.moveDown(0.5);
+    }
+
+    if (data.networkingStrategy) {
+      pg(); hdr('10  NETWORKING STRATEGY');
+      var ns = data.networkingStrategy;
+      if (ns.approachStrategy) { lbl('Your approach:'); bod(ns.approachStrategy); }
+      if (ns.targetTitles && ns.targetTitles.length) { lbl('Who to target:'); ns.targetTitles.forEach(bul); doc.moveDown(0.3); }
+      if (ns.connectionTemplate) {
+        lbl('Connection message template:');
+        doc.font('Helvetica-Oblique').fontSize(9.5).fillColor('#555555').text('"' + ns.connectionTemplate + '"', { width: W });
+        doc.moveDown(0.3);
+      }
+      if (ns.communities && ns.communities.length) { lbl('Communities to join:'); ns.communities.forEach(bul); }
+      doc.moveDown(0.5);
+    }
+
+    if (data.positioningStrategy) {
+      pg(); hdr('11  POSITIONING STRATEGY');
+      var ps = data.positioningStrategy;
+      if (ps.narrativeAngle) { lbl('Your narrative angle:'); bod(ps.narrativeAngle); }
+      if (ps.elevatorPitch) {
+        lbl('Your elevator pitch:');
+        doc.font('Helvetica-Oblique').fontSize(10.5).fillColor(BLACK).text('"' + ps.elevatorPitch + '"', { width: W });
+        doc.moveDown(0.5);
+      }
+      if (ps.linkedinHeadline) {
+        lbl('LinkedIn headline:');
+        doc.font('Helvetica-Bold').fontSize(10.5).fillColor(PURPLE).text(ps.linkedinHeadline, { width: W });
+        doc.moveDown(0.4);
+      }
+      if (ps.keywordsToOwn && ps.keywordsToOwn.length) {
+        lbl('Keywords to own:');
+        doc.font('Helvetica').fontSize(10).fillColor(BLACK).text(ps.keywordsToOwn.join('  ·  '), { width: W });
+        doc.moveDown(0.4);
+      }
+      doc.moveDown(0.3);
+    }
+
+    if (data.linkedInRewrite) {
+      pg(); hdr('12  LINKEDIN PROFILE REWRITE');
+      var li = data.linkedInRewrite;
+      if (li.headline) { lbl('Headline:'); doc.font('Helvetica-Bold').fontSize(11).fillColor(PURPLE).text(li.headline, { width: W }); doc.moveDown(0.4); }
+      if (li.aboutSection) { lbl('About section:'); bod(li.aboutSection); }
+      if (li.experienceFraming) { lbl('Experience framing:'); bod(li.experienceFraming); }
+      if (li.featuredSection) { lbl('Featured section:'); bod(li.featuredSection); }
+      doc.moveDown(0.3);
+    }
+
+    if (data.thirtyDayPlan) {
+      pg(); hdr('13  30-DAY VISIBILITY SPRINT');
+      var plan = data.thirtyDayPlan;
+      ['week1','week2','week3','week4'].forEach(function(wk) {
+        var week = plan[wk];
+        if (!week) return;
+        doc.font('Helvetica-Bold').fontSize(10).fillColor(PURPLE)
+           .text(wk.replace('week', 'Week ') + (week.title ? '  —  ' + week.title : ''));
+        doc.moveDown(0.2);
+        (week.tasks || []).forEach(bul);
+        doc.moveDown(0.5);
+      });
+    }
+
+    // Footer
+    doc.moveDown(1.5);
+    doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor('#E5E5E5').stroke();
+    doc.moveDown(0.5);
+    doc.font('Helvetica').fontSize(8).fillColor('#AAAAAA')
+       .text('not ur regular hr — est. 2016 · built different. because you deserve better than a template.', { align: 'center', width: W });
+
+    doc.end();
+  });
+}
+
+// ── Free results email ────────────────────────────────────────────────────
+async function sendFreeResultsEmail(to, jobTitle, data) {
+  const firstName = extractFirstName(to) || 'there';
+  const score = (data.scores && data.scores.overall != null) ? data.scores.overall : '—';
+  const oneLiner = (data.scores && data.scores.brutalOneLiner) || '';
+  const topIssues = data.topIssues || [];
+  const sixSecondRead = (data.firstImpression && data.firstImpression.sixSecondRead) || '';
+  const scoreColor = typeof score === 'number' ? (score >= 70 ? '#16A34A' : score >= 50 ? '#D97706' : '#DC2626') : '#2D1B69';
+
+  const cats = [
+    ['ATS Compatibility', data.scores && data.scores.atsCompatibility && data.scores.atsCompatibility.score],
+    ['Executive Presence', data.scores && data.scores.executivePresence && data.scores.executivePresence.score],
+    ['Clarity', data.scores && data.scores.clarity && data.scores.clarity.score],
+    ['Strategic Positioning', data.scores && data.scores.strategicPositioning && data.scores.strategicPositioning.score],
+    ['Credibility Signals', data.scores && data.scores.credibilitySignals && data.scores.credibilitySignals.score],
+    ['Impact Evidence', data.scores && data.scores.impactEvidence && data.scores.impactEvidence.score],
+    ['Industry Translation', data.scores && data.scores.industryTranslation && data.scores.industryTranslation.score],
+  ].filter(function(c) { return c[1] != null; });
+
+  const issueRows = topIssues.slice(0, 3).map(function(issue, i) {
+    return '<tr><td style="padding:10px 14px;border-bottom:1px solid #F0EDE8;vertical-align:middle;">'
+      + '<span style="font-family:monospace;font-size:11px;font-weight:700;color:#2D1B69;background:rgba(45,27,105,0.1);border:2px solid #2D1B69;border-radius:50%;width:20px;height:20px;display:inline-block;text-align:center;line-height:18px;margin-right:10px;vertical-align:middle;">' + (i+1) + '</span>'
+      + '<span style="font-size:14px;font-weight:600;color:#0A0A0A;vertical-align:middle;">' + issue + '</span>'
+      + '</td></tr>';
+  }).join('');
+
+  const catRows = cats.map(function(c) {
+    return '<tr><td style="padding:7px 0;border-bottom:1px solid #F0EDE8;">'
+      + '<table width="100%" cellpadding="0" cellspacing="0"><tr>'
+      + '<td style="font-size:13px;color:#0A0A0A;">' + c[0] + '</td>'
+      + '<td style="font-size:13px;font-weight:700;color:#2D1B69;text-align:right;width:55px;">' + c[1] + '/100</td>'
+      + '</tr></table>'
+      + '</td></tr>';
+  }).join('');
+
+  const teaserItems = [
+    ['🔍', 'Hard Truth &amp; Core Disconnect'],
+    ['🎾', 'Executive Presence Analysis'],
+    ['✦', 'Hidden Competitive Advantages'],
+    ['🌍', 'Industry Translation Gaps'],
+    ['✏', 'Rewrite Suggestions (copy-paste examples)'],
+    ['🤝', 'Tailored Networking Strategy'],
+    ['🎯', 'Positioning Strategy &amp; Elevator Pitch'],
+    ['💼', 'LinkedIn Profile Rewrite'],
+    ['📈', '30-Day Visibility Sprint'],
+  ].map(function(t) {
+    return '<tr><td style="padding:9px 16px;border-bottom:1px solid rgba(45,27,105,0.08);font-size:13px;color:#2D1B69;font-weight:600;">'
+      + t[0] + ' &nbsp;' + t[1] + '</td></tr>';
+  }).join('');
+
+  const html = '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'
+    + '<body style="margin:0;padding:0;background:#F7F7F5;font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;color:#0A0A0A;">'
+    + '<table width="100%" cellpadding="0" cellspacing="0" style="background:#F7F7F5;padding:40px 20px;"><tr><td align="center">'
+    + '<table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">'
+    + '<tr><td style="background:#0A0A0A;border-radius:12px 12px 0 0;padding:28px 36px;">'
+    + '<p style="margin:0;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#2D1B69;font-family:monospace;">not ur regular hr</p>'
+    + '<p style="margin:6px 0 0;font-size:18px;font-weight:700;color:#FFFFFF;letter-spacing:-0.02em;">roast my resume</p>'
+    + '</td></tr>'
+    + '<tr><td style="background:#FFFFFF;padding:40px 36px 36px;border-left:1px solid #E8E8E4;border-right:1px solid #E8E8E4;border-bottom:1px solid #E8E8E4;border-radius:0 0 12px 12px;">'
+    + '<p style="margin:0 0 28px;font-size:15px;color:#0A0A0A;line-height:1.75;">hey ' + firstName + ',</p>'
+    + '<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">'
+    + '<tr><td style="background:#F7F4FF;border:2px solid #2D1B69;border-radius:10px;padding:24px;text-align:center;">'
+    + '<p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#888;">your resume score</p>'
+    + '<p style="margin:0;font-size:64px;font-weight:800;color:' + scoreColor + ';line-height:1;">' + score + '</p>'
+    + '<p style="margin:4px 0 0;font-size:13px;color:#888;">out of 100</p>'
+    + (oneLiner ? '<p style="margin:16px 0 0;font-size:13px;font-style:italic;color:#2D1B69;line-height:1.5;">&ldquo;' + oneLiner + '&rdquo;</p>' : '')
+    + '</td></tr></table>'
+    + (issueRows ? '<p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#888;">the top ' + Math.min(topIssues.length, 3) + ' issues working against you</p>'
+      + '<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">' + issueRows + '</table>' : '')
+    + (sixSecondRead ? '<p style="margin:0 0 8px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#888;">what your recruiter actually thinks</p>'
+      + '<p style="margin:0 0 28px;font-size:14px;color:#0A0A0A;line-height:1.7;padding:14px 16px;background:#F7F7F5;border-left:3px solid #2D1B69;border-radius:0 6px 6px 0;">' + sixSecondRead + '</p>' : '')
+    + (catRows ? '<p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#888;">your score breakdown</p>'
+      + '<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">' + catRows + '</table>' : '')
+    + '<p style="margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#888;">what the full report unlocks</p>'
+    + '<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;background:#F7F4FF;border:1px solid rgba(45,27,105,0.15);border-radius:8px;overflow:hidden;">'
+    + teaserItems + '</table>'
+    + '<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;"><tr><td align="center">'
+    + '<a href="' + config.APP_URL + '" style="display:inline-block;background:#2D1B69;color:#FFFFFF;text-decoration:none;padding:16px 36px;border-radius:8px;font-size:15px;font-weight:700;letter-spacing:-0.01em;">Get your full report &rarr; $79 AUD</a>'
+    + '</td></tr></table>'
+    + '<p style="margin:0 0 2px;font-size:15px;font-weight:700;color:#0A0A0A;letter-spacing:-0.01em;">farzana</p>'
+    + '<p style="margin:0 0 28px;font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:#2D1B69;font-family:monospace;">not ur regular hr</p>'
+    + '<p style="margin:0;font-size:11px;color:#9CA3AF;letter-spacing:0.04em;border-top:1px solid #E5E7EB;padding-top:20px;">built different. because you deserve better than a template.</p>'
+    + '</td></tr></table></td></tr></table></body></html>';
+
+  const result = await resend.emails.send({
+    from: config.RESEND_FROM,
+    to,
+    subject: 'your resume score: ' + score + '/100 — here\'s what\'s holding you back',
+    html,
+  });
+  if (result.error) {
+    console.error('[Email] FREE send failed - name:', result.error.name, '| message:', result.error.message);
+    console.error('[Email] full error:', JSON.stringify(result.error));
+    if (result.error.message && result.error.message.toLowerCase().includes('verif')) {
+      console.error('[Email] ACTION REQUIRED: Domain not verified in Resend. Go to https://resend.com/domains and verify noturregularhr.com');
+    }
+  } else {
+    console.log('[Email] FREE email sent, id:', result.data && result.data.id);
+  }
+}
+
+// ── Paid results email ────────────────────────────────────────────────────
+async function sendPaidResultsEmail(to, jobTitle, data) {
   const firstName = extractFirstName(to) || 'there';
 
-  const html = `<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#F7F7F5;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#0A0A0A;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F7F7F5;padding:40px 20px;">
-    <tr><td align="center">
-      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
-
-        <!-- Header -->
-        <tr><td style="background:#0A0A0A;border-radius:12px 12px 0 0;padding:28px 36px;">
-          <p style="margin:0;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#2D1B69;font-family:monospace;">not ur regular hr</p>
-          <p style="margin:6px 0 0;font-size:18px;font-weight:700;color:#FFFFFF;letter-spacing:-0.02em;">roast my resume</p>
-        </td></tr>
-
-        <!-- Body -->
-        <tr><td style="background:#FFFFFF;padding:40px 36px 36px;border-left:1px solid #E8E8E4;border-right:1px solid #E8E8E4;border-bottom:1px solid #E8E8E4;border-radius:0 0 12px 12px;">
-          <p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">hey ${firstName},</p>
-          <p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">I built this tool because most career advice is generic. vague. written for everyone, which means it helps no one.</p>
-          <p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">this is the advice I'd give you if you were my friend.</p>
-          <p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">what did the feedback bring up for you? anything you're going to change?</p>
-          <p style="margin:0 0 36px;font-size:15px;color:#0A0A0A;line-height:1.75;">hit reply - I read and respond to every single one.</p>
-          <p style="margin:0 0 2px;font-size:15px;font-weight:700;color:#0A0A0A;letter-spacing:-0.01em;">farzana</p>
-          <p style="margin:0 0 36px;font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:#2D1B69;font-family:monospace;">not ur regular hr</p>
-          <p style="margin:0;font-size:11px;color:#9CA3AF;letter-spacing:0.04em;border-top:1px solid #E5E7EB;padding-top:24px;">built different. because you deserve better than a template.</p>
-        </td></tr>
-
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
-
-  console.log(`[Email] Sending from: ${config.RESEND_FROM} to: ${to}`);
+  let pdfBuffer = null;
   try {
-    const result = await resend.emails.send({
-      from: config.RESEND_FROM,
-      to,
-      subject: `your resume roast is ready 🔥`,
-      html,
-    });
-    if (result.error) {
-      // Log each field separately so they appear clearly in Vercel logs
-      console.error('[Email] SEND FAILED');
-      console.error('[Email] error.name:', result.error.name);
-      console.error('[Email] error.message:', result.error.message);
-      console.error('[Email] error.statusCode:', result.error.statusCode);
-      console.error('[Email] full error:', JSON.stringify(result.error));
-      if (result.error.message && result.error.message.toLowerCase().includes('verif')) {
-        console.error('[Email] ACTION REQUIRED: Domain not verified in Resend. Go to https://resend.com/domains and verify noturregularhr.com');
-      }
+    pdfBuffer = await generateReportPDF(data, jobTitle);
+    console.log('[Email] PDF generated, bytes:', pdfBuffer.length);
+  } catch (err) {
+    console.error('[Email] PDF generation failed:', err.message);
+  }
+
+  const html = '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'
+    + '<body style="margin:0;padding:0;background:#F7F7F5;font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;color:#0A0A0A;">'
+    + '<table width="100%" cellpadding="0" cellspacing="0" style="background:#F7F7F5;padding:40px 20px;"><tr><td align="center">'
+    + '<table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">'
+    + '<tr><td style="background:#0A0A0A;border-radius:12px 12px 0 0;padding:28px 36px;">'
+    + '<p style="margin:0;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#2D1B69;font-family:monospace;">not ur regular hr</p>'
+    + '<p style="margin:6px 0 0;font-size:18px;font-weight:700;color:#FFFFFF;letter-spacing:-0.02em;">roast my resume</p>'
+    + '</td></tr>'
+    + '<tr><td style="background:#FFFFFF;padding:40px 36px 36px;border-left:1px solid #E8E8E4;border-right:1px solid #E8E8E4;border-bottom:1px solid #E8E8E4;border-radius:0 0 12px 12px;">'
+    + '<p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">hey ' + firstName + ',</p>'
+    + '<p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">I built this tool because most career advice is generic. vague. written for everyone, which means it helps no one.</p>'
+    + '<p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">this is the advice I\'d give you if you were my friend. your full report is attached to this email — everything we found, everything to fix, and a clear plan to do it.</p>'
+    + '<p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">what did the feedback bring up for you? anything you\'re going to change?</p>'
+    + '<p style="margin:0 0 36px;font-size:15px;color:#0A0A0A;line-height:1.75;">hit reply — I read and respond to every single one.</p>'
+    + (!pdfBuffer ? '<p style="margin:0 0 22px;font-size:13px;color:#888;line-height:1.75;font-style:italic;">You can download your full PDF report from your results page at any time.</p>' : '')
+    + '<p style="margin:0 0 2px;font-size:15px;font-weight:700;color:#0A0A0A;letter-spacing:-0.01em;">farzana</p>'
+    + '<p style="margin:0 0 36px;font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:#2D1B69;font-family:monospace;">not ur regular hr</p>'
+    + '<p style="margin:0;font-size:11px;color:#9CA3AF;letter-spacing:0.04em;border-top:1px solid #E5E7EB;padding-top:24px;">built different. because you deserve better than a template.</p>'
+    + '</td></tr></table></td></tr></table></body></html>';
+
+  const emailParams = {
+    from: config.RESEND_FROM,
+    to,
+    subject: 'your full resume roast report — save this',
+    html,
+  };
+  if (pdfBuffer) {
+    emailParams.attachments = [{ filename: 'resume-roast-report.pdf', content: pdfBuffer }];
+  }
+
+  const result = await resend.emails.send(emailParams);
+  if (result.error) {
+    console.error('[Email] PAID send failed - name:', result.error.name, '| message:', result.error.message);
+    console.error('[Email] full error:', JSON.stringify(result.error));
+    if (result.error.message && result.error.message.toLowerCase().includes('verif')) {
+      console.error('[Email] ACTION REQUIRED: Domain not verified in Resend. Go to https://resend.com/domains and verify noturregularhr.com');
+    }
+  } else {
+    console.log('[Email] PAID email sent, id:', result.data && result.data.id);
+  }
+}
+
+// ── Upgrade confirmation email ────────────────────────────────────────────
+async function sendUpgradeConfirmEmail(to) {
+  if (!resend) return;
+  const firstName = extractFirstName(to) || 'there';
+
+  const html = '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'
+    + '<body style="margin:0;padding:0;background:#F7F7F5;font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;color:#0A0A0A;">'
+    + '<table width="100%" cellpadding="0" cellspacing="0" style="background:#F7F7F5;padding:40px 20px;"><tr><td align="center">'
+    + '<table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">'
+    + '<tr><td style="background:#0A0A0A;border-radius:12px 12px 0 0;padding:28px 36px;">'
+    + '<p style="margin:0;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#2D1B69;font-family:monospace;">not ur regular hr</p>'
+    + '<p style="margin:6px 0 0;font-size:18px;font-weight:700;color:#FFFFFF;letter-spacing:-0.02em;">roast my resume</p>'
+    + '</td></tr>'
+    + '<tr><td style="background:#FFFFFF;padding:40px 36px 36px;border-left:1px solid #E8E8E4;border-right:1px solid #E8E8E4;border-bottom:1px solid #E8E8E4;border-radius:0 0 12px 12px;">'
+    + '<p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">hey ' + firstName + ',</p>'
+    + '<p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">you\'re in. payment confirmed — your full report is now unlocked.</p>'
+    + '<p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">head back to the browser where you did your analysis — your full results are loaded and waiting.</p>'
+    + '<p style="margin:0 0 12px;font-size:13px;color:#888;">your full report includes:</p>'
+    + '<ul style="margin:0 0 28px;padding-left:20px;color:#0A0A0A;font-size:13px;line-height:2.1;">'
+    + '<li>Hard Truth &amp; Core Disconnect</li>'
+    + '<li>Executive Presence Analysis</li>'
+    + '<li>Hidden Competitive Advantages</li>'
+    + '<li>Industry Translation Gaps</li>'
+    + '<li>Rewrite Suggestions with copy-paste examples</li>'
+    + '<li>Networking Strategy</li>'
+    + '<li>Positioning Strategy &amp; Elevator Pitch</li>'
+    + '<li>LinkedIn Profile Rewrite</li>'
+    + '<li>30-Day Visibility Sprint</li>'
+    + '</ul>'
+    + '<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;"><tr><td align="center">'
+    + '<a href="' + config.APP_URL + '" style="display:inline-block;background:#2D1B69;color:#FFFFFF;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:14px;font-weight:700;">view your full report &rarr;</a>'
+    + '</td></tr></table>'
+    + '<p style="margin:0 0 2px;font-size:15px;font-weight:700;color:#0A0A0A;">farzana</p>'
+    + '<p style="margin:0 0 36px;font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:#2D1B69;font-family:monospace;">not ur regular hr</p>'
+    + '<p style="margin:0;font-size:11px;color:#9CA3AF;border-top:1px solid #E5E7EB;padding-top:20px;">built different. because you deserve better than a template.</p>'
+    + '</td></tr></table></td></tr></table></body></html>';
+
+  const result = await resend.emails.send({
+    from: config.RESEND_FROM,
+    to,
+    subject: 'you\'re in — your full report is unlocked',
+    html,
+  });
+  if (result.error) {
+    console.error('[Email] UPGRADE send failed - name:', result.error.name, '| message:', result.error.message);
+    console.error('[Email] full error:', JSON.stringify(result.error));
+  } else {
+    console.log('[Email] UPGRADE email sent, id:', result.data && result.data.id);
+  }
+}
+
+// ── Email helper ──────────────────────────────────────────────────────────
+async function sendResultsEmail(to, jobTitle, data, isPaid) {
+  console.log(`[Email] sendResultsEmail called - to: ${to}, isPaid: ${isPaid}`);
+  if (!resend) {
+    console.log('[Email] Resend not configured. Skipping.');
+    return;
+  }
+  console.log(`[Email] Sending ${isPaid ? 'PAID' : 'FREE'} email from: ${config.RESEND_FROM} to: ${to}`);
+  try {
+    if (isPaid) {
+      await sendPaidResultsEmail(to, jobTitle, data);
     } else {
-      console.log('[Email] Sent successfully, id:', result.data?.id);
+      await sendFreeResultsEmail(to, jobTitle, data);
     }
   } catch (err) {
-    console.error('[Email] resend.emails.send threw:', err.message);
+    console.error('[Email] send threw:', err.message);
     console.error('[Email] statusCode:', err.statusCode);
-    console.error('[Email] full:', JSON.stringify(err));
     throw err;
   }
 }

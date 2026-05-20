@@ -6,6 +6,7 @@ import FounderIntro from './components/FounderIntro'
 import HowItWorks from './components/HowItWorks'
 import WhyDifferent from './components/WhyDifferent'
 import MetricsStrip from './components/MetricsStrip'
+import SeeWhatYouGet from './components/SeeWhatYouGet'
 import About from './components/About'
 import FAQPage from './components/FAQPage'
 import MultiStepForm from './components/MultiStepForm'
@@ -220,6 +221,7 @@ export default function App() {
             <MetricsStrip />
             <FounderIntro />
             <HowItWorks />
+            <SeeWhatYouGet />
             <div id="roast-form" className="container--narrow" style={{ paddingBottom: '6rem' }}>
               {paymentConfirmed && (
                 <div style={{ background: 'rgba(45,27,105,0.06)', border: '2px solid #2D1B69', borderRadius: '12px', padding: '1.25rem 1.5rem', marginBottom: '2rem', display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>

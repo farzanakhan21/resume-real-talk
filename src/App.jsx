@@ -4,6 +4,8 @@ import Header from './components/Header'
 import Hero from './components/Hero'
 import FounderIntro from './components/FounderIntro'
 import HowItWorks from './components/HowItWorks'
+import WhyDifferent from './components/WhyDifferent'
+import MetricsStrip from './components/MetricsStrip'
 import About from './components/About'
 import FAQPage from './components/FAQPage'
 import MultiStepForm from './components/MultiStepForm'
@@ -214,6 +216,8 @@ export default function App() {
         {view === 'home' && (
           <motion.div key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
             <Hero />
+            <WhyDifferent />
+            <MetricsStrip />
             <FounderIntro />
             <HowItWorks />
             <div id="roast-form" className="container--narrow" style={{ paddingBottom: '6rem' }}>

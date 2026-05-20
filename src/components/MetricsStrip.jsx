@@ -4,7 +4,7 @@ const STATS = [
   { value: '75% → 19%', label: 'turnover reduction' },
   { value: '$0', label: 'workers comp premium achieved' },
   { value: 'since 2016', label: 'in hospitality, startups & scaling businesses' },
-  { value: 'from the ground up', label: 'HR functions built from the ground up across multi-site teams' },
+  { value: 'built from nothing', label: 'HR functions built from nothing across multi-site teams' },
 ]
 
 export default function MetricsStrip() {

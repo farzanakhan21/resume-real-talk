@@ -3,8 +3,8 @@ import { motion } from 'framer-motion'
 const STATS = [
   { value: '75% → 19%', label: 'turnover reduction' },
   { value: '$0', label: 'workers comp premium achieved' },
-  { value: '10+', label: 'years inside hospitality, startups & scaling businesses' },
-  { value: 'from scratch', label: 'HR functions built across multi-site teams' },
+  { value: 'since 2016', label: 'in hospitality, startups & scaling businesses' },
+  { value: 'from the ground up', label: 'HR functions built from the ground up across multi-site teams' },
 ]
 
 export default function MetricsStrip() {

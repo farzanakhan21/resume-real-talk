@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Header from './components/Header'
 import Hero from './components/Hero'
-import FounderIntro from './components/FounderIntro'
 import HowItWorks from './components/HowItWorks'
 import WhyDifferent from './components/WhyDifferent'
 import MetricsStrip from './components/MetricsStrip'
@@ -219,7 +218,6 @@ export default function App() {
             <Hero />
             <WhyDifferent />
             <MetricsStrip />
-            <FounderIntro />
             <HowItWorks />
             <SeeWhatYouGet />
             <div id="roast-form" className="container--narrow" style={{ paddingBottom: '6rem' }}>

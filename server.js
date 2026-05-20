@@ -251,6 +251,15 @@ app.post('/api/create-checkout', async (req, res) => {
   if (!email) return res.status(400).json({ error: 'Email required.' });
 
   try {
+    // Derive the base URL from the incoming request so Stripe always redirects
+    // back to the exact domain the user is on (noturregularhr.com in production,
+    // localhost in dev). This avoids any dependency on APP_URL being correctly
+    // configured — a misconfigured APP_URL was sending users to the wrong domain.
+    const proto = req.headers['x-forwarded-proto'] || (req.socket?.encrypted ? 'https' : 'http');
+    const host = req.headers['x-forwarded-host'] || req.headers.host;
+    const reqOrigin = `${proto}://${host}`;
+    console.log(`[Checkout] origin=${reqOrigin} APP_URL=${config.APP_URL}`);
+
     // Resolve promo code to a Stripe promotion code ID if provided
     let discounts;
     if (promoCode && promoCode.trim()) {
@@ -271,8 +280,8 @@ app.post('/api/create-checkout', async (req, res) => {
       customer_email: email.toLowerCase().trim(),
       line_items: [{ price: config.STRIPE_PRICE_ID, quantity: 1 }],
       mode: 'payment',
-      success_url: `${config.APP_URL}?payment=success&session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(email)}`,
-      cancel_url: `${config.APP_URL}?payment=cancelled`,
+      success_url: `${reqOrigin}?payment=success&session_id={CHECKOUT_SESSION_ID}&email=${encodeURIComponent(email)}`,
+      cancel_url: `${reqOrigin}?payment=cancelled`,
       metadata: { email: email.toLowerCase().trim() },
     };
 

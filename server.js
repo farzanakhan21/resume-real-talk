@@ -29,6 +29,8 @@ const config = {
   APP_URL: process.env.APP_URL || fileConfig.APP_URL || 'http://localhost:5173',
   PORT: process.env.PORT || fileConfig.PORT || 3001,
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || fileConfig.ADMIN_PASSWORD || '',
+  SUPABASE_URL: process.env.SUPABASE_URL || fileConfig.SUPABASE_URL || '',
+  SUPABASE_KEY: process.env.SUPABASE_KEY || fileConfig.SUPABASE_KEY || '',
 };
 
 // ── Startup validation ────────────────────────────────────────────────────
@@ -42,6 +44,7 @@ if (!config.STRIPE_SECRET_KEY || config.STRIPE_SECRET_KEY.includes('YOUR')) {
 }
 console.log(`RESEND_API_KEY: ${config.RESEND_API_KEY ? 'SET (' + config.RESEND_API_KEY.slice(0, 8) + '...)' : 'NOT SET - emails will be skipped'}`);
 console.log(`RESEND_FROM: ${config.RESEND_FROM}`);
+console.log(`SUPABASE: ${config.SUPABASE_URL ? 'configured (' + config.SUPABASE_URL + ')' : 'NOT SET — analyses will not persist on Vercel. Add SUPABASE_URL + SUPABASE_KEY.'}`)
 if (config.RESEND_FROM.includes('onboarding@resend.dev')) {
   console.warn('WARNING: RESEND_FROM is using onboarding@resend.dev - Resend only allows this to send to your own Resend account email. Set RESEND_FROM to a verified domain address to send to real users.');
 }
@@ -95,7 +98,82 @@ function writeAnalysis(entry) {
     list.push(entry);
     writeFileSync(ANALYSES_PATH, JSON.stringify(list, null, 2));
   } catch {
-    // Vercel serverless: filesystem is read-only
+    // Vercel serverless: filesystem is read-only — use saveAnalysis() instead
+  }
+}
+
+// ── Supabase-backed analysis persistence ──────────────────────────────────
+// Uses Supabase REST API (plain fetch, no SDK) when SUPABASE_URL + SUPABASE_KEY
+// are set. Falls back to the local JSON file for dev environments.
+
+function supabaseHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'apikey': config.SUPABASE_KEY,
+    'Authorization': `Bearer ${config.SUPABASE_KEY}`,
+  };
+}
+
+async function saveAnalysis(entry) {
+  if (config.SUPABASE_URL && config.SUPABASE_KEY) {
+    try {
+      const res = await fetch(`${config.SUPABASE_URL}/rest/v1/analyses`, {
+        method: 'POST',
+        headers: { ...supabaseHeaders(), 'Prefer': 'return=minimal' },
+        body: JSON.stringify({
+          email: entry.email,
+          date: entry.date,
+          job_title: entry.jobTitle || null,
+          industry: entry.industry || null,
+          career_situation: entry.careerSituation || null,
+          timeframe: entry.timeframe || null,
+          is_paid: entry.isPaid || false,
+        }),
+      });
+      if (!res.ok) {
+        const msg = await res.text();
+        console.error('[DB] Supabase insert failed:', res.status, msg);
+      } else {
+        console.log('[DB] Analysis saved to Supabase for:', entry.email);
+      }
+    } catch (err) {
+      console.error('[DB] Supabase saveAnalysis error:', err.message);
+    }
+  } else {
+    // Local dev fallback: write to analyses.json
+    writeAnalysis(entry);
+  }
+}
+
+async function fetchAnalyses() {
+  if (config.SUPABASE_URL && config.SUPABASE_KEY) {
+    try {
+      const res = await fetch(
+        `${config.SUPABASE_URL}/rest/v1/analyses?select=*&order=date.desc`,
+        { headers: supabaseHeaders() }
+      );
+      if (!res.ok) {
+        console.error('[DB] Supabase fetch failed:', res.status, await res.text());
+        return [];
+      }
+      const rows = await res.json();
+      // Map snake_case DB columns back to camelCase for the rest of the app
+      return rows.map(r => ({
+        email: r.email,
+        date: r.date,
+        jobTitle: r.job_title || '',
+        industry: r.industry || '',
+        careerSituation: r.career_situation || '',
+        timeframe: r.timeframe || '',
+        isPaid: r.is_paid || false,
+      }));
+    } catch (err) {
+      console.error('[DB] Supabase fetchAnalyses error:', err.message);
+      return [];
+    }
+  } else {
+    // Local dev fallback: read from analyses.json
+    return readAnalyses();
   }
 }
 
@@ -1024,8 +1102,8 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
       console.error('[Email] Fire-and-forget failed:', err.message, err.statusCode, JSON.stringify(err))
     );
 
-    // Record analysis for admin dashboard
-    writeAnalysis({
+    // Record analysis for admin dashboard — fire and forget
+    saveAnalysis({
       email: normalised,
       date: new Date().toISOString(),
       jobTitle: jobTitle || '',
@@ -1033,7 +1111,7 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
       careerSituation: careerSituation || '',
       timeframe: timeframe || '',
       isPaid,
-    });
+    }).catch(err => console.error('[DB] saveAnalysis fire-and-forget failed:', err.message));
 
     res.json({ success: true, data: parsed, isPaid });
   } catch (err) {
@@ -1254,10 +1332,11 @@ function adminDashboardPage(analyses) {
 </html>`;
 }
 
-app.get('/admin', (req, res) => {
+app.get('/admin', async (req, res) => {
   if (!config.ADMIN_PASSWORD) return res.status(500).send('ADMIN_PASSWORD not configured.');
   if (!isAdminAuthed(req)) return res.send(adminLoginPage());
-  res.send(adminDashboardPage(readAnalyses()));
+  const analyses = await fetchAnalyses();
+  res.send(adminDashboardPage(analyses));
 });
 
 app.post('/admin/login', (req, res) => {

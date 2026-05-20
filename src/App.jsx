@@ -77,14 +77,14 @@ export default function App() {
                   setResults(savedResults)
                   sessionStorage.setItem('nrhr_session', JSON.stringify({ results: savedResults, isPaid: true, userEmail: resolvedEmail, jobTitle: savedJobTitle || '' }))
                   setView('results')
-                  // Send paid email with PDF — fire and forget
+                  // Send paid email with PDF - fire and forget
                   fetch('/api/resend-results', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: resolvedEmail, jobTitle: savedJobTitle || '', data: savedResults, sessionId }),
                   }).catch(() => {})
                 } else {
-                  // No saved results (e.g. different tab/browser) — show confirmation banner
+                  // No saved results (e.g. different tab/browser) - show confirmation banner
                   setPaymentConfirmed(true)
                 }
               } catch {
@@ -227,7 +227,7 @@ export default function App() {
                 <div style={{ background: 'rgba(45,27,105,0.06)', border: '2px solid #2D1B69', borderRadius: '12px', padding: '1.25rem 1.5rem', marginBottom: '2rem', display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
                   <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>✓</span>
                   <div>
-                    <p style={{ margin: '0 0 0.25rem', fontWeight: 800, fontSize: '0.9rem', color: '#2D1B69', letterSpacing: '0.02em' }}>Payment confirmed — you're in.</p>
+                    <p style={{ margin: '0 0 0.25rem', fontWeight: 800, fontSize: '0.9rem', color: '#2D1B69', letterSpacing: '0.02em' }}>Payment confirmed - you're in.</p>
                     <p style={{ margin: 0, fontSize: '0.85rem', color: '#555', lineHeight: 1.5 }}>Re-upload your resume below to get your full paid report with PDF attached. Your email is already unlocked.</p>
                   </div>
                 </div>
@@ -291,7 +291,7 @@ export default function App() {
 
       {view !== 'results' && (
         <footer className="footer">
-          <p>not ur regular hr — est. 2016 &copy; 2026 · built different. because you deserve better than a template.</p>
+          <p>not ur regular hr - est. 2016 &copy; 2026 · built different. because you deserve better than a template.</p>
           <p className="footer__links">
             <button className="footer__link" onClick={() => navigateTo('/faq')}>FAQs</button>
             <button className="footer__link" onClick={() => navigateTo('/about')}>About</button>

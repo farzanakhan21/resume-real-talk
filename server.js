@@ -44,7 +44,7 @@ if (!config.STRIPE_SECRET_KEY || config.STRIPE_SECRET_KEY.includes('YOUR')) {
 }
 console.log(`RESEND_API_KEY: ${config.RESEND_API_KEY ? 'SET (' + config.RESEND_API_KEY.slice(0, 8) + '...)' : 'NOT SET - emails will be skipped'}`);
 console.log(`RESEND_FROM: ${config.RESEND_FROM}`);
-console.log(`SUPABASE: ${config.SUPABASE_URL ? 'configured (' + config.SUPABASE_URL + ')' : 'NOT SET — analyses will not persist on Vercel. Add SUPABASE_URL + SUPABASE_KEY.'}`)
+console.log(`SUPABASE: ${config.SUPABASE_URL ? 'configured (' + config.SUPABASE_URL + ')' : 'NOT SET - analyses will not persist on Vercel. Add SUPABASE_URL + SUPABASE_KEY.'}`)
 if (config.RESEND_FROM.includes('onboarding@resend.dev')) {
   console.warn('WARNING: RESEND_FROM is using onboarding@resend.dev - Resend only allows this to send to your own Resend account email. Set RESEND_FROM to a verified domain address to send to real users.');
 }
@@ -98,7 +98,7 @@ function writeAnalysis(entry) {
     list.push(entry);
     writeFileSync(ANALYSES_PATH, JSON.stringify(list, null, 2));
   } catch {
-    // Vercel serverless: filesystem is read-only — use saveAnalysis() instead
+    // Vercel serverless: filesystem is read-only - use saveAnalysis() instead
   }
 }
 
@@ -254,7 +254,7 @@ app.post('/api/create-checkout', async (req, res) => {
     // Derive the base URL from the incoming request so Stripe always redirects
     // back to the exact domain the user is on (noturregularhr.com in production,
     // localhost in dev). This avoids any dependency on APP_URL being correctly
-    // configured — a misconfigured APP_URL was sending users to the wrong domain.
+    // configured - a misconfigured APP_URL was sending users to the wrong domain.
     const proto = req.headers['x-forwarded-proto'] || (req.socket?.encrypted ? 'https' : 'http');
     const host = req.headers['x-forwarded-host'] || req.headers.host;
     const reqOrigin = `${proto}://${host}`;
@@ -327,7 +327,7 @@ app.get('/api/verify-payment', async (req, res) => {
       }
       return res.json({ paid: true, email: normalised });
     }
-    console.log(`[Payment] Unexpected payment_status: ${session.payment_status} — returning paid: false`);
+    console.log(`[Payment] Unexpected payment_status: ${session.payment_status} - returning paid: false`);
     res.json({ paid: false });
   } catch (err) {
     console.error(err);
@@ -341,7 +341,7 @@ app.post('/api/resend-results', async (req, res) => {
   if (!email || !data) return res.status(400).json({ error: 'Missing email or data.' });
   const normalised = email.toLowerCase().trim();
 
-  // Verify payment via Stripe session (primary) — avoids depending on emails.json
+  // Verify payment via Stripe session (primary) - avoids depending on emails.json
   // which silently fails to write on Vercel's read-only serverless filesystem.
   let verified = false;
   if (sessionId && stripe) {
@@ -364,7 +364,7 @@ app.post('/api/resend-results', async (req, res) => {
   }
 
   if (!verified) {
-    console.error(`[resend-results] 403 — could not verify payment for ${normalised}`);
+    console.error(`[resend-results] 403 - could not verify payment for ${normalised}`);
     return res.status(403).json({ error: 'Payment not verified.' });
   }
 
@@ -407,7 +407,7 @@ function generateReportPDF(data, jobTitle) {
     const PDFDocument = require('pdfkit');
     const doc = new PDFDocument({
       margin: 50, size: 'A4',
-      info: { Title: 'Resume Roast Report — not ur regular hr', Author: 'not ur regular hr' },
+      info: { Title: 'Resume Roast Report - not ur regular hr', Author: 'not ur regular hr' },
     });
     const chunks = [];
     doc.on('data', c => chunks.push(c));
@@ -641,7 +641,7 @@ function generateReportPDF(data, jobTitle) {
         var week = plan[wk];
         if (!week) return;
         doc.font('Helvetica-Bold').fontSize(10).fillColor(PURPLE)
-           .text(wk.replace('week', 'Week ') + (week.title ? '  —  ' + week.title : ''));
+           .text(wk.replace('week', 'Week ') + (week.title ? '  -  ' + week.title : ''));
         doc.moveDown(0.2);
         (week.tasks || []).forEach(bul);
         doc.moveDown(0.5);
@@ -653,7 +653,7 @@ function generateReportPDF(data, jobTitle) {
     doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor('#E5E5E5').stroke();
     doc.moveDown(0.5);
     doc.font('Helvetica').fontSize(8).fillColor('#AAAAAA')
-       .text('not ur regular hr — est. 2016 · built different. because you deserve better than a template.', { align: 'center', width: W });
+       .text('not ur regular hr - est. 2016 · built different. because you deserve better than a template.', { align: 'center', width: W });
 
     doc.end();
   });
@@ -662,7 +662,7 @@ function generateReportPDF(data, jobTitle) {
 // ── Free results email ────────────────────────────────────────────────────
 async function sendFreeResultsEmail(to, jobTitle, data) {
   const firstName = extractFirstName(to) || 'there';
-  const score = (data.scores && data.scores.overall != null) ? data.scores.overall : '—';
+  const score = (data.scores && data.scores.overall != null) ? data.scores.overall : '-';
   const oneLiner = (data.scores && data.scores.brutalOneLiner) || '';
   const topIssues = data.topIssues || [];
   const sixSecondRead = (data.firstImpression && data.firstImpression.sixSecondRead) || '';
@@ -746,7 +746,7 @@ async function sendFreeResultsEmail(to, jobTitle, data) {
   const result = await resend.emails.send({
     from: config.RESEND_FROM,
     to,
-    subject: 'your resume score: ' + score + '/100 — here\'s what\'s holding you back',
+    subject: 'your resume score: ' + score + '/100 - here\'s what\'s holding you back',
     html,
   });
   if (result.error) {
@@ -783,9 +783,9 @@ async function sendPaidResultsEmail(to, jobTitle, data) {
     + '<tr><td style="background:#FFFFFF;padding:40px 36px 36px;border-left:1px solid #E8E8E4;border-right:1px solid #E8E8E4;border-bottom:1px solid #E8E8E4;border-radius:0 0 12px 12px;">'
     + '<p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">hey ' + firstName + ',</p>'
     + '<p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">I built this tool because most career advice is generic. vague. written for everyone, which means it helps no one.</p>'
-    + '<p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">this is the advice I\'d give you if you were my friend. your full report is attached to this email — everything we found, everything to fix, and a clear plan to do it.</p>'
+    + '<p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">this is the advice I\'d give you if you were my friend. your full report is attached to this email - everything we found, everything to fix, and a clear plan to do it.</p>'
     + '<p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">what did the feedback bring up for you? anything you\'re going to change?</p>'
-    + '<p style="margin:0 0 36px;font-size:15px;color:#0A0A0A;line-height:1.75;">hit reply — I read and respond to every single one.</p>'
+    + '<p style="margin:0 0 36px;font-size:15px;color:#0A0A0A;line-height:1.75;">hit reply - I read and respond to every single one.</p>'
     + (!pdfBuffer ? '<p style="margin:0 0 22px;font-size:13px;color:#888;line-height:1.75;font-style:italic;">You can download your full PDF report from your results page at any time.</p>' : '')
     + '<p style="margin:0 0 2px;font-size:15px;font-weight:700;color:#0A0A0A;letter-spacing:-0.01em;">farzana</p>'
     + '<p style="margin:0 0 36px;font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:#2D1B69;font-family:monospace;">not ur regular hr</p>'
@@ -795,7 +795,7 @@ async function sendPaidResultsEmail(to, jobTitle, data) {
   const emailParams = {
     from: config.RESEND_FROM,
     to,
-    subject: 'your full resume roast report — save this',
+    subject: 'your full resume roast report - save this',
     html,
   };
   if (pdfBuffer) {
@@ -829,8 +829,8 @@ async function sendUpgradeConfirmEmail(to) {
     + '</td></tr>'
     + '<tr><td style="background:#FFFFFF;padding:40px 36px 36px;border-left:1px solid #E8E8E4;border-right:1px solid #E8E8E4;border-bottom:1px solid #E8E8E4;border-radius:0 0 12px 12px;">'
     + '<p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">hey ' + firstName + ',</p>'
-    + '<p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">you\'re in. payment confirmed — your full report is now unlocked.</p>'
-    + '<p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">head back to the browser where you did your analysis — your full results are loaded and waiting.</p>'
+    + '<p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">you\'re in. payment confirmed - your full report is now unlocked.</p>'
+    + '<p style="margin:0 0 22px;font-size:15px;color:#0A0A0A;line-height:1.75;">head back to the browser where you did your analysis - your full results are loaded and waiting.</p>'
     + '<p style="margin:0 0 12px;font-size:13px;color:#888;">your full report includes:</p>'
     + '<ul style="margin:0 0 28px;padding-left:20px;color:#0A0A0A;font-size:13px;line-height:2.1;">'
     + '<li>Hard Truth &amp; Core Disconnect</li>'
@@ -854,7 +854,7 @@ async function sendUpgradeConfirmEmail(to) {
   const result = await resend.emails.send({
     from: config.RESEND_FROM,
     to,
-    subject: 'you\'re in — your full report is unlocked',
+    subject: 'you\'re in - your full report is unlocked',
     html,
   });
   if (result.error) {
@@ -1135,7 +1135,7 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
       console.error('[Email] Fire-and-forget failed:', err.message, err.statusCode, JSON.stringify(err))
     );
 
-    // Record analysis for admin dashboard — fire and forget
+    // Record analysis for admin dashboard - fire and forget
     saveAnalysis({
       email: normalised,
       date: new Date().toISOString(),
@@ -1205,7 +1205,7 @@ function adminLoginPage(errorMsg) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Admin Login — not ur regular hr</title>
+  <title>Admin Login - not ur regular hr</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f1;display:flex;align-items:center;justify-content:center;min-height:100vh}
@@ -1263,7 +1263,7 @@ function adminDashboardPage(analyses) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Admin Dashboard — not ur regular hr</title>
+  <title>Admin Dashboard - not ur regular hr</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f1;color:#0a0a0a;min-height:100vh}

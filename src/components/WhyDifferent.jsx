@@ -19,7 +19,7 @@ export default function WhyDifferent() {
             This one understands how hiring actually works.
           </p>
           <p>
-            I've spent years inside fast-paced workplaces — sitting in hiring meetings, restructures, and leadership decisions. I've seen what makes a recruiter stop scrolling. What makes a hiring manager say no before they finish reading. What gets someone shortlisted when they shouldn't be, and screened out when they should have been a no-brainer.
+            I've spent years inside fast-paced workplaces - sitting in hiring meetings, restructures, and leadership decisions. I've seen what makes a recruiter stop scrolling. What makes a hiring manager say no before they finish reading. What gets someone shortlisted when they shouldn't be, and screened out when they should have been a no-brainer.
           </p>
           <p className="why-different__pull">
             This isn't AI guessing at your resume.<br />

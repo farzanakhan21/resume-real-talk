@@ -318,7 +318,7 @@ ul { list-style: none; }
   margin-bottom: 3rem;
 }
 .swyg__tile {
-  /* Inherits .locked-section base — just needs overrides */
+  /* Inherits .locked-section base - just needs overrides */
   border: 2px solid var(--border-dark);
   box-shadow: var(--shadow-sm);
   transition: transform 0.15s, box-shadow 0.15s;

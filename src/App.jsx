@@ -78,7 +78,7 @@ export default function App() {
                   fetch('/api/resend-results', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: resolvedEmail, jobTitle: savedJobTitle || '', data: savedResults }),
+                    body: JSON.stringify({ email: resolvedEmail, jobTitle: savedJobTitle || '', data: savedResults, sessionId }),
                   }).catch(() => {})
                 } else {
                   // No saved results (e.g. different tab/browser) — show confirmation banner

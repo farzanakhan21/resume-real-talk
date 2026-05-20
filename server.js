@@ -337,14 +337,38 @@ app.get('/api/verify-payment', async (req, res) => {
 
 // ── Send paid results email after upgrade (client posts saved analysis data) ─
 app.post('/api/resend-results', async (req, res) => {
-  const { email, jobTitle, data } = req.body;
+  const { email, jobTitle, data, sessionId } = req.body;
   if (!email || !data) return res.status(400).json({ error: 'Missing email or data.' });
   const normalised = email.toLowerCase().trim();
-  const emails = readEmails();
-  if (!emails.paid.includes(normalised)) {
-    return res.status(403).json({ error: 'Not a paid account.' });
+
+  // Verify payment via Stripe session (primary) — avoids depending on emails.json
+  // which silently fails to write on Vercel's read-only serverless filesystem.
+  let verified = false;
+  if (sessionId && stripe) {
+    try {
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
+      const isComplete = session.payment_status === 'paid' || session.payment_status === 'no_payment_required';
+      const sessionEmail = (session.customer_email || session.metadata?.email || '').toLowerCase().trim();
+      verified = isComplete && (!sessionEmail || sessionEmail === normalised);
+      console.log(`[resend-results] Stripe verify: status=${session.payment_status} sessionEmail=${sessionEmail} match=${verified}`);
+    } catch (err) {
+      console.error('[resend-results] Stripe session lookup failed:', err.message);
+    }
   }
-  console.log(`[Email] resend-results requested for ${normalised}`);
+
+  // Fallback: check in-memory emails list (works locally, not on Vercel serverless)
+  if (!verified) {
+    const emails = readEmails();
+    verified = emails.paid.includes(normalised);
+    console.log(`[resend-results] fallback emails.paid check: ${verified}`);
+  }
+
+  if (!verified) {
+    console.error(`[resend-results] 403 — could not verify payment for ${normalised}`);
+    return res.status(403).json({ error: 'Payment not verified.' });
+  }
+
+  console.log(`[Email] resend-results: sending paid PDF to ${normalised}`);
   sendPaidResultsEmail(normalised, jobTitle || '', data).catch(err =>
     console.error('[Email] resend-results send failed:', err.message)
   );

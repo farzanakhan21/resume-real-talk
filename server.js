@@ -221,7 +221,13 @@ app.get('/api/verify-payment', async (req, res) => {
 
   try {
     const session = await stripe.checkout.sessions.retrieve(session_id);
-    if (session.payment_status === 'paid') {
+    console.log(`[Payment] session ${session_id} status: ${session.payment_status}`);
+
+    // 'no_payment_required' fires when a 100% discount is applied (e.g. TEST100).
+    // Stripe still fires checkout.session.completed and the session is fully valid.
+    const isComplete = session.payment_status === 'paid' || session.payment_status === 'no_payment_required';
+
+    if (isComplete) {
       const emails = readEmails();
       const normalised = (email || session.customer_email || '').toLowerCase().trim();
       if (normalised && !emails.paid.includes(normalised)) {
@@ -234,11 +240,28 @@ app.get('/api/verify-payment', async (req, res) => {
       }
       return res.json({ paid: true, email: normalised });
     }
+    console.log(`[Payment] Unexpected payment_status: ${session.payment_status} — returning paid: false`);
     res.json({ paid: false });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
   }
+});
+
+// ── Send paid results email after upgrade (client posts saved analysis data) ─
+app.post('/api/resend-results', async (req, res) => {
+  const { email, jobTitle, data } = req.body;
+  if (!email || !data) return res.status(400).json({ error: 'Missing email or data.' });
+  const normalised = email.toLowerCase().trim();
+  const emails = readEmails();
+  if (!emails.paid.includes(normalised)) {
+    return res.status(403).json({ error: 'Not a paid account.' });
+  }
+  console.log(`[Email] resend-results requested for ${normalised}`);
+  sendPaidResultsEmail(normalised, jobTitle || '', data).catch(err =>
+    console.error('[Email] resend-results send failed:', err.message)
+  );
+  res.json({ ok: true });
 });
 
 // ── Audience helper ───────────────────────────────────────────────────────

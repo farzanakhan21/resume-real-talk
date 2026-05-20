@@ -24,6 +24,7 @@ export default function App() {
   const [isPaid, setIsPaid] = useState(false)
   const [userEmail, setUserEmail] = useState('')
   const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [paymentConfirmed, setPaymentConfirmed] = useState(false)
 
   const trackPageView = (path) => {
     if (typeof window.gtag === 'function') {
@@ -68,13 +69,26 @@ export default function App() {
             const saved = sessionStorage.getItem('nrhr_session')
             if (saved) {
               try {
-                const { results: savedResults } = JSON.parse(saved)
+                const { results: savedResults, jobTitle: savedJobTitle } = JSON.parse(saved)
                 if (savedResults) {
                   setResults(savedResults)
-                  sessionStorage.setItem('nrhr_session', JSON.stringify({ results: savedResults, isPaid: true, userEmail: resolvedEmail }))
+                  sessionStorage.setItem('nrhr_session', JSON.stringify({ results: savedResults, isPaid: true, userEmail: resolvedEmail, jobTitle: savedJobTitle || '' }))
                   setView('results')
+                  // Send paid email with PDF — fire and forget
+                  fetch('/api/resend-results', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: resolvedEmail, jobTitle: savedJobTitle || '', data: savedResults }),
+                  }).catch(() => {})
+                } else {
+                  // No saved results (e.g. different tab/browser) — show confirmation banner
+                  setPaymentConfirmed(true)
                 }
-              } catch {}
+              } catch {
+                setPaymentConfirmed(true)
+              }
+            } else {
+              setPaymentConfirmed(true)
             }
           }
         })
@@ -93,6 +107,7 @@ export default function App() {
             setUserEmail(savedEmail || '')
             setView('results')
           }
+          // Note: jobTitle is also stored in the session but only needed for resend-results
         } catch {}
       }
     }
@@ -148,7 +163,7 @@ export default function App() {
 
       setResults(json.data)
       setIsPaid(json.isPaid || false)
-      sessionStorage.setItem('nrhr_session', JSON.stringify({ results: json.data, isPaid: json.isPaid || false, userEmail: email }))
+      sessionStorage.setItem('nrhr_session', JSON.stringify({ results: json.data, isPaid: json.isPaid || false, userEmail: email, jobTitle: pendingData.jobTitle || '' }))
       setView('results')
       window.scrollTo({ top: 0 })
     } catch (err) {
@@ -187,6 +202,7 @@ export default function App() {
     setGlobalError('')
     setIsPaid(false)
     setUserEmail('')
+    setPaymentConfirmed(false)
     window.scrollTo({ top: 0 })
   }
 
@@ -201,6 +217,15 @@ export default function App() {
             <FounderIntro />
             <HowItWorks />
             <div className="container--narrow" style={{ paddingBottom: '6rem' }}>
+              {paymentConfirmed && (
+                <div style={{ background: 'rgba(45,27,105,0.06)', border: '2px solid #2D1B69', borderRadius: '12px', padding: '1.25rem 1.5rem', marginBottom: '2rem', display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                  <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>✓</span>
+                  <div>
+                    <p style={{ margin: '0 0 0.25rem', fontWeight: 800, fontSize: '0.9rem', color: '#2D1B69', letterSpacing: '0.02em' }}>Payment confirmed — you're in.</p>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: '#555', lineHeight: 1.5 }}>Re-upload your resume below to get your full paid report with PDF attached. Your email is already unlocked.</p>
+                  </div>
+                </div>
+              )}
               <MultiStepForm onSubmit={handleFormSubmit} error={globalError} />
             </div>
           </motion.div>

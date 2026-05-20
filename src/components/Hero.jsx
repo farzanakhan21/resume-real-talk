@@ -16,7 +16,7 @@ export default function Hero() {
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
     >
-      <span className="hero__badge">✦ roast my resume</span>
+      <button className="hero__badge" onClick={scrollToForm}>✦ roast my resume</button>
       <h1 className="hero__h1">
         Your resume<br />
         is <em>lying</em><br />
@@ -25,9 +25,6 @@ export default function Hero() {
       <p className="hero__sub">
         Not a generic ATS scanner. A brutally honest hiring perception analysis - what the recruiter sees, what the hiring manager feels, what you need to do differently.
       </p>
-      <button className="btn btn--primary hero__cta" onClick={scrollToForm}>
-        + roast my resume <span className="btn-arrow">→</span>
-      </button>
     </motion.section>
   )
 }

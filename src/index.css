@@ -123,6 +123,12 @@ ul { list-style: none; }
   border: 2px solid var(--border-dark);
   margin-bottom: 2.5rem;
   box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.hero__badge:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
 }
 .hero__h1 {
   font-size: clamp(4rem, 13vw, 9.5rem);
@@ -144,9 +150,6 @@ ul { list-style: none; }
   font-weight: 400;
   border-left: 4px solid var(--accent);
   padding-left: 1.5rem;
-}
-.hero__cta {
-  margin-top: 2.5rem;
 }
 
 /* ── Founder Intro ── */

@@ -1,5 +1,12 @@
 import { motion } from 'framer-motion'
 
+function scrollToForm() {
+  const el = document.getElementById('roast-form')
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
+
 export default function Hero() {
   return (
     <motion.section
@@ -18,6 +25,9 @@ export default function Hero() {
       <p className="hero__sub">
         Not a generic ATS scanner. A brutally honest hiring perception analysis - what the recruiter sees, what the hiring manager feels, what you need to do differently.
       </p>
+      <button className="btn btn--primary hero__cta" onClick={scrollToForm}>
+        + roast my resume <span className="btn-arrow">→</span>
+      </button>
     </motion.section>
   )
 }

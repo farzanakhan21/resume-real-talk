@@ -13,7 +13,6 @@ import PositioningStrategy from './PositioningStrategy'
 import LinkedInRewrite from './LinkedInRewrite'
 import ThirtyDayPlan from './ThirtyDayPlan'
 import LeadCapture from './LeadCapture'
-import LockedSection from './LockedSection'
 import Disclaimer from '../Disclaimer'
 
 function SectionHeader({ num, title, amberAccent }) {
@@ -157,39 +156,10 @@ export default function Results({ data, isPaid, userEmail, onRewrite, onReset, o
           </>
         )}
 
-        {/* ── Free: locked section previews ── */}
-        {!isPaid && (
-          <div style={{ marginTop: '2rem' }}>
-            <div style={{
-              fontFamily: 'var(--mono)',
-              fontSize: '0.65rem',
-              fontWeight: 700,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              color: 'var(--text-tertiary)',
-              marginBottom: '1rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.875rem',
-            }}>
-              <span>Locked in full report</span>
-              <span style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-              <LockedSection icon="🔍" title="Hard Truth & Core Disconnect" lines={3} onUpgrade={onUpgrade} delay={0.05} />
-              <LockedSection icon="🎖️" title="Executive Presence Analysis" lines={3} onUpgrade={onUpgrade} delay={0.1} />
-              <LockedSection icon="✦" title="Hidden Competitive Advantages" lines={2} onUpgrade={onUpgrade} delay={0.15} />
-              <LockedSection icon="🌐" title="Industry Translation Gaps" lines={2} onUpgrade={onUpgrade} delay={0.2} />
-              <LockedSection icon="✏️" title="Rewrite Suggestions with Copy-Paste Examples" lines={4} onUpgrade={onUpgrade} delay={0.25} />
-            </div>
-          </div>
-        )}
-
         {/* ── Section 2: Unfair Advantage Playbook ── */}
-        <SectionHeader num={2} title="The Unfair|Advantage Playbook" amberAccent />
-
-        {isPaid ? (
+        {isPaid && (
           <>
+            <SectionHeader num={2} title="The Unfair|Advantage Playbook" amberAccent />
             <NetworkingStrategy data={data.networkingStrategy} />
             <div style={{ height: '1rem' }} />
             <PositioningStrategy data={data.positioningStrategy} />
@@ -206,13 +176,6 @@ export default function Results({ data, isPaid, userEmail, onRewrite, onReset, o
               </>
             )}
           </>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-            <LockedSection icon="🤝" title="Tailored Networking Strategy" lines={3} onUpgrade={onUpgrade} delay={0.05} />
-            <LockedSection icon="🎯" title="Positioning Strategy & Elevator Pitch" lines={3} onUpgrade={onUpgrade} delay={0.1} />
-            <LockedSection icon="💼" title="LinkedIn Profile Rewrite" lines={4} onUpgrade={onUpgrade} delay={0.15} />
-            <LockedSection icon="📈" title="30-Day Visibility Sprint" lines={3} onUpgrade={onUpgrade} delay={0.2} />
-          </div>
         )}
 
         {/* Sample report teaser for free users */}

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 const STATS = [
   { value: '75% → 19%', label: 'turnover reduction' },
   { value: '$0', label: 'workers comp premium achieved' },
-  { value: 'since 2016', label: 'in hospitality, startups & scaling businesses' },
+  { value: 'since 2016', label: 'in HR across hospitality, service-led & startups' },
   { value: 'built from nothing', label: 'HR functions built from nothing across multi-site teams' },
 ]
 

@@ -285,6 +285,27 @@ ul { list-style: none; }
   max-width: 1100px;
   margin: 0 auto;
 }
+.swyg__inner--simple {
+  max-width: 680px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.swyg__inner--simple .swyg__label {
+  margin-bottom: 1rem;
+}
+.swyg__inner--simple .swyg__heading {
+  margin-bottom: 0.75rem;
+}
+.swyg__inner--simple .swyg__sub {
+  margin-bottom: 2rem;
+}
+.swyg__sample-btn {
+  font-size: 1rem;
+  padding: 0.9rem 2.5rem;
+}
 .swyg__header {
   margin-bottom: 3rem;
 }

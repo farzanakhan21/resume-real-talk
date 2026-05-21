@@ -39,7 +39,7 @@ export default function About({ onNavigate }) {
         </motion.div>
 
         <Section delay={0.1}>
-          <p>Building HR from the ground up since 2016 - in hospitality, events, and high-growth environments. And now building products to fix the problems I keep seeing from the inside.</p>
+          <p>Building HR from the ground up since 2016 - in hospitality, service-led and startups. And now turning what I've learned into tools that actually help.</p>
 
           <h3 className="about-receipts-heading">the receipts.</h3>
 

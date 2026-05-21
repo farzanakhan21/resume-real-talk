@@ -275,40 +275,13 @@ ul { list-style: none; }
   }
 }
 
-/* ── Sample report teaser (in Results, free users only) ── */
-.sample-report-teaser {
+/* ── Social proof line (in Results, free users only) ── */
+.social-proof-line {
   text-align: center;
-  padding: 2.5rem 2rem;
+  font-size: 0.82rem;
+  color: var(--text-tertiary);
   margin: 2rem 0;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--bg-card);
-}
-.sample-report-teaser__label {
-  display: inline-block;
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 0.75rem;
-}
-.sample-report-teaser__heading {
-  font-size: 1.35rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--text);
-  margin: 0 0 0.5rem;
-}
-.sample-report-teaser__sub {
-  font-size: 0.95rem;
-  color: var(--text-secondary);
-  margin: 0 0 1.5rem;
-  line-height: 1.6;
-}
-.sample-report-teaser__btn {
-  font-size: 0.95rem;
+  letter-spacing: 0.01em;
 }
 
 /* ── See What You're Getting ── */

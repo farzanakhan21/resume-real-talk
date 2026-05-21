@@ -1241,11 +1241,11 @@ select.input { cursor: pointer; appearance: none; background-image: url("data:im
 }
 .lead-capture-dark .lead-label {
   font-family: var(--mono);
-  font-size: 0.63rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: rgba(250, 248, 244, 0.75);
   margin-bottom: 1rem;
 }
 .lead-capture-dark h2 {

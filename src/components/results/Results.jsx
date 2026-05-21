@@ -215,6 +215,28 @@ export default function Results({ data, isPaid, userEmail, onRewrite, onReset, o
           </div>
         )}
 
+        {/* Sample report teaser for free users */}
+        {!isPaid && (
+          <motion.div
+            className="sample-report-teaser no-print"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <span className="sample-report-teaser__label">✦ no surprises</span>
+            <h3 className="sample-report-teaser__heading">See exactly what you're getting</h3>
+            <p className="sample-report-teaser__sub">No surprises. Here's a real example of what lands in your inbox.</p>
+            <a
+              href="/sample-report.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn--ghost sample-report-teaser__btn"
+            >
+              View sample report →
+            </a>
+          </motion.div>
+        )}
+
         {/* Lead capture for free users */}
         {!isPaid && <LeadCapture onUpgrade={onUpgrade} />}
 

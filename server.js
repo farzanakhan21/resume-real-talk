@@ -1121,12 +1121,32 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
   }${isPaid ? `,\n${paidSections}` : ''}
 }`;
 
-    const message = await client.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: isPaid ? 12000 : 8000,
-      system: 'You are a brutally honest career analyst powering "Roast My Resume". Return only valid JSON - no markdown, no preamble, no explanation. Be specific, uncomfortable, and direct - name exact problems, quote actual resume language, never soften. SCORING CALIBRATION: most real-world resumes score 40-65 out of 100. Truly exceptional resumes score 75-85. Scores above 85 are extremely rare.',
-      messages: [{ role: 'user', content: prompt }],
-    });
+    // Retry up to 3 times on 529 overloaded_error, with a 3-second pause between attempts
+    let message;
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY_MS = 3000;
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        message = await client.messages.create({
+          model: 'claude-sonnet-4-6',
+          max_tokens: isPaid ? 12000 : 8000,
+          system: 'You are a brutally honest career analyst powering "Roast My Resume". Return only valid JSON - no markdown, no preamble, no explanation. Be specific, uncomfortable, and direct - name exact problems, quote actual resume language, never soften. SCORING CALIBRATION: most real-world resumes score 40-65 out of 100. Truly exceptional resumes score 75-85. Scores above 85 are extremely rare.',
+          messages: [{ role: 'user', content: prompt }],
+        });
+        break; // success - exit retry loop
+      } catch (apiErr) {
+        const isOverloaded = apiErr.status === 529 ||
+          apiErr.error?.type === 'overloaded_error' ||
+          (apiErr.message || '').toLowerCase().includes('overloaded');
+        if (isOverloaded && attempt < MAX_RETRIES) {
+          console.warn(`[Anthropic] 529 overloaded on attempt ${attempt}/${MAX_RETRIES} - retrying in ${RETRY_DELAY_MS}ms`);
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+          continue;
+        }
+        // Final attempt failed or non-retryable error - re-throw for outer catch
+        throw apiErr;
+      }
+    }
 
     const raw = message.content[0].text.trim();
     let parsed;
@@ -1178,8 +1198,14 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
 
     res.json({ success: true, data: parsed, isPaid });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message || 'Something went wrong. Try again.' });
+    console.error('[Analyze] Error:', err.status || '', err.message || err);
+    const isOverloaded = err.status === 529 ||
+      err.error?.type === 'overloaded_error' ||
+      (err.message || '').toLowerCase().includes('overloaded');
+    const userMessage = isOverloaded
+      ? "We're experiencing high demand right now. Please try again in a moment."
+      : 'Something went wrong analysing your resume. Please try again.';
+    res.status(500).json({ error: userMessage });
   }
 });
 

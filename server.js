@@ -145,6 +145,28 @@ async function saveAnalysis(entry) {
   }
 }
 
+async function markAnalysisPaid(email) {
+  if (!config.SUPABASE_URL || !config.SUPABASE_KEY) return;
+  try {
+    const res = await fetch(
+      `${config.SUPABASE_URL}/rest/v1/analyses?email=eq.${encodeURIComponent(email)}&order=date.desc&limit=1`,
+      {
+        method: 'PATCH',
+        headers: { ...supabaseHeaders(), 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ is_paid: true }),
+      }
+    );
+    if (!res.ok) {
+      const msg = await res.text();
+      console.error('[DB] Supabase markAnalysisPaid failed:', res.status, msg);
+    } else {
+      console.log('[DB] Marked is_paid=true in Supabase for:', email);
+    }
+  } catch (err) {
+    console.error('[DB] Supabase markAnalysisPaid error:', err.message);
+  }
+}
+
 async function fetchAnalyses() {
   if (config.SUPABASE_URL && config.SUPABASE_KEY) {
     try {
@@ -320,6 +342,10 @@ app.get('/api/verify-payment', async (req, res) => {
       if (normalised && !emails.paid.includes(normalised)) {
         emails.paid.push(normalised);
         writeEmails(emails);
+        // Update Supabase record to is_paid = true (fire and forget)
+        markAnalysisPaid(normalised).catch(err =>
+          console.error('[DB] markAnalysisPaid failed in verify-payment:', err.message)
+        );
         // Send upgrade confirmation email (fire and forget)
         sendUpgradeConfirmEmail(normalised).catch(err =>
           console.error('[Email] Upgrade confirm failed:', err.message)
@@ -368,6 +394,10 @@ app.post('/api/resend-results', async (req, res) => {
     return res.status(403).json({ error: 'Payment not verified.' });
   }
 
+  // Update Supabase record to is_paid = true (fire and forget)
+  markAnalysisPaid(normalised).catch(err =>
+    console.error('[DB] markAnalysisPaid failed in resend-results:', err.message)
+  );
   console.log(`[Email] resend-results: sending paid PDF to ${normalised}`);
   sendPaidResultsEmail(normalised, jobTitle || '', data).catch(err =>
     console.error('[Email] resend-results send failed:', err.message)

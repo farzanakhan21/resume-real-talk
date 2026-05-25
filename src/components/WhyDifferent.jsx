@@ -10,7 +10,6 @@ export default function WhyDifferent() {
     >
       <div className="why-different__inner">
         <div className="why-different__left">
-          <span className="why-different__label">✦ why this is different</span>
           <h2 className="why-different__heading">Why This Is<br />Different</h2>
         </div>
         <div className="why-different__right">

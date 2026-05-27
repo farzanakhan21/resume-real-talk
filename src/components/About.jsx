@@ -33,13 +33,17 @@ export default function About({ onNavigate }) {
         >
           <span className="hero__badge">✦ about</span>
           <h1 className="about-headline">
-            I didn't plan to work in HR.<br />HR found me.
+            I build what I wish existed. And share what I know the way I would with a friend.
           </h1>
           <p className="about-subheadline">here's what being on the inside since 2016 has taught me.</p>
         </motion.div>
 
         <Section delay={0.1}>
-          <p>Building HR from the ground up since 2016 - in hospitality, service-led and startups. And now turning what I've learned into tools that actually help.</p>
+          <p>I built Roast My Resume because I felt the pain personally. The no responses. The silence. The generic tools that told me nothing useful.</p>
+
+          <p>But I've also sat on the other side of the hiring table. I know what hiring managers actually think. I know why people get screened out before a human even sees their application.</p>
+
+          <p>So I stopped relying on job applications and figured out how to show up differently. Then I built the tool I wished existed.</p>
 
           <h3 className="about-receipts-heading">the receipts.</h3>
 
@@ -55,17 +59,7 @@ export default function About({ onNavigate }) {
             <li>Worked with the systems, and against them - <strong>I know both sides</strong></li>
           </ul>
 
-          <p className="about-and-yes">And yes - I've also been the one writing my own redundancy letter, navigating toxic workplaces, and figuring it out from scratch. Which is exactly why I know this stuff works.</p>
-
-          <p>I believe great HR doesn't take sides - not the employee's, not the business's. We sit at the intersection. Everyone deserves to be heard. And there's always a way to figure out how to use your voice - whether you're trying to get in the room, run the room, or redesign what happens inside it.</p>
-
-          <p>And sometimes, people need more than information. They need someone who's lived it.</p>
-
-          <p>I work 1:1 with individuals navigating career pivots after 10+ years, returning to the workforce, and learning how to get seen in a market that doesn't know them yet. And sometimes the harder stuff - Fair Work claims, psychological workers' comp cases, starting over when the system has worked against you.</p>
-
-          <p>If you need someone who understands both sides of the table, that's exactly where I come in.</p>
-
-          <p>If you're a founder or operator - I make complex legislation simple and difficult conversations easy. This is what I'd tell you if you were my friend and you needed real answers.</p>
+          <p className="about-and-yes">And yes - I've also been the one writing my own redundancy letter. Which is exactly why I know this stuff works.</p>
         </Section>
 
         {/* Sign-off: photo inline with name */}

@@ -1663,6 +1663,58 @@ select.input { cursor: pointer; appearance: none; background-image: url("data:im
   border-color: var(--accent-hover);
 }
 
+/* ── Testimonials ── */
+.testimonials {
+  padding: 5rem 2rem;
+  border-top: 2px solid var(--border-dark);
+}
+.testimonials__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.testimonials__label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: 2.5rem;
+}
+.testimonials__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+.testimonials__card {
+  border: 2px solid var(--border-dark);
+  box-shadow: var(--shadow-sm);
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.testimonials__quote {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--text);
+  margin: 0;
+}
+.testimonials__initial {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+@media (max-width: 768px) {
+  .testimonials__grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
 /* ── Error ── */
 .error-msg {
   background: rgba(179, 58, 42, 0.06);

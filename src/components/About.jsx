@@ -39,13 +39,13 @@ export default function About({ onNavigate }) {
         </motion.div>
 
         <Section delay={0.1}>
-          <p>I built Roast My Resume because I felt the pain personally. The no responses. The silence. The generic tools that told me nothing useful.</p>
+          <p>I tell you what actually goes through our minds when we look at your resume.</p>
 
-          <p>But I've also sat on the other side of the hiring table. I know what hiring managers actually think. I know why people get screened out before a human even sees their application.</p>
+          <p>I've been on the hiring side since 2016 - in hospitality, service-led businesses and startups. I know what makes a hiring manager stop scrolling. I know why good people get screened out before a human even reads their application. And I know what it feels like to be on the other side of that silence too.</p>
 
-          <p>So I stopped relying on job applications and figured out how to show up differently. Then I built the tool I wished existed.</p>
+          <p>I've also been the one writing my own redundancy letter. So when I say I know this stuff works - I mean it from both sides of the table.</p>
 
-<p className="about-and-yes">And yes - I've also been the one writing my own redundancy letter. Which is exactly why I know this stuff works.</p>
+          <p>I built Roast My Resume because the tools that exist aren't telling people the truth. This isn't just AI. It's 10 years of hiring-side experience, encoded into every part of the analysis.</p>
         </Section>
 
         {/* Sign-off: photo inline with name */}

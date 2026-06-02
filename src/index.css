@@ -1587,40 +1587,6 @@ select.input { cursor: pointer; appearance: none; background-image: url("data:im
   color: var(--text);
   font-style: normal;
 }
-/* receipts section */
-.about-receipts-heading {
-  font-size: 1.75rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--text);
-  line-height: 1;
-  margin-top: 0.5rem;
-  margin-bottom: 0.25rem;
-}
-.about-receipts {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  padding-left: 0;
-}
-.about-receipts li {
-  font-size: 1.05rem;
-  line-height: 1.65;
-  color: var(--text);
-  padding-left: 1.25rem;
-  position: relative;
-}
-.about-receipts li::before {
-  content: '-';
-  position: absolute;
-  left: 0;
-  color: var(--text-tertiary);
-}
-.about-receipts strong {
-  color: var(--accent);
-  font-weight: 700;
-}
 .about-section__body strong {
   color: var(--accent);
   font-weight: 700;

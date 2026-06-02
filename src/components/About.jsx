@@ -45,21 +45,7 @@ export default function About({ onNavigate }) {
 
           <p>So I stopped relying on job applications and figured out how to show up differently. Then I built the tool I wished existed.</p>
 
-          <h3 className="about-receipts-heading">the receipts.</h3>
-
-          <ul className="about-receipts">
-            <li>Reviewed <strong>thousands of resumes</strong> - and know exactly what makes hiring managers stop scrolling</li>
-            <li>Helped secure <strong>100+ interviews</strong> through strategic positioning</li>
-            <li>Reduced turnover from <strong>75% to 19%</strong></li>
-            <li>Improved engagement scores from <strong>6.9 to 8.3</strong></li>
-            <li>Achieved <strong>$0 workers' comp premium</strong></li>
-            <li>Reduced recruitment spend from <strong>$20,000 to $0</strong></li>
-            <li>Built HR functions from scratch for businesses that <strong>had never had one</strong></li>
-            <li>Navigated successful audits with <strong>Fair Work, Safe Work, and Home Affairs</strong> - I know exactly what they look for</li>
-            <li>Worked with the systems, and against them - <strong>I know both sides</strong></li>
-          </ul>
-
-          <p className="about-and-yes">And yes - I've also been the one writing my own redundancy letter. Which is exactly why I know this stuff works.</p>
+<p className="about-and-yes">And yes - I've also been the one writing my own redundancy letter. Which is exactly why I know this stuff works.</p>
         </Section>
 
         {/* Sign-off: photo inline with name */}

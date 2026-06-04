@@ -25,6 +25,7 @@ export default function Hero() {
       <p className="hero__sub">
         Not a generic ATS scanner. A brutally honest hiring perception analysis - what the recruiter sees, what the hiring manager feels, what you need to do differently.
       </p>
+      <button className="hero__cta" onClick={scrollToForm}>Get my roast →</button>
       <p className="hero__context">
         Built by someone who understands how recruiters, hiring managers, and HR teams actually think - not just how AI rewrites resumes.
       </p>

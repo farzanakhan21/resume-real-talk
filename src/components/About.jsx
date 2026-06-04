@@ -41,9 +41,9 @@ export default function About({ onNavigate }) {
         <Section delay={0.1}>
           <p>I tell you what actually goes through our minds when we look at your resume.</p>
 
-          <p>I've been on the hiring side since 2016 - in hospitality, service-led businesses and startups. I know what makes a hiring manager stop scrolling. I know why good people get screened out before a human even reads their application. And I know what it feels like to be on the other side of that silence too.</p>
+          <p>I've been on the hiring side since 2016 - in hospitality, service-led businesses and startups. I've watched hiring managers stop scrolling. I've seen good people get screened out before a human even reads their application. And I've been on the other side of that silence too.</p>
 
-          <p>I've also been the one writing my own redundancy letter. So when I say I know this stuff works - I mean it from both sides of the table.</p>
+          <p>I've also been the one writing my own redundancy letter. So this comes from both sides of the table.</p>
 
           <p>I built Roast My Resume because the tools that exist aren't telling people the truth. This isn't just AI. It's 10 years of hiring-side experience, encoded into every part of the analysis.</p>
         </Section>

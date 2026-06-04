@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-const FAQS = [
+const GENERAL = [
   {
     q: 'Is the first analysis really free?',
     a: 'Yes. No credit card needed. Upload your resume, fill in the role details, and get your roast instantly.',
@@ -30,45 +30,80 @@ const FAQS = [
     q: "What's coming next?",
     a: "This is just the start. I'm building out tools for navigating difficult workplace conversations, making the case for your promotion, and recognising toxic workplaces before they take a toll. Stay tuned.",
   },
+]
+
+const PRIVACY_LEGAL = [
+  {
+    q: 'Is my resume stored or shared?',
+    a: 'No. Your resume is processed in memory during analysis and immediately discarded. We never store, share, or use your resume content for any other purpose. The only information we retain is your email address, target role, industry and career situation for our own records.',
+  },
+  {
+    q: 'Is this tool powered by AI?',
+    a: 'Yes. Roast My Resume uses AI to generate your analysis. The tool is built on 10 years of hiring-side experience - the questions it asks, the framework it uses, and the way it interprets your resume all come from real HR expertise. The AI delivers it, the human thinking behind it is what makes it different.',
+  },
+  {
+    q: 'Are results guaranteed?',
+    a: 'No. Roast My Resume provides career insight and strategic feedback to help you understand how your resume is being perceived. It is not a guarantee of employment outcomes. Always apply your own judgement and seek professional advice where needed.',
+  },
   {
     q: 'What is your refund policy?',
-    a: "All sales are final. Because this is a digital product delivered instantly, I'm unable to offer refunds once the report has been generated. If you have any questions, just hit reply on the email we sent you with your report and we can talk it through.",
+    a: 'Because your full report is generated and delivered immediately upon payment, we are unable to offer refunds once the analysis has been completed. If you experience a technical issue that prevents you from receiving your report, please contact us at farzana@noturregularhr.com and we will make it right.',
+  },
+  {
+    q: 'Who is behind this tool?',
+    a: 'Roast My Resume is built by Farzana Khan, an HR professional with over 10 years of experience across hospitality, service-led businesses and startups. This is not a generic AI tool - it is built on real hiring-side experience from someone who has sat on both sides of the table.',
   },
 ]
+
+function FaqItem({ q, a, id, open, onToggle }) {
+  return (
+    <div className="faq-item">
+      <button
+        className="faq-item__q"
+        onClick={() => onToggle(id)}
+        aria-expanded={open}
+      >
+        <span>{q}</span>
+        <span className={`faq-item__icon${open ? ' open' : ''}`}>+</span>
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            className="faq-item__a"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+          >
+            <p>{a}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 
 export default function FAQ() {
   const [open, setOpen] = useState(null)
 
-  const toggle = (i) => setOpen(open === i ? null : i)
+  const toggle = (id) => setOpen(open === id ? null : id)
 
   return (
     <section className="faq">
       <div className="faq__inner">
         <div className="faq__list">
-          {FAQS.map(({ q, a }, i) => (
-            <div key={i} className="faq-item">
-              <button
-                className="faq-item__q"
-                onClick={() => toggle(i)}
-                aria-expanded={open === i}
-              >
-                <span>{q}</span>
-                <span className={`faq-item__icon${open === i ? ' open' : ''}`}>+</span>
-              </button>
-              <AnimatePresence initial={false}>
-                {open === i && (
-                  <motion.div
-                    className="faq-item__a"
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
-                  >
-                    <p>{a}</p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+          {GENERAL.map(({ q, a }, i) => (
+            <FaqItem key={i} id={`g-${i}`} q={q} a={a} open={open === `g-${i}`} onToggle={toggle} />
+          ))}
+        </div>
+
+        <div className="faq__section-heading">
+          <span>✦ privacy &amp; legal</span>
+        </div>
+
+        <div className="faq__list">
+          {PRIVACY_LEGAL.map(({ q, a }, i) => (
+            <FaqItem key={i} id={`l-${i}`} q={q} a={a} open={open === `l-${i}`} onToggle={toggle} />
           ))}
         </div>
       </div>

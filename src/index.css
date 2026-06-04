@@ -1442,6 +1442,18 @@ select.input { cursor: pointer; appearance: none; background-image: url("data:im
 .faq__list {
   border-top: 1px solid var(--border);
 }
+.faq__section-heading {
+  margin-top: 3rem;
+  margin-bottom: 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--border-dark);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
 .faq-item {
   border-bottom: 1px solid var(--border);
 }

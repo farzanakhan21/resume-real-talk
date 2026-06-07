@@ -24,7 +24,7 @@ const GENERAL = [
   },
   {
     q: "What's the difference between free and paid?",
-    a: 'The free report shows your overall score, category scores and top issues - enough to know something\'s wrong. The paid report ($79 AUD) tells you exactly why and gives you the full plan to fix it - detailed recommendations, rewrite suggestions, LinkedIn profile rewrite, networking strategy and PDF download.',
+    a: "The free report shows your overall score, category scores and top issues - enough to know something's wrong. The paid report ($79 AUD) tells you exactly why and gives you the full plan to fix it - detailed recommendations, rewrite suggestions, LinkedIn profile rewrite, networking strategy and PDF download.",
   },
   {
     q: "What's coming next?",
@@ -57,19 +57,19 @@ const PRIVACY_LEGAL = [
 
 function FaqItem({ q, a, id, open, onToggle }) {
   return (
-    <div className="faq-item">
+    <div className={`lp-faq-item${open ? ' lp-faq-item--open' : ''}`}>
       <button
-        className="faq-item__q"
+        className="lp-faq-item__q"
         onClick={() => onToggle(id)}
         aria-expanded={open}
       >
         <span>{q}</span>
-        <span className={`faq-item__icon${open ? ' open' : ''}`}>+</span>
+        <span className="lp-faq-item__icon">{open ? '−' : '+'}</span>
       </button>
       <AnimatePresence initial={false}>
         {open && (
           <motion.div
-            className="faq-item__a"
+            className="lp-faq-item__a"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -89,24 +89,22 @@ export default function FAQ() {
   const toggle = (id) => setOpen(open === id ? null : id)
 
   return (
-    <section className="faq">
-      <div className="faq__inner">
-        <div className="faq__list">
-          {GENERAL.map(({ q, a }, i) => (
-            <FaqItem key={i} id={`g-${i}`} q={q} a={a} open={open === `g-${i}`} onToggle={toggle} />
-          ))}
-        </div>
-
-        <div className="faq__section-heading">
-          <span>✦ privacy &amp; legal</span>
-        </div>
-
-        <div className="faq__list">
-          {PRIVACY_LEGAL.map(({ q, a }, i) => (
-            <FaqItem key={i} id={`l-${i}`} q={q} a={a} open={open === `l-${i}`} onToggle={toggle} />
-          ))}
-        </div>
+    <div className="lp-faq">
+      <div className="lp-faq__list">
+        {GENERAL.map(({ q, a }, i) => (
+          <FaqItem key={i} id={`g-${i}`} q={q} a={a} open={open === `g-${i}`} onToggle={toggle} />
+        ))}
       </div>
-    </section>
+
+      <div className="lp-faq__section-label">
+        <span>✦ privacy &amp; legal</span>
+      </div>
+
+      <div className="lp-faq__list">
+        {PRIVACY_LEGAL.map(({ q, a }, i) => (
+          <FaqItem key={i} id={`l-${i}`} q={q} a={a} open={open === `l-${i}`} onToggle={toggle} />
+        ))}
+      </div>
+    </div>
   )
 }

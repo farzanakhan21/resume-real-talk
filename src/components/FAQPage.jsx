@@ -1,41 +1,43 @@
 import { motion } from 'framer-motion'
 import FAQ from './FAQ'
+import LandingNav from './landing/LandingNav'
+import LandingFooter from './landing/LandingFooter'
 
 export default function FAQPage({ onNavigate }) {
   return (
     <motion.div
       key="faq"
-      className="faq-page"
+      className="lp-faq-page"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.35 }}
     >
-      <div className="faq-page__inner">
-        <motion.div
-          className="faq-page__header"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <span className="hero__badge">✦ faqs</span>
-          <h1 className="faq-page__headline">questions I get asked.</h1>
-        </motion.div>
+      <LandingNav onNavigate={onNavigate} />
 
-        <FAQ />
-
-        <motion.div
-          className="faq-page__cta"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-        >
-          <button className="btn btn--primary" onClick={() => onNavigate('/')}>
-            Get your resume roasted →
-          </button>
-          <p className="pdf-hint" style={{ marginTop: '1rem' }}>When saving as PDF, uncheck 'Headers and footers' in your print dialog for the cleanest result.</p>
-        </motion.div>
+      {/* Purple hero header */}
+      <div className="lp-faq-hero">
+        <span className="lp-section-tag lp-section-tag--gold">✦ faqs</span>
+        <h1 className="lp-faq-hero__title">Questions I get asked.</h1>
+        <p className="lp-faq-hero__sub">
+          Everything you need to know before you roast.
+        </p>
       </div>
+
+      {/* Cream body with accordion */}
+      <div className="lp-faq-body">
+        <div className="lp-faq-body__inner">
+          <FAQ />
+
+          <div className="lp-faq-cta">
+            <button className="lp-btn-primary" onClick={() => onNavigate('/')}>
+              Get your resume roasted →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <LandingFooter onNavigate={onNavigate} />
     </motion.div>
   )
 }

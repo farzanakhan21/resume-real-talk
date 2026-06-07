@@ -214,7 +214,7 @@ export default function App() {
 
   return (
     <>
-      {view !== 'home' && <Header view={view} onNavigate={navigateTo} />}
+      {view !== 'home' && view !== 'faq' && <Header view={view} onNavigate={navigateTo} />}
 
       <AnimatePresence>
         {view === 'home' && (
@@ -227,17 +227,30 @@ export default function App() {
             <LandingProof />
             <LandingAbout />
             <LandingCTA />
-            <div id="roast-form" className="container--narrow" style={{ paddingTop: '5rem', paddingBottom: '6rem' }}>
-              {paymentConfirmed && (
-                <div style={{ background: 'rgba(45,27,105,0.06)', border: '2px solid #2D1B69', borderRadius: '12px', padding: '1.25rem 1.5rem', marginBottom: '2rem', display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
-                  <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>✓</span>
-                  <div>
-                    <p style={{ margin: '0 0 0.25rem', fontWeight: 800, fontSize: '0.9rem', color: '#2D1B69', letterSpacing: '0.02em' }}>Payment confirmed - you're in.</p>
-                    <p style={{ margin: 0, fontSize: '0.85rem', color: '#555', lineHeight: 1.5 }}>Re-upload your resume below to get your full paid report with PDF attached. Your email is already unlocked.</p>
+
+            {/* ── Form section: purple header + cream body ── */}
+            <div id="roast-form" className="lp-form-hero">
+              <div className="lp-form-hero__inner">
+                <span className="lp-section-tag lp-section-tag--gold">✦ roast my resume</span>
+                <h2 className="lp-form-hero__title">Let's find out what's really going on.</h2>
+                <p className="lp-form-hero__sub">Four quick questions - then drop your resume. We'll take it from there.</p>
+              </div>
+            </div>
+            <div className="lp-form-body">
+              <div className="lp-form-body__inner">
+                {paymentConfirmed && (
+                  <div className="lp-form-confirmed">
+                    <span className="lp-form-confirmed__icon">✓</span>
+                    <div>
+                      <p className="lp-form-confirmed__title">Payment confirmed - you're in.</p>
+                      <p className="lp-form-confirmed__sub">Re-upload your resume below to get your full paid report with PDF attached. Your email is already unlocked.</p>
+                    </div>
                   </div>
+                )}
+                <div className="lp-form-wrap">
+                  <MultiStepForm onSubmit={handleFormSubmit} error={globalError} />
                 </div>
-              )}
-              <MultiStepForm onSubmit={handleFormSubmit} error={globalError} />
+              </div>
             </div>
             <LandingFooter onNavigate={navigateTo} />
           </motion.div>
@@ -295,7 +308,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {view !== 'results' && view !== 'home' && (
+      {view !== 'results' && view !== 'home' && view !== 'faq' && (
         <footer className="footer">
           <p>not ur regular hr - est. 2016 &copy; 2026 · built different. because you deserve better than a template.</p>
           <p className="footer__links">

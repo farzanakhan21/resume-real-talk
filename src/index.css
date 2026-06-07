@@ -2562,3 +2562,447 @@ html { scroll-behavior: smooth; }
   .lp-btn-primary,
   .lp-btn-secondary { width: 100%; text-align: center; }
 }
+
+/* ═══════════════════════════════════════════════
+   FAQ PAGE
+   ═══════════════════════════════════════════════ */
+
+.lp-faq-page { min-height: 100vh; background: var(--lp-cream); }
+
+/* Purple hero header */
+.lp-faq-hero {
+  background: var(--lp-purple);
+  padding: 140px 48px 80px;
+  position: relative;
+  overflow: hidden;
+}
+.lp-faq-hero::before {
+  content: '?';
+  position: absolute;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 500px;
+  color: rgba(255,255,255,0.03);
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+.lp-faq-hero__title {
+  font-family: var(--lp-serif);
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 400;
+  color: #fff;
+  line-height: 1.1;
+  max-width: 700px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+.lp-faq-hero__sub {
+  font-size: 17px;
+  color: rgba(255,255,255,0.55);
+  max-width: 480px;
+  line-height: 1.6;
+}
+
+/* Cream accordion body */
+.lp-faq-body {
+  background: var(--lp-cream);
+  padding: 72px 48px 80px;
+}
+.lp-faq-body__inner {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+/* Accordion items */
+.lp-faq__list { display: flex; flex-direction: column; gap: 0; }
+
+.lp-faq-item {
+  background: #fff;
+  border: 1px solid rgba(45,27,105,0.1);
+  border-radius: 4px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.lp-faq-item--open {
+  border-color: var(--lp-gold);
+  box-shadow: 0 2px 12px rgba(200,168,75,0.12);
+}
+.lp-faq-item__q {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 20px 24px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--lp-purple);
+  line-height: 1.4;
+  transition: color 0.2s;
+}
+.lp-faq-item--open .lp-faq-item__q { color: var(--lp-purple); }
+.lp-faq-item__q:hover { color: var(--lp-purple-mid); }
+.lp-faq-item__icon {
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--lp-gold);
+  flex-shrink: 0;
+  line-height: 1;
+  width: 24px;
+  text-align: center;
+}
+.lp-faq-item__a {
+  overflow: hidden;
+}
+.lp-faq-item__a p {
+  padding: 0 24px 20px;
+  font-size: 15px;
+  color: var(--lp-text-muted);
+  line-height: 1.7;
+  margin: 0;
+  border-top: 1px solid rgba(200,168,75,0.2);
+  padding-top: 16px;
+}
+
+/* Section divider label */
+.lp-faq__section-label {
+  margin: 36px 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--lp-purple-light);
+}
+.lp-faq__section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(45,27,105,0.12);
+}
+
+/* FAQ bottom CTA */
+.lp-faq-cta {
+  margin-top: 56px;
+  display: flex;
+  justify-content: center;
+}
+
+/* FAQ responsive */
+@media (max-width: 768px) {
+  .lp-faq-hero { padding: 100px 24px 60px; }
+  .lp-faq-body { padding: 48px 24px 60px; }
+  .lp-faq-item__q { font-size: 15px; padding: 16px 18px; }
+  .lp-faq-item__a p { padding: 0 18px 16px; padding-top: 14px; }
+}
+
+/* ═══════════════════════════════════════════════
+   ROAST FORM SECTION
+   ═══════════════════════════════════════════════ */
+
+/* Purple hero above the form */
+.lp-form-hero {
+  background: var(--lp-purple);
+  padding: 80px 48px 72px;
+  position: relative;
+  overflow: hidden;
+}
+.lp-form-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 90% 50%, rgba(123,94,167,0.25) 0%, transparent 60%);
+  pointer-events: none;
+}
+.lp-form-hero__inner {
+  max-width: 760px;
+  margin: 0 auto;
+  position: relative;
+}
+.lp-form-hero__title {
+  font-family: var(--lp-serif);
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 400;
+  color: #fff;
+  line-height: 1.15;
+  margin: 16px 0 16px;
+}
+.lp-form-hero__sub {
+  font-size: 17px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.6;
+  border-left: 2px solid var(--lp-gold);
+  padding-left: 16px;
+}
+
+/* Cream form body */
+.lp-form-body {
+  background: var(--lp-cream);
+  padding: 64px 48px 80px;
+}
+.lp-form-body__inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Payment confirmed banner */
+.lp-form-confirmed {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(200,168,75,0.1);
+  border: 2px solid var(--lp-gold);
+  border-radius: 4px;
+  padding: 16px 20px;
+  margin-bottom: 32px;
+}
+.lp-form-confirmed__icon {
+  font-size: 18px;
+  color: var(--lp-gold);
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+.lp-form-confirmed__title {
+  margin: 0 0 4px;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--lp-purple);
+  letter-spacing: 0.02em;
+}
+.lp-form-confirmed__sub {
+  margin: 0;
+  font-size: 13px;
+  color: var(--lp-text-muted);
+  line-height: 1.5;
+}
+
+/* ── Form element overrides (scoped to .lp-form-wrap) ── */
+.lp-form-wrap .step-indicator {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 2.5rem;
+}
+.lp-form-wrap .step-dot {
+  width: 28px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(45,27,105,0.15);
+  transition: background 0.25s;
+}
+.lp-form-wrap .step-dot.active { background: var(--lp-gold); }
+.lp-form-wrap .step-dot.done  { background: var(--lp-purple-light); }
+
+.lp-form-wrap .form-step-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--lp-purple);
+  margin-bottom: 6px;
+}
+.lp-form-wrap .form-step-hint {
+  font-size: 15px;
+  color: var(--lp-text-muted);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.lp-form-wrap .option-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 18px;
+  background: #fff;
+  border: 1.5px solid rgba(45,27,105,0.15);
+  border-radius: 4px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--lp-text);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s, background 0.2s;
+}
+.lp-form-wrap .option-card:hover {
+  border-color: var(--lp-purple-light);
+  background: var(--lp-purple-pale);
+}
+.lp-form-wrap .option-card--selected {
+  background: var(--lp-purple);
+  border-color: var(--lp-purple);
+  color: #fff;
+}
+.lp-form-wrap .option-card__check {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.lp-form-wrap .option-card--selected .option-card__check {
+  background: var(--lp-gold);
+  border-color: var(--lp-gold);
+  color: var(--lp-purple);
+}
+.lp-form-wrap .option-card__label { flex: 1; }
+
+.lp-form-wrap .field { margin-bottom: 20px; }
+.lp-form-wrap .field__label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lp-purple);
+  margin-bottom: 8px;
+}
+.lp-form-wrap .field__label span { color: var(--lp-gold); }
+.lp-form-wrap .field__hint {
+  font-size: 13px;
+  color: var(--lp-text-muted);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+.lp-form-wrap .input {
+  width: 100%;
+  padding: 12px 16px;
+  background: #fff;
+  border: 1.5px solid rgba(45,27,105,0.18);
+  border-radius: 4px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  color: var(--lp-text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+}
+.lp-form-wrap .input:focus {
+  border-color: var(--lp-gold);
+  box-shadow: 0 0 0 3px rgba(200,168,75,0.15);
+}
+
+/* Upload drop zone */
+.lp-form-wrap .drop-zone {
+  background: #fff;
+  border: 2px dashed rgba(200,168,75,0.5);
+  border-radius: 4px;
+  padding: 36px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  text-align: center;
+}
+.lp-form-wrap .drop-zone:hover,
+.lp-form-wrap .drop-zone.over {
+  border-color: var(--lp-gold);
+  background: var(--lp-gold-light);
+}
+.lp-form-wrap .drop-zone__icon { font-size: 32px; }
+.lp-form-wrap .drop-zone__text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--lp-purple);
+}
+.lp-form-wrap .drop-zone__sub {
+  font-size: 12px;
+  color: var(--lp-text-muted);
+  letter-spacing: 0.5px;
+}
+.lp-form-wrap .drop-zone__file {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lp-gold);
+}
+
+.lp-form-wrap .privacy-note {
+  font-size: 12px;
+  color: var(--lp-text-muted);
+  margin-top: 10px;
+  line-height: 1.5;
+  padding: 10px 14px;
+  background: rgba(45,27,105,0.04);
+  border-radius: 4px;
+  border-left: 2px solid rgba(45,27,105,0.15);
+}
+
+.lp-form-wrap .btn--primary {
+  background: var(--lp-gold);
+  color: var(--lp-purple);
+  padding: 15px 36px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.15s, opacity 0.15s;
+}
+.lp-form-wrap .btn--primary:hover { transform: translateY(-2px); opacity: 0.92; }
+.lp-form-wrap .btn--primary .btn-arrow { font-style: normal; }
+
+.lp-form-wrap .btn--ghost {
+  background: none;
+  border: none;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lp-purple-light);
+  cursor: pointer;
+  padding: 0;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+.lp-form-wrap .btn--ghost:hover { color: var(--lp-purple); }
+
+.lp-form-wrap .error-msg {
+  background: rgba(179,58,42,0.06);
+  border: 1.5px solid #B33A2A;
+  color: #B33A2A;
+  border-radius: 4px;
+  padding: 10px 14px;
+  font-size: 14px;
+  margin-top: 12px;
+  line-height: 1.5;
+}
+
+.lp-form-wrap .form-disclaimer {
+  font-size: 12px;
+  color: var(--lp-text-muted);
+  line-height: 1.6;
+  margin-top: 20px;
+  margin-bottom: 4px;
+}
+
+/* Form responsive */
+@media (max-width: 768px) {
+  .lp-form-hero { padding: 60px 24px 52px; }
+  .lp-form-body { padding: 40px 24px 60px; }
+}

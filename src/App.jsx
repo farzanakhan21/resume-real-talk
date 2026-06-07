@@ -6,7 +6,6 @@ import LandingNav from './components/landing/LandingNav'
 import LandingHero from './components/landing/LandingHero'
 import LandingWho from './components/landing/LandingWho'
 import LandingWhat from './components/landing/LandingWhat'
-import LandingDiff from './components/landing/LandingDiff'
 import LandingProof from './components/landing/LandingProof'
 import LandingAbout from './components/landing/LandingAbout'
 import LandingCTA from './components/landing/LandingCTA'
@@ -223,7 +222,6 @@ export default function App() {
             <LandingHero />
             <LandingWho />
             <LandingWhat />
-            <LandingDiff />
             <LandingProof />
             <LandingAbout />
             <LandingCTA />

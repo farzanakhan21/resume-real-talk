@@ -221,10 +221,10 @@ export default function App() {
             <LandingNav onNavigate={navigateTo} />
             <LandingHero />
             <LandingWho />
-            <LandingWhat />
-            <LandingProof />
-            <LandingAbout />
             <LandingCTA />
+            <LandingWhat />
+            <LandingAbout />
+            <LandingProof />
 
             {/* ── Form section: purple header + cream body ── */}
             <div id="roast-form" className="lp-form-hero">

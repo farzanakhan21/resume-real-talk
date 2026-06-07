@@ -15,10 +15,10 @@ export default function LandingAbout() {
             Someone who's been on every side of the table.
           </h2>
           <p>
-            I've sat in <strong>hiring meetings, redundancy discussions, performance reviews and leadership conversations</strong> for almost 10 years - watching talented people get overlooked because they didn't know how to position themselves.
+            I've sat in <strong>hiring meetings, redundancy discussions, performance reviews and leadership conversations</strong> for over 10 years - watching talented people get overlooked because they didn't know how to position themselves.
           </p>
           <p>
-            Myself included. I've had interviews where I thought I nailed it and heard nothing. And ones where I walked out unsure and got the offer.
+            Myself included. I've written my own redundancy letter. So yes - I've been on every side of this. I've had interviews where I thought I nailed it and heard nothing. And ones where I walked out unsure and got the offer.
           </p>
           <p>
             The gap between how we think we're coming across and how we're actually being perceived is real. And most people never find out.

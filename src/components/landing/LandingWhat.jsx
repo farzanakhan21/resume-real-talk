@@ -7,7 +7,7 @@ const WHAT = [
   {
     n: '02',
     title: 'ATS & red flag audit',
-    body: 'Why you might not be making it past the systems — before a human ever sees you.',
+    body: 'Why you might not be making it past the systems - before a human ever sees you.',
   },
   {
     n: '03',

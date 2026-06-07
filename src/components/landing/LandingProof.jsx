@@ -2,7 +2,7 @@ const QUOTES = [
   { quote: 'omg it made me want to cry', meta: 'Beta tester' },
   { quote: 'I made immediate changes to my profile', meta: 'Beta tester' },
   { quote: 'I was so curious from the roast, I deffs would pay for the full report', meta: 'Beta tester' },
-  { quote: 'The market needs something more refreshingly honest and actionable.', meta: 'Sonia P. — Beta tester' },
+  { quote: 'The market needs something more refreshingly honest and actionable.', meta: 'Sonia P. - Beta tester' },
 ]
 
 export default function LandingProof() {

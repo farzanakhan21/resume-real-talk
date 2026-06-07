@@ -24,7 +24,7 @@ export default function LandingAbout() {
             Someone who's been on every side of the table.
           </h2>
           <p>
-            I've sat in <strong>hiring meetings, redundancy discussions, performance reviews and leadership conversations</strong> for almost 10 years — watching talented people get overlooked because they didn't know how to position themselves.
+            I've sat in <strong>hiring meetings, redundancy discussions, performance reviews and leadership conversations</strong> for almost 10 years - watching talented people get overlooked because they didn't know how to position themselves.
           </p>
           <p>
             Myself included. I've had interviews where I thought I nailed it and heard nothing. And ones where I walked out unsure and got the offer.
@@ -33,7 +33,7 @@ export default function LandingAbout() {
             The gap between how we think we're coming across and how we're actually being perceived is real. And most people never find out.
           </p>
           <p>
-            <strong>When people ask about the HR budget, I have to laugh sometimes and say — I AM THE BUDGET. 😂</strong> The resources just aren't there to give everyone the feedback they deserve.
+            <strong>When people ask about the HR budget, I have to laugh sometimes and say - I AM THE BUDGET. 😂</strong> The resources just aren't there to give everyone the feedback they deserve.
           </p>
           <p>So I built something that does.</p>
 
@@ -48,6 +48,13 @@ export default function LandingAbout() {
         </div>
 
         <div className="lp-about__visual">
+          {/* ── Portrait photo ── swap src value when you have the file ── */}
+          <img
+            src="/farzana.png"
+            alt="Farzana Khan"
+            className="lp-about__photo"
+          />
+
           <div className="lp-score-preview">
             <span className="lp-score-tag">Your score</span>
             <div className="lp-score-big">59</div>

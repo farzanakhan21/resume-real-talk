@@ -9,7 +9,7 @@ const COMPARISONS = [
   },
   {
     theirs: '"Make sure your LinkedIn headline is optimised."',
-    ours: '"You have the receipts — but you\'re burying them. Here\'s your unfair advantage you\'re not using."',
+    ours: '"You have the receipts - but you\'re burying them. Here\'s your unfair advantage you\'re not using."',
   },
 ]
 
@@ -23,7 +23,7 @@ export default function LandingDiff() {
             ChatGPT will tell you to use strong action verbs.
           </h2>
           <p>
-            This tells you why a hiring manager would scroll past you in 6 seconds — and what to do about it.
+            This tells you why a hiring manager would scroll past you in 6 seconds - and what to do about it.
           </p>
           <p>
             And yes, you could spend hours prompting AI to get there. Or you could get it in 60 seconds from{' '}

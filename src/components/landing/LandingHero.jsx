@@ -14,7 +14,7 @@ export default function LandingHero() {
       <div className="lp-hero__inner">
         <div className="lp-hero__tag">
           <span className="lp-hero__tag-dot" />
-          Beta — limited access open
+          Beta - limited access open
         </div>
 
         <h1 className="lp-hero__headline">
@@ -22,7 +22,7 @@ export default function LandingHero() {
         </h1>
 
         <p className="lp-hero__sub">
-          Not a generic ATS scanner. A brutally honest hiring perception analysis — what the recruiter sees, what the hiring manager feels, what you need to do differently.
+          Not a generic ATS scanner. A brutally honest hiring perception analysis - what the recruiter sees, what the hiring manager feels, what you need to do differently.
         </p>
 
         <div className="lp-hero__actions">

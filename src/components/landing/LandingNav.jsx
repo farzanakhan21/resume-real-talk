@@ -1,8 +1,19 @@
 import { useState } from 'react'
 
-function scrollTo(id) {
-  const el = document.getElementById(id)
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+// Scroll directly if already on the homepage; otherwise navigate home first
+// then scroll once the home sections have had time to render.
+function scrollToSection(sectionId, onNavigate) {
+  const isHome = window.location.pathname === '/'
+  if (isHome) {
+    const el = document.getElementById(sectionId)
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  } else {
+    onNavigate('/')
+    setTimeout(() => {
+      const el = document.getElementById(sectionId)
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 400)
+  }
 }
 
 export default function LandingNav({ onNavigate }) {
@@ -18,12 +29,18 @@ export default function LandingNav({ onNavigate }) {
 
       <ul className={`lp-nav__links${menuOpen ? ' lp-nav__links--open' : ''}`}>
         <li>
-          <a href="#lp-what" onClick={(e) => { e.preventDefault(); close(); scrollTo('lp-what') }}>
+          <a
+            href="#lp-what"
+            onClick={(e) => { e.preventDefault(); close(); scrollToSection('lp-what', onNavigate) }}
+          >
             What you get
           </a>
         </li>
         <li>
-          <a href="#lp-about" onClick={(e) => { e.preventDefault(); close(); scrollTo('lp-about') }}>
+          <a
+            href="#lp-about"
+            onClick={(e) => { e.preventDefault(); close(); scrollToSection('lp-about', onNavigate) }}
+          >
             About
           </a>
         </li>
@@ -33,7 +50,10 @@ export default function LandingNav({ onNavigate }) {
       </ul>
 
       <div className="lp-nav__right">
-        <button className="lp-nav__cta" onClick={() => { close(); scrollTo('roast-form') }}>
+        <button
+          className="lp-nav__cta"
+          onClick={() => { close(); scrollToSection('roast-form', onNavigate) }}
+        >
           Roast my resume
         </button>
         <button

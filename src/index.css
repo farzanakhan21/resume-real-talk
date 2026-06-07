@@ -2309,14 +2309,56 @@ html { scroll-behavior: smooth; }
 .lp-compare-card--ours p { color: var(--lp-purple); font-weight: 500; }
 
 /* ── Proof ── */
-.lp-proof { padding: 100px 48px; background: var(--lp-cream-dark); }
-.lp-proof__inner { max-width: 1200px; margin: 0 auto; }
-.lp-proof__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 24px;
-  margin-top: 60px;
+.lp-proof {
+  padding: 100px 0;
+  background: var(--lp-cream-dark);
+  overflow: hidden;
 }
+.lp-proof__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 48px;
+  margin-bottom: 56px;
+}
+
+/* Carousel */
+@keyframes lp-carousel-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.lp-carousel {
+  /* Fade edges in/out */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
+}
+.lp-carousel__track {
+  display: flex;
+  gap: 24px;
+  width: max-content;
+  animation: lp-carousel-scroll 28s linear infinite;
+}
+.lp-carousel__track:hover {
+  animation-play-state: paused;
+}
+
+/* Cards inside carousel — fixed width so the loop maths work */
+.lp-carousel .lp-proof__card {
+  width: 340px;
+  flex-shrink: 0;
+}
+
 .lp-proof__card {
   background: #fff;
   border: 1px solid rgba(45,27,105,0.08);
@@ -2552,6 +2594,9 @@ html { scroll-behavior: smooth; }
   .lp-hero__actions { gap: 12px; }
   .lp-hero__proof { margin-top: 36px; padding-top: 28px; gap: 28px; }
   .lp-what__grid { grid-template-columns: 1fr; }
+  .lp-proof__inner { padding: 0 24px; }
+  .lp-carousel .lp-proof__card { width: 260px; }
+  .lp-carousel__track { gap: 16px; }
   .lp-who,
   .lp-what,
   .lp-diff,

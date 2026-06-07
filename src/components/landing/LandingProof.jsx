@@ -5,6 +5,9 @@ const QUOTES = [
   { quote: 'The market needs something more refreshingly honest and actionable.', meta: 'Sonia P. - Beta tester' },
 ]
 
+// Duplicated so the loop resets seamlessly at the -50% mark
+const CAROUSEL_QUOTES = [...QUOTES, ...QUOTES]
+
 export default function LandingProof() {
   return (
     <section className="lp-proof">
@@ -13,9 +16,17 @@ export default function LandingProof() {
           <span className="lp-section-tag">Early feedback</span>
           <h2 className="lp-section-title">The early feedback has been… something.</h2>
         </div>
-        <div className="lp-proof__grid">
-          {QUOTES.map(({ quote, meta }) => (
-            <div key={meta + quote} className="lp-proof__card">
+      </div>
+
+      {/* Carousel spans full section width, outside the inner container */}
+      <div className="lp-carousel">
+        <div className="lp-carousel__track">
+          {CAROUSEL_QUOTES.map(({ quote, meta }, i) => (
+            <div
+              key={i}
+              className="lp-proof__card"
+              aria-hidden={i >= QUOTES.length}
+            >
               <p className="lp-proof__quote">"{quote}"</p>
               <div className="lp-proof__meta">
                 <span className="lp-proof__dot" />

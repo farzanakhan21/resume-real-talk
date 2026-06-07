@@ -37,15 +37,6 @@ export default function LandingAbout() {
             ))}
           </div>
         </div>
-
-        <div className="lp-about__visual">
-          {/* ── Portrait photo ── swap src value when you have the file ── */}
-          <img
-            src="/farzana.png"
-            alt="Farzana Khan"
-            className="lp-about__photo"
-          />
-        </div>
       </div>
     </section>
   )

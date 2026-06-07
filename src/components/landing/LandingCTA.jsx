@@ -14,7 +14,7 @@ export default function LandingCTA() {
         <p>Beta is open. Get your roast instantly or join the waitlist for a personalised 1:1 session.</p>
         <div className="lp-cta__buttons">
           <button className="lp-btn-primary" onClick={scrollToForm}>
-            Get my roast ❤️‍🔥
+            Roast my resume ❤️‍🔥
           </button>
           <a
             href="https://forms.gle/sLz9p8sDYEpRej7y5"

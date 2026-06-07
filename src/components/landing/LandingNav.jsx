@@ -34,7 +34,7 @@ export default function LandingNav({ onNavigate }) {
 
       <div className="lp-nav__right">
         <button className="lp-nav__cta" onClick={() => { close(); scrollTo('roast-form') }}>
-          Get my roast
+          Roast my resume
         </button>
         <button
           className="lp-nav__burger"

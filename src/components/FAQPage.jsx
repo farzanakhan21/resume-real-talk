@@ -31,7 +31,7 @@ export default function FAQPage({ onNavigate }) {
 
           <div className="lp-faq-cta">
             <button className="lp-btn-primary" onClick={() => onNavigate('/')}>
-              Get your resume roasted →
+              Roast my resume →
             </button>
           </div>
         </div>

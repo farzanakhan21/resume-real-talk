@@ -1,10 +1,3 @@
-const STATS = [
-  { number: '10+', label: 'Years in HR' },
-  { number: 'Est.', label: '2016' },
-  { number: '1:1', label: 'Beta sessions' },
-  { number: 'real', label: 'Not a template' },
-]
-
 export default function LandingAbout() {
   return (
     <section className="lp-about" id="lp-about">
@@ -27,15 +20,15 @@ export default function LandingAbout() {
             <strong>When people ask about the HR budget, I have to laugh sometimes and say - I AM THE BUDGET. 😂</strong> The resources just aren't there to give everyone the feedback they deserve.
           </p>
           <p>So I built something that does.</p>
+        </div>
 
-          <div className="lp-about__stats">
-            {STATS.map(({ number, label }) => (
-              <div key={label} className="lp-about__stat">
-                <div className="lp-about__stat-number">{number}</div>
-                <div className="lp-about__stat-label">{label}</div>
-              </div>
-            ))}
-          </div>
+        {/* Portrait photo — centred below the copy */}
+        <div className="lp-about__photo-wrap">
+          <img
+            src="/farzana.png"
+            alt="Farzana Khan"
+            className="lp-about__portrait"
+          />
         </div>
       </div>
     </section>

@@ -2369,6 +2369,13 @@ html { scroll-behavior: smooth; }
 .lp-about__inner {
   max-width: 760px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 48px;
+}
+.lp-about__content {
+  width: 100%;
 }
 .lp-about__content p {
   font-size: 16px;
@@ -2377,28 +2384,18 @@ html { scroll-behavior: smooth; }
   margin-bottom: 16px;
 }
 .lp-about__content p strong { color: #fff; }
-.lp-about__stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-top: 40px;
+.lp-about__photo-wrap {
+  display: flex;
+  justify-content: center;
 }
-.lp-about__stat {
-  padding: 24px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 4px;
-}
-.lp-about__stat-number {
-  font-size: 36px;
-  font-weight: 700;
-  color: var(--lp-gold);
-  line-height: 1;
-  margin-bottom: 6px;
-}
-.lp-about__stat-label {
-  font-size: 13px;
-  color: rgba(255,255,255,0.4);
+.lp-about__portrait {
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top center;
+  border: 3px solid var(--lp-gold);
+  display: block;
 }
 
 /* Founder portrait */
@@ -2579,7 +2576,7 @@ html { scroll-behavior: smooth; }
   .lp-cta { padding: 60px 24px; }
   .lp-footer { padding: 32px 24px; flex-direction: column; text-align: center; }
   .lp-compare-row { grid-template-columns: 1fr; }
-  .lp-about__stats { grid-template-columns: 1fr 1fr; }
+  .lp-about__portrait { width: 200px; height: 200px; }
   .lp-cta__buttons { flex-direction: column; align-items: center; }
   .lp-btn-primary,
   .lp-btn-secondary { width: 100%; text-align: center; }

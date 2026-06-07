@@ -2390,13 +2390,18 @@ html { scroll-behavior: smooth; }
 /* Founder portrait */
 .lp-about__photo {
   display: block;
-  width: 160px;
-  height: 160px;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
   object-fit: cover;
   object-position: top center;
   border: 3px solid var(--lp-gold);
-  margin: 0 auto 28px;
+  margin: 0 auto;
+}
+.lp-about__visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Score preview */

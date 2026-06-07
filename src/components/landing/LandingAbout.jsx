@@ -5,15 +5,6 @@ const STATS = [
   { number: 'real', label: 'Not a template' },
 ]
 
-const SCORE_BARS = [
-  { label: 'ATS Compatibility', pct: 55, gold: true },
-  { label: 'Executive Presence', pct: 63, gold: true },
-  { label: 'Clarity', pct: 58, gold: true },
-  { label: 'Strategic Positioning', pct: 50, gold: true },
-  { label: 'Credibility Signals', pct: 72, gold: false },
-  { label: 'Impact Evidence', pct: 88, gold: false },
-]
-
 export default function LandingAbout() {
   return (
     <section className="lp-about" id="lp-about">
@@ -54,25 +45,6 @@ export default function LandingAbout() {
             alt="Farzana Khan"
             className="lp-about__photo"
           />
-
-          <div className="lp-score-preview">
-            <span className="lp-score-tag">Your score</span>
-            <div className="lp-score-big">59</div>
-            <div className="lp-score-sub">out of 100</div>
-            <div className="lp-score-bars">
-              {SCORE_BARS.map(({ label, pct, gold }) => (
-                <div key={label} className="lp-score-bar-row">
-                  <span className="lp-score-bar-label">{label}</span>
-                  <div className="lp-score-bar-track">
-                    <div
-                      className={`lp-score-bar-fill${gold ? '' : ' lp-score-bar-fill--purple'}`}
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </section>

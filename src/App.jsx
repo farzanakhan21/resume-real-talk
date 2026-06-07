@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Header from './components/Header'
-import Hero from './components/Hero'
-import HowItWorks from './components/HowItWorks'
-import WhyDifferent from './components/WhyDifferent'
-import Testimonials from './components/Testimonials'
 import About from './components/About'
+import LandingNav from './components/landing/LandingNav'
+import LandingHero from './components/landing/LandingHero'
+import LandingWho from './components/landing/LandingWho'
+import LandingWhat from './components/landing/LandingWhat'
+import LandingDiff from './components/landing/LandingDiff'
+import LandingProof from './components/landing/LandingProof'
+import LandingAbout from './components/landing/LandingAbout'
+import LandingCTA from './components/landing/LandingCTA'
+import LandingFooter from './components/landing/LandingFooter'
 import FAQPage from './components/FAQPage'
 import MultiStepForm from './components/MultiStepForm'
 import EmailGate from './components/EmailGate'
@@ -209,16 +214,20 @@ export default function App() {
 
   return (
     <>
-      <Header view={view} onNavigate={navigateTo} />
+      {view !== 'home' && <Header view={view} onNavigate={navigateTo} />}
 
       <AnimatePresence>
         {view === 'home' && (
           <motion.div key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-            <Hero />
-            <WhyDifferent />
-            <Testimonials />
-            <HowItWorks />
-            <div id="roast-form" className="container--narrow" style={{ paddingBottom: '6rem' }}>
+            <LandingNav onNavigate={navigateTo} />
+            <LandingHero />
+            <LandingWho />
+            <LandingWhat />
+            <LandingDiff />
+            <LandingProof />
+            <LandingAbout />
+            <LandingCTA />
+            <div id="roast-form" className="container--narrow" style={{ paddingTop: '5rem', paddingBottom: '6rem' }}>
               {paymentConfirmed && (
                 <div style={{ background: 'rgba(45,27,105,0.06)', border: '2px solid #2D1B69', borderRadius: '12px', padding: '1.25rem 1.5rem', marginBottom: '2rem', display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
                   <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>✓</span>
@@ -230,6 +239,7 @@ export default function App() {
               )}
               <MultiStepForm onSubmit={handleFormSubmit} error={globalError} />
             </div>
+            <LandingFooter onNavigate={navigateTo} />
           </motion.div>
         )}
 
@@ -285,7 +295,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {view !== 'results' && (
+      {view !== 'results' && view !== 'home' && (
         <footer className="footer">
           <p>not ur regular hr - est. 2016 &copy; 2026 · built different. because you deserve better than a template.</p>
           <p className="footer__links">

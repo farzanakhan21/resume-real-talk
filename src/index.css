@@ -2553,7 +2553,9 @@ html { scroll-behavior: smooth; }
   }
   .lp-nav__burger { display: flex; }
 
-  .lp-hero { padding: 100px 24px 60px; }
+  .lp-hero { padding: 100px 24px 36px; min-height: unset; }
+  .lp-hero__actions { gap: 12px; }
+  .lp-hero__proof { margin-top: 36px; padding-top: 28px; gap: 28px; }
   .lp-who,
   .lp-what,
   .lp-diff,

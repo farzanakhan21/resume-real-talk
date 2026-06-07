@@ -2225,7 +2225,7 @@ html { scroll-behavior: smooth; }
 .lp-what__inner { max-width: 1200px; margin: 0 auto; position: relative; }
 .lp-what__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 2px;
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.06);
@@ -2570,6 +2570,7 @@ html { scroll-behavior: smooth; }
   .lp-hero__actions { gap: 12px; }
   .lp-hero__proof { margin-top: 36px; padding-top: 28px; gap: 28px; }
   .lp-hero__photo-col { display: none; }
+  .lp-what__grid { grid-template-columns: 1fr; }
   .lp-who,
   .lp-what,
   .lp-diff,

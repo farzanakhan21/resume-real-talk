@@ -14,7 +14,7 @@ export default function LandingAbout() {
             Myself included. I've written my own redundancy letter. I've had interviews where I thought I nailed it and heard nothing. And ones where I walked out unsure and got the offer.
           </p>
           <p>
-            As a candidate you don't see the other side. The one advert with 500 applicants. The systems and filters before a human even looks. The first impression a hiring manager forms before you've said a word.
+            As a candidate you don't see the other side. The one advert with 500+ applicants. The decisions pre-made before the role even goes live. The budget conversation just to get it approved. The hiring manager drowning in their day-to-day. The systems and filters before a human even looks. The first impression formed before you've said a word.
           </p>
           <p>Most people never get that information. So I built something that gives it to them.</p>
           <p>Farzana K.</p>

@@ -23,9 +23,9 @@ export default function LandingNav({ onNavigate }) {
 
   return (
     <nav className="lp-nav">
-      <div className="lp-nav__logo">
+      <button className="lp-nav__logo" onClick={() => { close(); onNavigate('/') }}>
         <span>N</span>URHR
-      </div>
+      </button>
 
       <ul className={`lp-nav__links${menuOpen ? ' lp-nav__links--open' : ''}`}>
         <li>

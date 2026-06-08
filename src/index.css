@@ -1903,6 +1903,10 @@ html { scroll-behavior: smooth; }
   text-transform: uppercase;
   color: #fff;
   flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 .lp-nav__logo span { color: var(--lp-gold); }
 .lp-nav__links {

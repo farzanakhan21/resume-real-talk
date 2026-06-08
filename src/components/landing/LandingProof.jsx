@@ -13,7 +13,7 @@ export default function LandingProof() {
     <section className="lp-proof">
       <div className="lp-proof__inner">
         <div className="lp-section-header">
-          <span className="lp-section-tag">Early feedback</span>
+          <span className="lp-section-tag">Don't take my word for it</span>
           <h2 className="lp-section-title">The early feedback has been… something.</h2>
         </div>
       </div>

@@ -17,7 +17,7 @@ export default function LandingCTA() {
             Roast my resume ❤️‍🔥
           </button>
           <a
-            href="https://forms.gle/sLz9p8sDYEpRej7y5"
+            href="https://tally.so/r/lbzMJk"
             className="lp-btn-secondary"
             target="_blank"
             rel="noopener noreferrer"

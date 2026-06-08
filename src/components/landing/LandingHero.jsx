@@ -37,7 +37,7 @@ export default function LandingHero() {
         <div className="lp-hero__proof">
           <div className="lp-proof-item">
             <span className="lp-proof-number">10+</span>
-            <span className="lp-proof-label">Years HR experience</span>
+            <span className="lp-proof-label">years of insider info</span>
           </div>
           <div className="lp-proof-item">
             <span className="lp-proof-number">Beta</span>

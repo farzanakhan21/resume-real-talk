@@ -2,7 +2,7 @@ const QUOTES = [
   { quote: 'omg it made me want to cry', meta: 'K.' },
   { quote: 'I made immediate changes to my profile', meta: 'M.' },
   { quote: 'I was so curious from the roast, I would pay for the full report', meta: 'D.' },
-  { quote: 'The market needs something more refreshingly honest and actionable.', meta: 'Sonia P. - Beta tester' },
+  { quote: 'The market needs something more refreshingly honest and actionable.', meta: 'S.' },
 ]
 
 // Duplicated so the loop resets seamlessly at the -50% mark

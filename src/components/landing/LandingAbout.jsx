@@ -3,23 +3,21 @@ export default function LandingAbout() {
     <section className="lp-about" id="lp-about">
       <div className="lp-about__inner">
         <div className="lp-about__content">
-          <span className="lp-section-tag lp-section-tag--gold">Built by</span>
+          <span className="lp-section-tag lp-section-tag--gold">Created by</span>
           <h2 className="lp-section-title lp-section-title--white">
             Someone who's been on every side of the table.
           </h2>
           <p>
-            I've led <strong>talent strategy, workforce restructures, development and leadership coaching</strong> for over 10 years - watching capable people get overlooked because they didn't know how to position themselves.
+            Since 2016 I've been in this space - leading talent strategy, candidate experience, employee journey, workforce restructures and leadership coaching - watching capable people get overlooked because they didn't know how to position themselves.
           </p>
           <p>
-            Myself included. I've written my own redundancy letter. So yes - I've been on every side of this. I've had interviews where I thought I nailed it and heard nothing. And ones where I walked out unsure and got the offer.
+            Myself included. I've written my own redundancy letter. I've had interviews where I thought I nailed it and heard nothing. And ones where I walked out unsure and got the offer.
           </p>
           <p>
-            The gap between how we think we're coming across and how we're actually being perceived is real. And most people never find out.
+            As a candidate you don't see the other side. The one advert with 500 applicants. The systems and filters before a human even looks. The first impression a hiring manager forms before you've said a word.
           </p>
-          <p>
-            <strong>When people ask about the HR budget, I have to laugh sometimes and say - I AM THE BUDGET. 😂</strong> The resources just aren't there to give everyone the feedback they deserve.
-          </p>
-          <p>So I built something that does.</p>
+          <p>Most people never get that information. So I built something that gives it to them.</p>
+          <p>Farzana K.</p>
         </div>
 
         {/* Portrait photo — centred below the copy */}

@@ -7,11 +7,7 @@ export default function LandingFooter({ onNavigate }) {
       <ul className="lp-footer__links">
         <li><button onClick={() => onNavigate('/faq')}>FAQs</button></li>
         <li><button onClick={() => onNavigate('/about')}>About</button></li>
-        <li>
-          <a href="https://noturregularhr.com" target="_blank" rel="noopener noreferrer">
-            Privacy
-          </a>
-        </li>
+        <li><button onClick={() => onNavigate('/faq')}>Privacy</button></li>
       </ul>
       <span className="lp-footer__copy">© 2026 NURHR. Built different.</span>
     </footer>

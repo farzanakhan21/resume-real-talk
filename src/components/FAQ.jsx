@@ -49,10 +49,6 @@ const PRIVACY_LEGAL = [
     q: 'What is your refund policy?',
     a: 'Because your full report is generated and delivered immediately upon payment, we are unable to offer refunds once the analysis has been completed. If you experience a technical issue that prevents you from receiving your report, please contact us at farzana@noturregularhr.com and we will make it right.',
   },
-  {
-    q: 'Who is behind this tool?',
-    a: 'Roast My Resume is built by Farzana Khan, an HR professional with over 10 years of experience across hospitality, service-led businesses and startups. This is not a generic AI tool - it is built on real hiring-side experience from someone who has sat on both sides of the table.',
-  },
 ]
 
 function FaqItem({ q, a, id, open, onToggle }) {

@@ -2158,7 +2158,7 @@ html { scroll-behavior: smooth; }
 .lp-who__inner { max-width: 1200px; margin: 0 auto; }
 .lp-who__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
 .lp-who__card {
@@ -2597,6 +2597,7 @@ html { scroll-behavior: smooth; }
   .lp-hero { padding: 100px 24px 36px; min-height: unset; }
   .lp-hero__actions { gap: 12px; }
   .lp-hero__proof { margin-top: 36px; padding-top: 28px; gap: 28px; }
+  .lp-who__grid { grid-template-columns: 1fr; }
   .lp-what__grid { grid-template-columns: 1fr; }
   .lp-proof__inner { padding: 0 24px; }
   .lp-carousel .lp-proof__card { width: 260px; }

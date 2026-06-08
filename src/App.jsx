@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Header from './components/Header'
-import About from './components/About'
 import LandingNav from './components/landing/LandingNav'
 import LandingHero from './components/landing/LandingHero'
 import LandingWho from './components/landing/LandingWho'
@@ -38,9 +37,20 @@ export default function App() {
   }
 
   const navigateTo = (path) => {
+    if (path === '/about') {
+      // About is now a section on the homepage, not a separate page
+      window.history.pushState({}, '', '/')
+      setView('home')
+      window.scrollTo({ top: 0 })
+      setTimeout(() => {
+        const el = document.getElementById('lp-about')
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 400)
+      trackPageView('/about')
+      return
+    }
     window.history.pushState({}, '', path)
-    if (path === '/about') setView('about')
-    else if (path === '/faq') setView('faq')
+    if (path === '/faq') setView('faq')
     else setView('home')
     window.scrollTo({ top: 0 })
     trackPageView(path)
@@ -53,9 +63,18 @@ export default function App() {
       window.gtag('event', 'page_view', { page_path: window.location.pathname })
     }
 
-    // Direct load of /about or /faq
-    if (window.location.pathname === '/about') { setView('about'); return }
+    // Direct load of /faq
     if (window.location.pathname === '/faq') { setView('faq'); return }
+    // /about is now a homepage section — redirect home and scroll
+    if (window.location.pathname === '/about') {
+      window.history.replaceState({}, '', '/')
+      setView('home')
+      setTimeout(() => {
+        const el = document.getElementById('lp-about')
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 500)
+      return
+    }
 
     const params = new URLSearchParams(window.location.search)
     const payment = params.get('payment')
@@ -119,8 +138,7 @@ export default function App() {
 
     const handlePopState = () => {
       const p = window.location.pathname
-      if (p === '/about') setView('about')
-      else if (p === '/faq') setView('faq')
+      if (p === '/faq') setView('faq')
       else setView('home')
       window.scrollTo({ top: 0 })
     }
@@ -213,7 +231,7 @@ export default function App() {
 
   return (
     <>
-      {view !== 'home' && view !== 'faq' && <Header view={view} onNavigate={navigateTo} />}
+      {view !== 'home' && view !== 'faq' && view !== 'about' && <Header view={view} onNavigate={navigateTo} />}
 
       <AnimatePresence>
         {view === 'home' && (
@@ -256,10 +274,6 @@ export default function App() {
 
         {view === 'faq' && (
           <FAQPage key="faq" onNavigate={navigateTo} />
-        )}
-
-        {view === 'about' && (
-          <About key="about" onNavigate={navigateTo} />
         )}
 
         {view === 'loading' && <LoadingScreen key="loading" />}

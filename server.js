@@ -770,7 +770,7 @@ async function sendFreeResultsEmail(to, jobTitle, data) {
     + '</td></tr></table>'
     + '<p style="margin:0 0 16px;font-size:14px;color:#0A0A0A;line-height:1.7;">now it\'s your turn - roast me back.</p>'
     + '<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:36px;"><tr><td>'
-    + '<a href="https://forms.gle/BAJNk6DQRsb4yNWUA" style="display:inline-block;background:#F7F4FF;color:#2D1B69;text-decoration:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;border:2px solid #2D1B69;letter-spacing:-0.01em;">roast me back &rarr;</a>'
+    + '<a href="https://tally.so/r/rjYkJv" style="display:inline-block;background:#F7F4FF;color:#2D1B69;text-decoration:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;border:2px solid #2D1B69;letter-spacing:-0.01em;">roast me back &rarr;</a>'
     + '</td></tr></table>'
     + '<p style="margin:32px 0 6px;font-size:14px;font-weight:700;color:#0A0A0A;line-height:1.7;">one quick favour - got 2 minutes?</p>'
     + '<p style="margin:0 0 14px;font-size:14px;color:#0A0A0A;line-height:1.7;">I\'m currently in beta and your feedback genuinely shapes what gets built next. I\'d love to know what landed, what didn\'t, and yes - you can roast me back.</p>'

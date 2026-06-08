@@ -22,7 +22,7 @@ export default function LandingHero() {
         </h1>
 
         <p className="lp-hero__sub">
-          Not a generic ATS scanner. A brutally honest hiring perception analysis - what the recruiter sees, what the hiring manager feels, what you need to do differently.
+          Not another resume review. A way to stop being overlooked - what recruiters actually see, what hiring managers really think, and what to do about it.
         </p>
 
         <div className="lp-hero__actions">

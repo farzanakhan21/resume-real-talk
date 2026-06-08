@@ -19,9 +19,6 @@ export default function FAQPage({ onNavigate }) {
       <div className="lp-faq-hero">
         <span className="lp-section-tag lp-section-tag--gold">✦ faqs</span>
         <h1 className="lp-faq-hero__title">Questions I get asked.</h1>
-        <p className="lp-faq-hero__sub">
-          Everything you need to know before you roast.
-        </p>
       </div>
 
       {/* Cream body with accordion */}

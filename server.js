@@ -4,6 +4,7 @@ import { createRequire } from 'module';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import { randomUUID } from 'crypto';
 import Anthropic from '@anthropic-ai/sdk';
 import Stripe from 'stripe';
 import { Resend } from 'resend';
@@ -128,13 +129,15 @@ async function saveAnalysis(entry) {
           career_situation: entry.careerSituation || null,
           timeframe: entry.timeframe || null,
           is_paid: entry.isPaid || false,
+          result_id: entry.resultId || null,
+          results_data: entry.resultsData || null,
         }),
       });
       if (!res.ok) {
         const msg = await res.text();
         console.error('[DB] Supabase insert failed:', res.status, msg);
       } else {
-        console.log('[DB] Analysis saved to Supabase for:', entry.email);
+        console.log('[DB] Analysis saved to Supabase for:', entry.email, '| result_id:', entry.resultId);
       }
     } catch (err) {
       console.error('[DB] Supabase saveAnalysis error:', err.message);
@@ -403,6 +406,47 @@ app.post('/api/resend-results', async (req, res) => {
     console.error('[Email] resend-results send failed:', err.message)
   );
   res.json({ ok: true });
+});
+
+// ── Fetch results by result_id (persistent deep link) ─────────────────────
+app.get('/api/results/:id', async (req, res) => {
+  const { id } = req.params;
+  if (!id || !/^[0-9a-f-]{36}$/i.test(id)) {
+    return res.status(400).json({ error: 'Invalid result ID.' });
+  }
+
+  if (config.SUPABASE_URL && config.SUPABASE_KEY) {
+    try {
+      const response = await fetch(
+        `${config.SUPABASE_URL}/rest/v1/analyses?result_id=eq.${encodeURIComponent(id)}&select=results_data,is_paid,email&limit=1`,
+        { headers: supabaseHeaders() }
+      );
+      if (!response.ok) {
+        console.error('[DB] results fetch failed:', response.status, await response.text());
+        return res.status(500).json({ error: 'Failed to fetch results.' });
+      }
+      const rows = await response.json();
+      if (!rows.length || !rows[0].results_data) {
+        return res.status(404).json({ error: 'Results not found or have expired.' });
+      }
+      return res.json({
+        results: rows[0].results_data,
+        isPaid: rows[0].is_paid || false,
+        email: rows[0].email || '',
+      });
+    } catch (err) {
+      console.error('[DB] results fetch error:', err.message);
+      return res.status(500).json({ error: 'Failed to fetch results.' });
+    }
+  } else {
+    // Local dev fallback: read from analyses.json
+    const list = readAnalyses();
+    const row = list.find(r => r.resultId === id);
+    if (!row || !row.resultsData) {
+      return res.status(404).json({ error: 'Results not found.' });
+    }
+    return res.json({ results: row.resultsData, isPaid: row.isPaid || false, email: row.email || '' });
+  }
 });
 
 // ── Audience helper ───────────────────────────────────────────────────────
@@ -690,7 +734,7 @@ function generateReportPDF(data, jobTitle) {
 }
 
 // ── Free results email ────────────────────────────────────────────────────
-async function sendFreeResultsEmail(to, jobTitle, data) {
+async function sendFreeResultsEmail(to, jobTitle, data, resultUrl) {
   const firstName = extractFirstName(to) || 'there';
   const score = (data.scores && data.scores.overall != null) ? data.scores.overall : '-';
   const oneLiner = (data.scores && data.scores.brutalOneLiner) || '';
@@ -766,7 +810,7 @@ async function sendFreeResultsEmail(to, jobTitle, data) {
     + '<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;background:#F7F4FF;border:1px solid rgba(45,27,105,0.15);border-radius:8px;overflow:hidden;">'
     + teaserItems + '</table>'
     + '<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;"><tr><td align="center">'
-    + '<a href="' + config.APP_URL + '" style="display:inline-block;background:#2D1B69;color:#FFFFFF;text-decoration:none;padding:16px 36px;border-radius:8px;font-size:15px;font-weight:700;letter-spacing:-0.01em;">Get your full report &rarr; $79 AUD</a>'
+    + '<a href="' + (resultUrl || config.APP_URL) + '" style="display:inline-block;background:#2D1B69;color:#FFFFFF;text-decoration:none;padding:16px 36px;border-radius:8px;font-size:15px;font-weight:700;letter-spacing:-0.01em;">Get your full report &rarr; $79 AUD</a>'
     + '</td></tr></table>'
     + '<p style="margin:0 0 16px;font-size:14px;color:#0A0A0A;line-height:1.7;">now it\'s your turn - roast me back.</p>'
     + '<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:36px;"><tr><td>'
@@ -904,8 +948,8 @@ async function sendUpgradeConfirmEmail(to) {
 }
 
 // ── Email helper ──────────────────────────────────────────────────────────
-async function sendResultsEmail(to, jobTitle, data, isPaid) {
-  console.log(`[Email] sendResultsEmail called - to: ${to}, isPaid: ${isPaid}`);
+async function sendResultsEmail(to, jobTitle, data, isPaid, resultId) {
+  console.log(`[Email] sendResultsEmail called - to: ${to}, isPaid: ${isPaid}, resultId: ${resultId}`);
   if (!resend) {
     console.log('[Email] Resend not configured. Skipping.');
     return;
@@ -915,7 +959,8 @@ async function sendResultsEmail(to, jobTitle, data, isPaid) {
     if (isPaid) {
       await sendPaidResultsEmail(to, jobTitle, data);
     } else {
-      await sendFreeResultsEmail(to, jobTitle, data);
+      const resultUrl = resultId ? `${config.APP_URL}/results/${resultId}` : config.APP_URL;
+      await sendFreeResultsEmail(to, jobTitle, data, resultUrl);
     }
   } catch (err) {
     console.error('[Email] send threw:', err.message);
@@ -1185,15 +1230,18 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
       writeEmails(emails);
     }
 
+    // Generate a unique ID for this result so it can be retrieved later
+    const resultId = randomUUID();
+
     // Add to Resend audience - fire and forget
     addToAudience(normalised);
 
     // Send results email - fire and forget, never block the response
-    sendResultsEmail(normalised, jobTitle, parsed, isPaid).catch(err =>
+    sendResultsEmail(normalised, jobTitle, parsed, isPaid, resultId).catch(err =>
       console.error('[Email] Fire-and-forget failed:', err.message, err.statusCode, JSON.stringify(err))
     );
 
-    // Record analysis for admin dashboard - fire and forget
+    // Record analysis + full results for persistent retrieval - fire and forget
     saveAnalysis({
       email: normalised,
       date: new Date().toISOString(),
@@ -1202,9 +1250,11 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
       careerSituation: careerSituation || '',
       timeframe: timeframe || '',
       isPaid,
+      resultId,
+      resultsData: parsed,
     }).catch(err => console.error('[DB] saveAnalysis fire-and-forget failed:', err.message));
 
-    res.json({ success: true, data: parsed, isPaid });
+    res.json({ success: true, data: parsed, isPaid, resultId });
   } catch (err) {
     console.error('[Analyze] Error:', err.status || '', err.message || err);
     const isOverloaded = err.status === 529 ||

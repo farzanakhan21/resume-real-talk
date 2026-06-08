@@ -35,7 +35,11 @@ const GENERAL = [
 const PRIVACY_LEGAL = [
   {
     q: 'Is my resume stored or shared?',
-    a: 'No. Your resume is processed in memory during analysis and immediately discarded. We never store, share, or use your resume content for any other purpose. The only information we retain is your email address, target role, industry and career situation for our own records.',
+    a: 'Your resume content is used only to generate your analysis and is never sold or shared with third parties. The analysis results are stored securely in our database so you can access your report via your unique results link. Results are stored for 90 days and deleted upon request. To request deletion of your data, email farzana@noturregularhr.com.',
+  },
+  {
+    q: 'What data do you collect and what are my rights?',
+    a: 'We collect your resume content, analysis results, and email address provided during the process. You have the right to request access to or deletion of your personal data at any time. To make a request, email farzana@noturregularhr.com.',
   },
   {
     q: 'Is this tool powered by AI?',

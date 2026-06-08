@@ -23,6 +23,7 @@ export default function App() {
   const [paywallOpen, setPaywallOpen] = useState(false)
   const [pendingData, setPendingData] = useState(null)
   const [results, setResults] = useState(null)
+  const [resultId, setResultId] = useState(null)
   const [rewriteTarget, setRewriteTarget] = useState(null)
   const [globalError, setGlobalError] = useState('')
   const [isPaid, setIsPaid] = useState(false)
@@ -75,6 +76,32 @@ export default function App() {
       }, 500)
       return
     }
+    // Deep link: /results/:id — fetch persistent results from the API
+    const resultsMatch = window.location.pathname.match(/^\/results\/([0-9a-f-]{36})$/i)
+    if (resultsMatch) {
+      const id = resultsMatch[1]
+      fetch(`/api/results/${id}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.results) {
+            setResults(data.results)
+            setIsPaid(data.isPaid || false)
+            setUserEmail(data.email || '')
+            setResultId(id)
+            setView('results')
+            window.scrollTo({ top: 0 })
+          } else {
+            // Results not found or expired — go home
+            window.history.replaceState({}, '', '/')
+            setView('home')
+          }
+        })
+        .catch(() => {
+          window.history.replaceState({}, '', '/')
+          setView('home')
+        })
+      return
+    }
 
     const params = new URLSearchParams(window.location.search)
     const payment = params.get('payment')
@@ -124,11 +151,12 @@ export default function App() {
       const saved = sessionStorage.getItem('nrhr_session')
       if (saved) {
         try {
-          const { results: savedResults, isPaid: savedPaid, userEmail: savedEmail } = JSON.parse(saved)
+          const { results: savedResults, isPaid: savedPaid, userEmail: savedEmail, resultId: savedResultId } = JSON.parse(saved)
           if (savedResults) {
             setResults(savedResults)
             setIsPaid(savedPaid || false)
             setUserEmail(savedEmail || '')
+            if (savedResultId) setResultId(savedResultId)
             setView('results')
           }
           // Note: jobTitle is also stored in the session but only needed for resend-results
@@ -186,7 +214,8 @@ export default function App() {
 
       setResults(json.data)
       setIsPaid(json.isPaid || false)
-      sessionStorage.setItem('nrhr_session', JSON.stringify({ results: json.data, isPaid: json.isPaid || false, userEmail: email, jobTitle: pendingData.jobTitle || '' }))
+      if (json.resultId) setResultId(json.resultId)
+      sessionStorage.setItem('nrhr_session', JSON.stringify({ results: json.data, isPaid: json.isPaid || false, userEmail: email, jobTitle: pendingData.jobTitle || '', resultId: json.resultId || null }))
       setView('results')
       window.scrollTo({ top: 0 })
     } catch (err) {
@@ -221,6 +250,7 @@ export default function App() {
     sessionStorage.removeItem('nrhr_session')
     setView('home')
     setResults(null)
+    setResultId(null)
     setPendingData(null)
     setGlobalError('')
     setIsPaid(false)

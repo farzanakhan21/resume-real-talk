@@ -17,6 +17,7 @@ const CAREER_SITUATIONS = [
   'Pivoting industries',
   'Recently made redundant',
   'Returning to the workforce',
+  'Just curious',
   'Other',
 ]
 

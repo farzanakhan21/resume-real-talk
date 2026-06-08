@@ -249,7 +249,6 @@ export default function App() {
               <div className="lp-form-hero__inner">
                 <span className="lp-section-tag lp-section-tag--gold">✦ roast my resume</span>
                 <h2 className="lp-form-hero__title">Let's find out what's really going on.</h2>
-                <p className="lp-form-hero__sub">Four quick questions - then drop your resume. We'll take it from there.</p>
               </div>
             </div>
             <div className="lp-form-body">

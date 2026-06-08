@@ -27,7 +27,7 @@ const WHAT = [
   {
     n: '06',
     title: '1:1 session (beta)',
-    body: 'During beta, some users get a personalised session with Farzana to go through their results together.',
+    body: 'You get the option to sit down with me and go through your results together. Not a chatbot.',
   },
 ]
 

@@ -398,9 +398,6 @@ export default function MultiStepForm({ onSubmit, error }) {
                 <p className="field__hint" style={{ marginTop: '0.5rem' }}>
                   To download your LinkedIn profile as a PDF - go to your LinkedIn profile - click 'More' - select 'Save to PDF'.
                 </p>
-                <p className="privacy-note">
-                  Your document is processed securely by AI and never stored or shared. I only keep your email address to send you your results.
-                </p>
               </div>
 
               <div className="field">

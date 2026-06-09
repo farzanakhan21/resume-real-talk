@@ -16,7 +16,7 @@ export default function LandingAbout() {
           <p>
             As a candidate you don't see the other side. The one advert with 500+ applicants. The decisions pre-made before the role even goes live. The budget conversation just to get it approved. The hiring manager drowning in their day-to-day. The systems and filters before a human even looks. The first impression formed before you've said a word.
           </p>
-          <p>Most people never get that information. So I built something that gives it to them.</p>
+          <p>Most people never get that information. So I created something that gives it to them.</p>
           <p>Farzana K.</p>
         </div>
 

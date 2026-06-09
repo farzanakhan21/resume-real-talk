@@ -44,6 +44,9 @@ function OptionCard({ label, selected, onClick }) {
 export default function MultiStepForm({ onSubmit, error }) {
   const [step, setStep] = useState(1)
 
+  // Terms consent
+  const [termsAccepted, setTermsAccepted] = useState(false)
+
   // Step 1: career situation
   const [careerSituation, setCareerSituation] = useState('')
   const [otherSituation, setOtherSituation] = useState('')
@@ -105,6 +108,11 @@ export default function MultiStepForm({ onSubmit, error }) {
     setFormError(''); setStep(4)
   }
 
+  const handleTermsNext = () => {
+    if (!termsAccepted) return setFormError('Please agree to the Terms and Conditions to continue.')
+    setFormError(''); setStep(5)
+  }
+
   // ── File handling ────────────────────────────────────────────────────────
   const handleFile = (f) => {
     if (!f || f.type !== 'application/pdf') return setFormError('PDF only please - we can\'t read anything else.')
@@ -131,7 +139,7 @@ export default function MultiStepForm({ onSubmit, error }) {
     })
   }
 
-  const totalSteps = 4
+  const totalSteps = 5
 
   return (
     <div>
@@ -325,10 +333,44 @@ export default function MultiStepForm({ onSubmit, error }) {
           </motion.div>
         )}
 
-        {/* ── Step 4: File + Details ── */}
+        {/* ── Step 4: Terms consent ── */}
         {step === 4 && (
           <motion.div key="step4" {...slide}>
             <button type="button" className="btn btn--ghost" style={{ marginBottom: '1.75rem', fontSize: '0.8rem' }} onClick={() => setStep(3)}>
+              ← Back
+            </button>
+
+            <p className="form-step-label">BEFORE YOU UPLOAD</p>
+            <p className="form-step-hint">Please review and agree to our terms before we analyse your resume.</p>
+
+            <label className="msf-terms-label">
+              <input
+                type="checkbox"
+                className="msf-terms-checkbox"
+                checked={termsAccepted}
+                onChange={(e) => { setTermsAccepted(e.target.checked); setFormError('') }}
+              />
+              <span>
+                I agree to the{' '}
+                <a href="/terms" target="_blank" rel="noopener noreferrer" className="msf-terms-link">
+                  Terms and Conditions
+                </a>{' '}
+                and understand my resume data will be stored for 90 days.
+              </span>
+            </label>
+
+            {formError && <div className="error-msg" style={{ marginTop: '1rem' }}>{formError}</div>}
+
+            <button className="btn btn--primary" style={{ marginTop: '1.5rem' }} onClick={handleTermsNext}>
+              Next <span className="btn-arrow">→</span>
+            </button>
+          </motion.div>
+        )}
+
+        {/* ── Step 5: File + Details ── */}
+        {step === 5 && (
+          <motion.div key="step5" {...slide}>
+            <button type="button" className="btn btn--ghost" style={{ marginBottom: '1.75rem', fontSize: '0.8rem' }} onClick={() => setStep(4)}>
               ← Back
             </button>
 

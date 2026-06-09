@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Header from './components/Header'
+import TermsPage from './components/TermsPage'
 import LandingNav from './components/landing/LandingNav'
 import LandingHero from './components/landing/LandingHero'
 import LandingWho from './components/landing/LandingWho'
@@ -52,6 +53,7 @@ export default function App() {
     }
     window.history.pushState({}, '', path)
     if (path === '/faq') setView('faq')
+    else if (path === '/terms') setView('terms')
     else setView('home')
     window.scrollTo({ top: 0 })
     trackPageView(path)
@@ -64,8 +66,9 @@ export default function App() {
       window.gtag('event', 'page_view', { page_path: window.location.pathname })
     }
 
-    // Direct load of /faq
+    // Direct load of /faq or /terms
     if (window.location.pathname === '/faq') { setView('faq'); return }
+    if (window.location.pathname === '/terms') { setView('terms'); return }
     // /about is now a homepage section — redirect home and scroll
     if (window.location.pathname === '/about') {
       window.history.replaceState({}, '', '/')
@@ -167,6 +170,7 @@ export default function App() {
     const handlePopState = () => {
       const p = window.location.pathname
       if (p === '/faq') setView('faq')
+      else if (p === '/terms') setView('terms')
       else setView('home')
       window.scrollTo({ top: 0 })
     }
@@ -261,7 +265,7 @@ export default function App() {
 
   return (
     <>
-      {view !== 'home' && view !== 'faq' && view !== 'about' && <Header view={view} onNavigate={navigateTo} />}
+      {view !== 'home' && view !== 'faq' && view !== 'about' && view !== 'terms' && <Header view={view} onNavigate={navigateTo} />}
 
       <AnimatePresence>
         {view === 'home' && (
@@ -303,6 +307,10 @@ export default function App() {
 
         {view === 'faq' && (
           <FAQPage key="faq" onNavigate={navigateTo} />
+        )}
+
+        {view === 'terms' && (
+          <TermsPage key="terms" onNavigate={navigateTo} />
         )}
 
         {view === 'loading' && <LoadingScreen key="loading" />}
@@ -349,7 +357,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {view !== 'results' && view !== 'home' && view !== 'faq' && (
+      {view !== 'results' && view !== 'home' && view !== 'faq' && view !== 'terms' && (
         <footer className="footer">
           <p>not ur regular hr - est. 2016 &copy; 2026 · built different. because you deserve better than a template.</p>
           <p className="footer__links">

@@ -16,7 +16,10 @@ export default function LandingAbout() {
           <p>
             As a candidate you don't see the other side. The one advert with 500+ applicants. The decisions pre-made before the role even goes live. The budget conversation just to get it approved. The hiring manager drowning in their day-to-day. The systems and filters before a human even looks. The first impression formed before you've said a word.
           </p>
-          <p>Most people never get that information. So I created something that gives it to them.</p>
+          <p>Most people never get that information. So I created something that gives it to you.</p>
+          <p>And if you're employed right now - this is for you too.</p>
+          <p>As an employee you rarely think about leaving or exploring other options. The uncertainty, the fear of the unknown, staying safe feels easier than the alternative.</p>
+          <p>But what if that's exactly what's holding you back?</p>
           <p>Farzana K.</p>
         </div>
 

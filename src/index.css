@@ -2418,6 +2418,10 @@ html { scroll-behavior: smooth; }
   margin-bottom: 16px;
 }
 .lp-about__content p strong { color: #fff; }
+.lp-about__signoff {
+  font-family: var(--lp-serif);
+  font-style: italic;
+}
 .lp-about__photo-wrap {
   display: flex;
   justify-content: center;

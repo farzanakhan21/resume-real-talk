@@ -20,7 +20,7 @@ export default function LandingAbout() {
           <p>And if you're employed right now - this is for you too.</p>
           <p>As an employee you rarely think about leaving or exploring other options. The uncertainty, the fear of the unknown, staying safe feels easier than the alternative.</p>
           <p>But what if that's exactly what's holding you back?</p>
-          <p>Farzana K.</p>
+          <p className="lp-about__signoff">Farzana K.</p>
         </div>
 
         {/* Portrait photo — centred below the copy */}

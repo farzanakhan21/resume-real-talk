@@ -1746,6 +1746,81 @@ select.input { cursor: pointer; appearance: none; background-image: url("data:im
   }
 }
 
+/* ── ATS tooltip ── */
+.ats-tip {
+  position: relative;
+  cursor: help;
+  border-bottom: 1px dotted var(--text-secondary);
+  display: inline;
+}
+.ats-tip__bubble {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--border-dark);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 7px 11px;
+  border-radius: var(--radius);
+  white-space: normal;
+  width: 240px;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.ats-tip__bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--border-dark);
+}
+.ats-tip:hover .ats-tip__bubble { opacity: 1; }
+
+/* ── Hard Truth blur (free tier) ── */
+.hard-truth-blur {
+  position: relative;
+  margin-top: 1rem;
+  cursor: pointer;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.hard-truth-blur__inner {
+  filter: blur(5px);
+  user-select: none;
+  pointer-events: none;
+}
+.hard-truth-blur__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
+  transition: background 0.2s;
+}
+.hard-truth-blur:hover .hard-truth-blur__overlay {
+  background: rgba(255, 255, 255, 0.25);
+}
+.hard-truth-blur__label {
+  background: var(--accent);
+  color: #fff;
+  padding: 9px 22px;
+  border-radius: var(--radius);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  box-shadow: var(--shadow-sm);
+}
+
 /* ── Error ── */
 .error-msg {
   background: rgba(179, 58, 42, 0.06);

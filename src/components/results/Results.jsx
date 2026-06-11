@@ -140,11 +140,17 @@ export default function Results({ data, isPaid, userEmail, onRewrite, onReset, o
         <div style={{ height: '1rem' }} />
         <ATSRisk data={data.atsRisk} isPaid={isPaid} />
 
+        {/* HardTruth: always shown — free users see card 1 + blurred cards 2-4 */}
+        {data.hardTruth && (
+          <>
+            <div style={{ height: '1rem' }} />
+            <HardTruth data={data.hardTruth} isPaid={isPaid} onUpgrade={onUpgrade} />
+          </>
+        )}
+
         {/* ── Paid: full detail sections ── */}
         {isPaid && (
           <>
-            <div style={{ height: '1rem' }} />
-            <HardTruth data={data.hardTruth} />
             <div style={{ height: '1rem' }} />
             <ExecutivePresence data={data.executivePresence} />
             <div style={{ height: '1rem' }} />

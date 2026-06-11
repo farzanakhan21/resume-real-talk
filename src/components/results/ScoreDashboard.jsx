@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion'
 import { scoreColor, scoreLabel } from '../../utils'
+import AtsTooltip from './AtsTooltip'
 
 const DIMENSIONS = [
-  { key: 'atsCompatibility', label: 'ATS Compatibility' },
+  { key: 'atsCompatibility', label: 'ATS Compatibility', atsLabel: true },
   { key: 'executivePresence', label: 'Executive Presence' },
   { key: 'clarity', label: 'Clarity' },
   { key: 'strategicPositioning', label: 'Strategic Positioning' },
@@ -36,14 +37,16 @@ export default function ScoreDashboard({ scores, isPaid }) {
         </div>
         <div style={{ flex: 1, minWidth: 220 }}>
           <div className="score-dimensions">
-            {DIMENSIONS.map(({ key, label }, i) => {
+            {DIMENSIONS.map(({ key, label, atsLabel }, i) => {
               const dim = scores[key]
               const sc = dim?.score ?? 0
               const c = scoreColor(sc)
               return (
                 <div key={key}>
                   <div className="score-dim">
-                    <div className="score-dim__label">{label}</div>
+                    <div className="score-dim__label">
+                      {atsLabel ? <><AtsTooltip /> Compatibility</> : label}
+                    </div>
                     <div className="score-dim__bar-wrap">
                       <motion.div
                         className="score-dim__bar"

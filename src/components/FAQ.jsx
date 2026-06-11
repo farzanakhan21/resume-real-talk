@@ -8,7 +8,7 @@ const GENERAL = [
   },
   {
     q: 'Is my resume safe?',
-    a: 'Your resume is processed securely through AI and never stored or shared. I only keep your email address to send you your results.',
+    a: 'Your resume is processed securely by AI to generate your analysis. Your results are stored for 90 days so you can access them anytime via your unique results link. After 90 days your data is permanently deleted. Your information is never sold or shared with third parties. To request early deletion of your data email farzana@noturregularhr.com',
   },
   {
     q: 'How accurate is the feedback?',

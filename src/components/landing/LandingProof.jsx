@@ -1,4 +1,5 @@
 const QUOTES = [
+  { quote: 'Unintentional signal is spot on.', meta: 'M.' },
   { quote: 'omg it made me want to cry', meta: 'K.' },
   { quote: 'I made immediate changes to my profile', meta: 'M.' },
   { quote: 'I was so curious from the roast, I would pay for the full report', meta: 'D.' },

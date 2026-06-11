@@ -117,25 +117,41 @@ function supabaseHeaders() {
 
 async function saveAnalysis(entry) {
   if (config.SUPABASE_URL && config.SUPABASE_KEY) {
+    const basePayload = {
+      email: entry.email,
+      date: entry.date,
+      job_title: entry.jobTitle || null,
+      industry: entry.industry || null,
+      career_situation: entry.careerSituation || null,
+      timeframe: entry.timeframe || null,
+      is_paid: entry.isPaid || false,
+    };
+    const fullPayload = {
+      ...basePayload,
+      result_id: entry.resultId || null,
+      results_data: entry.resultsData || null,
+    };
     try {
+      // Attempt full insert (with result_id + results_data)
       const res = await fetch(`${config.SUPABASE_URL}/rest/v1/analyses`, {
         method: 'POST',
         headers: { ...supabaseHeaders(), 'Prefer': 'return=minimal' },
-        body: JSON.stringify({
-          email: entry.email,
-          date: entry.date,
-          job_title: entry.jobTitle || null,
-          industry: entry.industry || null,
-          career_situation: entry.careerSituation || null,
-          timeframe: entry.timeframe || null,
-          is_paid: entry.isPaid || false,
-          result_id: entry.resultId || null,
-          results_data: entry.resultsData || null,
-        }),
+        body: JSON.stringify(fullPayload),
       });
       if (!res.ok) {
         const msg = await res.text();
-        console.error('[DB] Supabase insert failed:', res.status, msg);
+        console.warn('[DB] Full insert failed (migration may not have run yet), trying base insert:', msg);
+        // Fallback: save without result_id / results_data so the record is never lost
+        const res2 = await fetch(`${config.SUPABASE_URL}/rest/v1/analyses`, {
+          method: 'POST',
+          headers: { ...supabaseHeaders(), 'Prefer': 'return=minimal' },
+          body: JSON.stringify(basePayload),
+        });
+        if (!res2.ok) {
+          console.error('[DB] Base insert also failed:', res2.status, await res2.text());
+        } else {
+          console.log('[DB] Analysis saved (base columns only) for:', entry.email);
+        }
       } else {
         console.log('[DB] Analysis saved to Supabase for:', entry.email, '| result_id:', entry.resultId);
       }
@@ -173,8 +189,10 @@ async function markAnalysisPaid(email) {
 async function fetchAnalyses() {
   if (config.SUPABASE_URL && config.SUPABASE_KEY) {
     try {
+      // Explicitly select only the columns needed — avoids pulling large results_data JSONB
+      // which can make the response huge and cause truncation or timeouts.
       const res = await fetch(
-        `${config.SUPABASE_URL}/rest/v1/analyses?select=*&order=date.desc`,
+        `${config.SUPABASE_URL}/rest/v1/analyses?select=email,date,job_title,industry,career_situation,timeframe,is_paid&order=date.desc&limit=1000`,
         { headers: supabaseHeaders() }
       );
       if (!res.ok) {
@@ -1401,9 +1419,9 @@ function adminDashboardPage(analyses) {
     .bar__track{flex:1;height:6px;background:#f0ede8;border-radius:3px;overflow:hidden}
     .bar__fill{height:100%;background:#2D1B69;border-radius:3px}
     .bar__count{width:28px;text-align:right;font-size:0.75rem;color:#888;font-weight:600}
-    .table-wrap{overflow-x:auto}
+    .table-wrap{overflow-x:auto;overflow-y:auto;max-height:640px}
     table{width:100%;border-collapse:collapse;font-size:0.81rem}
-    th{padding:0.6rem 1rem;text-align:left;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#888;background:#faf9f7;border-bottom:1px solid #e5e3df;white-space:nowrap}
+    th{padding:0.6rem 1rem;text-align:left;font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#888;background:#faf9f7;border-bottom:1px solid #e5e3df;white-space:nowrap;position:sticky;top:0;z-index:1}
     td{padding:0.65rem 1rem;border-bottom:1px solid #f0ede8;vertical-align:top}
     tr:last-child td{border-bottom:none}
     tr:hover td{background:#faf9f7}

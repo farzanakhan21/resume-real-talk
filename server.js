@@ -52,7 +52,17 @@ if (config.RESEND_FROM.includes('onboarding@resend.dev')) {
 
 const app = express();
 const storage = multer.memoryStorage();
-const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype === 'application/pdf') {
+      cb(null, true);
+    } else {
+      cb(new Error('Only PDF files are accepted.'));
+    }
+  },
+});
 const client = config.ANTHROPIC_API_KEY
   ? new Anthropic({ apiKey: config.ANTHROPIC_API_KEY })
   : null;
@@ -232,11 +242,20 @@ function parseCookies(req) {
   return cookies;
 }
 
+// In-memory session store — maps random token → true.
+// Sessions are lost on server restart (acceptable for a single-admin tool).
+const adminSessions = new Map();
+
 function isAdminAuthed(req) {
-  const pw = config.ADMIN_PASSWORD;
-  if (!pw) return false;
+  if (!config.ADMIN_PASSWORD) return false;
   const cookies = parseCookies(req);
-  return cookies['nrhr_admin'] === pw;
+  const token = cookies['nrhr_admin'];
+  return !!(token && adminSessions.get(token));
+}
+
+function adminCookieFlags() {
+  const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+  return `Path=/; HttpOnly; SameSite=Lax${secure}`;
 }
 
 function escHtml(str) {
@@ -436,7 +455,7 @@ app.get('/api/results/:id', async (req, res) => {
   if (config.SUPABASE_URL && config.SUPABASE_KEY) {
     try {
       const response = await fetch(
-        `${config.SUPABASE_URL}/rest/v1/analyses?result_id=eq.${encodeURIComponent(id)}&select=results_data,is_paid,email&limit=1`,
+        `${config.SUPABASE_URL}/rest/v1/analyses?result_id=eq.${encodeURIComponent(id)}&select=results_data,is_paid&limit=1`,
         { headers: supabaseHeaders() }
       );
       if (!response.ok) {
@@ -450,7 +469,6 @@ app.get('/api/results/:id', async (req, res) => {
       return res.json({
         results: rows[0].results_data,
         isPaid: rows[0].is_paid || false,
-        email: rows[0].email || '',
       });
     } catch (err) {
       console.error('[DB] results fetch error:', err.message);
@@ -463,7 +481,7 @@ app.get('/api/results/:id', async (req, res) => {
     if (!row || !row.resultsData) {
       return res.status(404).json({ error: 'Results not found.' });
     }
-    return res.json({ results: row.resultsData, isPaid: row.isPaid || false, email: row.email || '' });
+    return res.json({ results: row.resultsData, isPaid: row.isPaid || false });
   }
 });
 
@@ -753,11 +771,12 @@ function generateReportPDF(data, jobTitle) {
 
 // ── Free results email ────────────────────────────────────────────────────
 async function sendFreeResultsEmail(to, jobTitle, data, resultUrl) {
-  const firstName = extractFirstName(to) || 'there';
+  const firstName = escHtml(extractFirstName(to) || 'there');
   const score = (data.scores && data.scores.overall != null) ? data.scores.overall : '-';
-  const oneLiner = (data.scores && data.scores.brutalOneLiner) || '';
-  const topIssues = data.topIssues || [];
-  const sixSecondRead = (data.firstImpression && data.firstImpression.sixSecondRead) || '';
+  // Escape all AI-generated fields before HTML interpolation
+  const oneLiner = escHtml((data.scores && data.scores.brutalOneLiner) || '');
+  const topIssues = (data.topIssues || []).map(escHtml);
+  const sixSecondRead = escHtml((data.firstImpression && data.firstImpression.sixSecondRead) || '');
   const scoreColor = typeof score === 'number' ? (score >= 70 ? '#16A34A' : score >= 50 ? '#D97706' : '#DC2626') : '#2D1B69';
 
   const cats = [
@@ -992,12 +1011,17 @@ app.post('/api/analyze', upload.single('resume'), async (req, res) => {
   try {
     const { jobTitle, roleCategory, industry, department, company, email, testPaid, careerSituation, timeframe, previousIndustry } = req.body;
     if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
+    // Verify PDF magic bytes regardless of MIME type header
+    if (req.file.buffer.slice(0, 5).toString('ascii') !== '%PDF-') {
+      return res.status(400).json({ error: 'Invalid file. Please upload a valid PDF.' });
+    }
     if (!jobTitle) return res.status(400).json({ error: 'Job title is required.' });
     if (!industry) return res.status(400).json({ error: 'Industry is required.' });
     if (!company) return res.status(400).json({ error: 'Target company is required.' });
     if (!email) return res.status(400).json({ error: 'Email is required.' });
 
-    const isTestPaid = testPaid === 'true';
+    // testPaid bypass disabled in production
+    const isTestPaid = process.env.NODE_ENV !== 'production' && testPaid === 'true';
     if (isTestPaid) console.log('[Test] test=paid flag active - bypassing paywall and generating full paid report');
 
     const normalised = email.toLowerCase().trim();
@@ -1506,14 +1530,18 @@ app.get('/admin', async (req, res) => {
 app.post('/admin/login', (req, res) => {
   const { password } = req.body || {};
   if (password === config.ADMIN_PASSWORD) {
-    res.setHeader('Set-Cookie', `nrhr_admin=${encodeURIComponent(password)}; Path=/; HttpOnly; SameSite=Lax`);
+    const token = randomUUID();
+    adminSessions.set(token, true);
+    res.setHeader('Set-Cookie', `nrhr_admin=${token}; ${adminCookieFlags()}`);
     return res.redirect('/admin');
   }
   res.send(adminLoginPage('Incorrect password. Try again.'));
 });
 
 app.get('/admin/logout', (req, res) => {
-  res.setHeader('Set-Cookie', 'nrhr_admin=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0');
+  const cookies = parseCookies(req);
+  if (cookies['nrhr_admin']) adminSessions.delete(cookies['nrhr_admin']);
+  res.setHeader('Set-Cookie', `nrhr_admin=; ${adminCookieFlags()}; Max-Age=0`);
   res.redirect('/admin');
 });
 

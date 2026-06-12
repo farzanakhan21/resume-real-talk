@@ -89,7 +89,7 @@ export default function App() {
           if (data.results) {
             setResults(data.results)
             setIsPaid(data.isPaid || false)
-            setUserEmail(data.email || '')
+            setUserEmail('')
             setResultId(id)
             setView('results')
             window.scrollTo({ top: 0 })
@@ -193,7 +193,8 @@ export default function App() {
       const fd = new FormData()
       fd.append('resume', pendingData.file)
       fd.append('jobTitle', pendingData.jobTitle)
-      if (new URLSearchParams(window.location.search).get('test') === 'paid') {
+      // testPaid bypass is only available in non-production builds
+      if (!import.meta.env.PROD && new URLSearchParams(window.location.search).get('test') === 'paid') {
         fd.append('testPaid', 'true')
       }
       fd.append('careerSituation', pendingData.careerSituation || '')

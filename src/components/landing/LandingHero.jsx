@@ -27,7 +27,7 @@ export default function LandingHero() {
 
         <div className="lp-hero__actions">
           <button className="lp-btn-primary" onClick={scrollToForm}>
-            Roast my resume ❤️‍🔥
+            Roast my resume
           </button>
           <button className="lp-btn-ghost" onClick={scrollToWhat}>
             See what's included →

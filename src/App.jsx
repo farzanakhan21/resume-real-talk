@@ -10,6 +10,7 @@ import LandingProof from './components/landing/LandingProof'
 import LandingAbout from './components/landing/LandingAbout'
 import LandingCTA from './components/landing/LandingCTA'
 import LandingFooter from './components/landing/LandingFooter'
+import LandingProofBar from './components/landing/LandingProofBar'
 import FAQPage from './components/FAQPage'
 import MultiStepForm from './components/MultiStepForm'
 import EmailGate from './components/EmailGate'
@@ -273,6 +274,7 @@ export default function App() {
           <motion.div key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
             <LandingNav onNavigate={navigateTo} />
             <LandingHero />
+            <LandingProofBar />
             <LandingWho />
             <LandingCTA />
             <LandingWhat />
@@ -282,7 +284,7 @@ export default function App() {
             {/* ── Form section: purple header + cream body ── */}
             <div id="roast-form" className="lp-form-hero">
               <div className="lp-form-hero__inner">
-                <span className="lp-section-tag lp-section-tag--gold">✦ roast my resume</span>
+                <span className="lp-section-tag lp-section-tag--gold">roast my resume</span>
                 <h2 className="lp-form-hero__title">Let's find out what's really going on.</h2>
               </div>
             </div>

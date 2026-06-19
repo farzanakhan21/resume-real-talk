@@ -24,11 +24,6 @@ const WHAT = [
     title: 'Networking scripts',
     body: 'Practical, specific outreach copy based on your actual experience. Not templates. Yours.',
   },
-  {
-    n: '06',
-    title: '1:1 session (beta)',
-    body: 'You get the option to sit down with me and go through your results together. Not a chatbot.',
-  },
 ]
 
 export default function LandingWhat() {
@@ -38,7 +33,7 @@ export default function LandingWhat() {
         <div className="lp-section-header lp-section-header--dark">
           <span className="lp-section-tag lp-section-tag--gold">What you get</span>
           <h2 className="lp-section-title lp-section-title--white">
-            Built different. Because you deserve better than a template.
+            Everything you need to be seen clearly.
           </h2>
         </div>
         <div className="lp-what__grid">

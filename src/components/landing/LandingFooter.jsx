@@ -23,7 +23,7 @@ export default function LandingFooter({ onNavigate }) {
         <li><button onClick={() => onNavigate('/faq')}>Privacy</button></li>
         <li><button onClick={() => onNavigate('/terms')}>Terms</button></li>
       </ul>
-      <span className="lp-footer__copy">© 2026 NURHR. Built different.</span>
+      <span className="lp-footer__copy">© 2026 NURHR. Built <strong>different.</strong></span>
     </footer>
   )
 }

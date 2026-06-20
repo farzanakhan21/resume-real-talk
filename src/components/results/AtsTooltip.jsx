@@ -5,7 +5,7 @@ export default function AtsTooltip() {
     <span className="ats-tip">
       ATS
       <span className="ats-tip__bubble">
-        Applicant Tracking System — the software that filters resumes before a human ever sees them
+        Applicant Tracking System - the software that filters resumes before a human ever sees them
       </span>
     </span>
   )

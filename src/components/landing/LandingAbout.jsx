@@ -3,24 +3,50 @@ export default function LandingAbout() {
     <section className="lp-about" id="lp-about">
       <div className="lp-about__inner">
         <div className="lp-about__card">
+
           <div className="lp-about__profile">
             <img
               src="/farzana.png"
               alt="Farzana Khan"
               className="lp-about__portrait"
             />
-            <span className="lp-about__name">Farzana Khan</span>
-            <span className="lp-about__role">not ur regular hr</span>
+            <div className="lp-about__profile-name">Farzana Khan</div>
+            <div className="lp-about__profile-role">Founder · HR Strategist</div>
+            <span className="lp-about__profile-tag">not ur regular hr</span>
           </div>
 
           <div className="lp-about__body">
-            <span className="lp-section-tag">Created by</span>
-            <p>I tell you what actually goes through our minds when we look at your resume.</p>
-            <p>I've been on the hiring side since 2016 - in hospitality, service-led businesses and startups. I've watched hiring managers stop scrolling. I've seen good people get screened out before a human even reads their application. And I've been on the other side of that silence too.</p>
-            <p>I've also been the one writing my own redundancy letter. So this comes from both sides of the table.</p>
-            <p>I built Roast My Resume because the tools that exist aren't telling people the truth. This isn't just AI. It's 10 years of hiring-side experience, encoded into every part of the analysis.</p>
-            <span className="lp-about__signoff">Farzana Khan<br />not ur regular hr<br />est. 2016</span>
+            <span className="lp-section-tag">Created By</span>
+            <h2 className="lp-about__body-h2">Someone who's been on every side of the table.</h2>
+
+            <div className="lp-about__wins">
+              <div className="lp-about__win">
+                <div className="lp-about__win-num">
+                  75→19%
+                  <small>Turnover</small>
+                </div>
+                <p>Reduced staff turnover from <strong>75% to 19%</strong> through targeted retention strategy and culture work.</p>
+              </div>
+              <div className="lp-about__win">
+                <div className="lp-about__win-num">
+                  -80%
+                  <small>Spend</small>
+                </div>
+                <p>Cut recruitment spend by <strong>80%</strong> through direct hiring and talent attraction - brand over budget.</p>
+              </div>
+              <div className="lp-about__win">
+                <div className="lp-about__win-num">
+                  6.9→8.3
+                  <small>Engagement</small>
+                </div>
+                <p>Lifted employee engagement from <strong>6.9 to 8.3</strong> while leading HR for luxury hospitality brands including Accor MGallery.</p>
+              </div>
+            </div>
+
+            <p className="lp-about__para">Since 2016 I've been leading talent strategy, candidate experience, and workforce transformation - watching capable people get overlooked because they didn't know how to position themselves. I created this because most people never see the other side of the hiring table. Now you can.</p>
+            <div className="lp-about__signoff">- Farzana Khan</div>
           </div>
+
         </div>
       </div>
     </section>

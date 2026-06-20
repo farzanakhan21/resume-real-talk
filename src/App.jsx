@@ -277,8 +277,8 @@ export default function App() {
             <LandingProofBar />
             <LandingWho />
             <LandingCTA />
-            <LandingWhat />
             <LandingAbout />
+            <LandingWhat />
             <LandingProof />
 
             {/* ── Form section: purple header + cream body ── */}

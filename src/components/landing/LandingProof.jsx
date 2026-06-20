@@ -10,69 +10,68 @@ const QUOTES = [
 
 const CARD_GAP = 20
 const INTERVAL_MS = 4500
-const RESUME_AFTER_MANUAL_MS = 2500
+const RESUME_DELAY = 2500
 
 export default function LandingProof() {
   const [current, setCurrent] = useState(0)
-  const intervalRef = useRef(null)
   const outerRef = useRef(null)
   const cardRefs = useRef([])
-  const isProgrammaticRef = useRef(false)
+  const intervalRef = useRef(null)
+  const programmaticRef = useRef(false)
   const count = QUOTES.length
 
-  // Scroll the carousel container to a specific card index
+  // Scroll the container to a card index — never call this inside a state updater
   const scrollToCard = useCallback((i) => {
     const outer = outerRef.current
     const card = cardRefs.current[i]
     if (!outer || !card) return
-    isProgrammaticRef.current = true
+    programmaticRef.current = true
     outer.scrollTo({ left: i * (card.offsetWidth + CARD_GAP), behavior: 'smooth' })
-    // Clear the flag after smooth scroll settles (~600ms)
-    setTimeout(() => { isProgrammaticRef.current = false }, 600)
+    setTimeout(() => { programmaticRef.current = false }, 800)
   }, [])
 
-  const startInterval = useCallback(() => {
+  // Interval updates state only — scroll is handled by the effect below
+  const startAutoplay = useCallback(() => {
     clearInterval(intervalRef.current)
     intervalRef.current = setInterval(() => {
-      setCurrent(c => {
-        const next = (c + 1) % count
-        scrollToCard(next)
-        return next
-      })
+      setCurrent(c => (c + 1) % count)
     }, INTERVAL_MS)
-  }, [count, scrollToCard])
+  }, [count])
 
-  // Start auto-advance on mount
+  // Whenever current changes (from timer or dot click), scroll to that card
   useEffect(() => {
-    startInterval()
-    return () => clearInterval(intervalRef.current)
-  }, [startInterval])
+    scrollToCard(current)
+  }, [current, scrollToCard])
 
-  // Pause on manual swipe, resume after RESUME_AFTER_MANUAL_MS
+  // Start autoplay on mount
+  useEffect(() => {
+    startAutoplay()
+    return () => clearInterval(intervalRef.current)
+  }, [startAutoplay])
+
+  // Detect manual swipe — pause timer, resume after RESUME_DELAY
   useEffect(() => {
     const outer = outerRef.current
     if (!outer) return
-    let resumeTimeout = null
-
-    const handleScroll = () => {
-      if (isProgrammaticRef.current) return
+    let resumeTimer = null
+    const onScroll = () => {
+      if (programmaticRef.current) return
       clearInterval(intervalRef.current)
-      clearTimeout(resumeTimeout)
-      resumeTimeout = setTimeout(startInterval, RESUME_AFTER_MANUAL_MS)
+      clearTimeout(resumeTimer)
+      resumeTimer = setTimeout(startAutoplay, RESUME_DELAY)
     }
-
-    outer.addEventListener('scroll', handleScroll, { passive: true })
+    outer.addEventListener('scroll', onScroll, { passive: true })
     return () => {
-      outer.removeEventListener('scroll', handleScroll)
-      clearTimeout(resumeTimeout)
+      outer.removeEventListener('scroll', onScroll)
+      clearTimeout(resumeTimer)
     }
-  }, [startInterval])
+  }, [startAutoplay])
 
+  // Dot click: setCurrent triggers the scroll effect; restart timer
   const goTo = useCallback((i) => {
     setCurrent(i)
-    scrollToCard(i)
-    startInterval()
-  }, [scrollToCard, startInterval])
+    startAutoplay()
+  }, [startAutoplay])
 
   return (
     <section className="lp-proof">

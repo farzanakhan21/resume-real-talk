@@ -2107,7 +2107,7 @@ html { scroll-behavior: smooth; }
 /* ── Hero ── */
 .lp-hero {
   background: var(--bg-soft);
-  padding: 84px 0 120px;
+  padding: 128px 0 120px;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -2870,7 +2870,7 @@ html { scroll-behavior: smooth; }
   .lp-proofbar__inner { padding: 0 22px; }
   .lp-proofbar__chip { font-size: 13px; padding: 9px 16px; }
 
-  .lp-hero { padding: 56px 0 96px; }
+  .lp-hero { padding: 96px 0 96px; }
   .lp-hero__inner { padding: 0 22px; }
   .resume-card { padding: 26px 22px 32px; }
   .resume-body { grid-template-columns: 1fr; gap: 26px; }

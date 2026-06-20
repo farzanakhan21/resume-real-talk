@@ -2,34 +2,51 @@ export default function LandingAbout() {
   return (
     <section className="lp-about" id="lp-about">
       <div className="lp-about__inner">
-        <div className="lp-about__content">
-          <span className="lp-section-tag lp-section-tag--gold">Created by</span>
-          <h2 className="lp-section-title lp-section-title--white">
-            Someone who's been on every side of the table.
-          </h2>
-          <p>
-            Since 2016 I've been in this space - leading talent strategy, candidate experience, employee journey, workforce restructures and leadership coaching - watching capable people get overlooked because they didn't know how to position themselves.
-          </p>
-          <p>
-            Myself included. I've written my own redundancy letter. I've had interviews where I thought I nailed it and heard nothing. And ones where I walked out unsure and got the offer.
-          </p>
-          <p>
-            As a candidate you don't see the other side. The one advert with 500+ applicants. The decisions pre-made before the role even goes live. The budget conversation just to get it approved. The hiring manager drowning in their day-to-day. The systems and filters before a human even looks. The first impression formed before you've said a word.
-          </p>
-          <p>Most people never get that information. So I created something that gives it to you.</p>
-          <p>And if you're employed right now - this is for you too.</p>
-          <p>As an employee you rarely think about leaving or exploring other options. The uncertainty, the fear of the unknown, staying safe feels easier than the alternative.</p>
-          <p>But what if that's exactly what's holding you back?</p>
-          <p className="lp-about__signoff">Farzana K.</p>
-        </div>
+        <div className="lp-about__card">
 
-        {/* Portrait photo — centred below the copy */}
-        <div className="lp-about__photo-wrap">
-          <img
-            src="/farzana.png"
-            alt="Farzana Khan"
-            className="lp-about__portrait"
-          />
+          <div className="lp-about__profile">
+            <img
+              src="/farzana.png"
+              alt="Farzana Khan"
+              className="lp-about__portrait"
+            />
+            <div className="lp-about__profile-name">Farzana Khan</div>
+            <div className="lp-about__profile-role">Founder · HR Strategist</div>
+            <span className="lp-about__profile-tag">not ur regular hr</span>
+          </div>
+
+          <div className="lp-about__body">
+            <span className="lp-section-tag">Created By</span>
+            <h2 className="lp-about__body-h2">Someone who's been on every side of the table.</h2>
+
+            <div className="lp-about__wins">
+              <div className="lp-about__win">
+                <div className="lp-about__win-num">
+                  75→19%
+                  <small>Turnover</small>
+                </div>
+                <p>Reduced staff turnover from <strong>75% to 19%</strong> through targeted retention strategy and culture work.</p>
+              </div>
+              <div className="lp-about__win">
+                <div className="lp-about__win-num">
+                  -80%
+                  <small>Spend</small>
+                </div>
+                <p>Cut recruitment spend by <strong>80%</strong> through direct hiring and talent attraction - brand over budget.</p>
+              </div>
+              <div className="lp-about__win">
+                <div className="lp-about__win-num">
+                  6.9→8.3
+                  <small>Engagement</small>
+                </div>
+                <p>Lifted employee engagement from <strong>6.9 to 8.3</strong> while leading HR for luxury hospitality brands including Accor MGallery.</p>
+              </div>
+            </div>
+
+            <p className="lp-about__para">Since 2016 I've been leading talent strategy, candidate experience, and workforce transformation - watching capable people get overlooked because they didn't know how to position themselves. I created this because most people never see the other side of the hiring table. Now you can.</p>
+            <div className="lp-about__signoff">- Farzana Khan</div>
+          </div>
+
         </div>
       </div>
     </section>

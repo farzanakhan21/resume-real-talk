@@ -12,3 +12,5 @@ vite.out
 vite.err
 server-out.txt
 server-err.txt
+
+.vercel

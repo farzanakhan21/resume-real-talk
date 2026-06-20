@@ -158,18 +158,21 @@ export default function MultiStepForm({ onSubmit, error }) {
         {/* ── Step 1: Career Situation ── */}
         {step === 1 && (
           <motion.div key="step1" {...slide}>
-            <p className="form-step-label">WHERE ARE YOU RIGHT NOW?</p>
-            <p className="form-step-hint">This helps us tailor your feedback to your actual situation.</p>
-
-            <div className="option-grid">
-              {CAREER_SITUATIONS.map(opt => (
-                <OptionCard
-                  key={opt}
-                  label={opt}
-                  selected={careerSituation === opt}
-                  onClick={() => { setCareerSituation(opt); setOtherSituation(''); setPreviousIndustry(''); setFormError('') }}
-                />
-              ))}
+            <div className="quiz-label-row">
+              <span className="quiz-label-bold">Where are you right now?</span>
+              <span className="quiz-label-muted">Pick the closest one.</span>
+            </div>
+            <div className="quiz-select-wrap">
+              <select
+                className="quiz-select"
+                value={careerSituation}
+                onChange={(e) => { setCareerSituation(e.target.value); setOtherSituation(''); setPreviousIndustry(''); setFormError('') }}
+              >
+                <option value="" disabled>Select your situation...</option>
+                {CAREER_SITUATIONS.map(opt => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
             </div>
 
             <AnimatePresence>

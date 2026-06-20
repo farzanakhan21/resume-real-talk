@@ -18,6 +18,7 @@ export default function LandingProof() {
   const cardRefs = useRef([])
   const intervalRef = useRef(null)
   const programmaticRef = useRef(false)
+  const scrollEndCleanupRef = useRef(null)
   const count = QUOTES.length
 
   // Scroll the container to a card index — never call this inside a state updater
@@ -25,9 +26,36 @@ export default function LandingProof() {
     const outer = outerRef.current
     const card = cardRefs.current[i]
     if (!outer || !card) return
+
+    // Cancel any in-progress scroll's flag-clear so it doesn't interfere
+    if (scrollEndCleanupRef.current) scrollEndCleanupRef.current()
+
     programmaticRef.current = true
     outer.scrollTo({ left: i * (card.offsetWidth + CARD_GAP), behavior: 'smooth' })
-    setTimeout(() => { programmaticRef.current = false }, 800)
+
+    // Use a once-flag so scrollend and the fallback timer don't both fire
+    let settled = false
+    const onDone = () => {
+      if (settled) return
+      settled = true
+      programmaticRef.current = false
+      scrollEndCleanupRef.current = null
+    }
+
+    // Primary: scrollend fires exactly when smooth animation finishes
+    const onScrollEnd = () => { clearTimeout(fallback); onDone() }
+    outer.addEventListener('scrollend', onScrollEnd, { once: true })
+
+    // Safety net for browsers where scrollend doesn't fire (older Safari)
+    const fallback = setTimeout(onDone, 1200)
+
+    // Store cleanup so a new scroll can cancel the pending one
+    scrollEndCleanupRef.current = () => {
+      outer.removeEventListener('scrollend', onScrollEnd)
+      clearTimeout(fallback)
+      settled = true
+      programmaticRef.current = false
+    }
   }, [])
 
   // Interval updates state only — scroll is handled by the effect below

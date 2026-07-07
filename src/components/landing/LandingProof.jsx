@@ -27,8 +27,7 @@ export default function LandingProof() {
     if (!outer || !card) return
     isProgrammaticRef.current = true
     outer.scrollTo({ left: i * (card.offsetWidth + CARD_GAP), behavior: 'smooth' })
-    // Clear the flag after smooth scroll settles (~600ms)
-    setTimeout(() => { isProgrammaticRef.current = false }, 600)
+    outer.addEventListener('scrollend', () => { isProgrammaticRef.current = false }, { once: true })
   }, [])
 
   const startInterval = useCallback(() => {

@@ -2470,25 +2470,35 @@ html { scroll-behavior: smooth; }
   margin: 0 auto;
   padding: 0 32px;
 }
-.lp-proof__carousel-outer {
-  overflow-x: auto;
-  scrollbar-width: none;
-  scroll-snap-type: x mandatory;
-  scroll-padding-left: max(32px, calc((100vw - var(--maxw)) / 2 + 32px));
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 12px;
+.lp-proof__marquee {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
 }
-.lp-proof__carousel-outer::-webkit-scrollbar { display: none; }
-.lp-proof__carousel-track {
+.lp-proof__marquee-track {
   display: flex;
-  gap: 20px;
-  padding-left: max(32px, calc((100vw - var(--maxw)) / 2 + 32px));
-  padding-right: max(32px, calc((100vw - var(--maxw)) / 2 + 32px));
+  width: max-content;
+  animation: lp-marquee 35s linear infinite;
+}
+.lp-proof__marquee-group {
+  display: flex;
+  flex-shrink: 0;
+}
+/* Trailing margin on every card (not flex gap) keeps the two groups
+   perfectly periodic, so the -50% loop has no visible jump. */
+.lp-proof__marquee-group > .lp-proof__card {
+  margin-right: 20px;
+}
+@keyframes lp-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-proof__marquee-track { animation: none; }
 }
 .lp-proof__card {
-  flex-shrink: 0;
+  flex: 0 0 auto;
   width: 340px;
-  scroll-snap-align: start;
   background: #fff;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -2514,26 +2524,6 @@ html { scroll-behavior: smooth; }
   font-size: 14px;
   font-weight: 600;
   color: var(--text-muted);
-}
-.lp-proof__dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 28px;
-}
-.lp-proof__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--purple-tint);
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: background .2s ease, transform .2s ease;
-}
-.lp-proof__dot--active {
-  background: var(--purple);
-  transform: scale(1.35);
 }
 
 /* ── About ── */
@@ -2881,8 +2871,7 @@ html { scroll-behavior: smooth; }
   .lp-who__grid,
   .lp-what__grid { grid-template-columns: 1fr; }
   .lp-proof__card { width: 80vw; }
-  .lp-proof__carousel-track { padding-left: 22px; padding-right: 22px; }
-  .lp-proof__carousel-outer { scroll-padding-left: 22px; }
+  .lp-proof__marquee-group > .lp-proof__card { margin-right: 16px; }
   .lp-about__card { padding: 26px; }
   .lp-about__portrait { width: 200px; height: 200px; }
   .lp-who,

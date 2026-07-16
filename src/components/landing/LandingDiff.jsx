@@ -30,7 +30,7 @@ export default function LandingDiff() {
             <strong>someone who's actually been in the room.</strong>
           </p>
           <div className="lp-diff__tagline">
-            built different. because you deserve better than a template.
+            because you deserve better than a template.
           </div>
         </div>
 

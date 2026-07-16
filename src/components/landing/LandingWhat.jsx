@@ -38,7 +38,7 @@ export default function LandingWhat() {
         <div className="lp-section-header">
           <span className="lp-section-tag">What You Get</span>
           <h2 className="lp-section-title">
-            Everything you need to be seen clearly.
+            so you actually get noticed.
           </h2>
         </div>
         <div className="lp-what__grid">

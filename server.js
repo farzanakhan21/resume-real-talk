@@ -847,7 +847,7 @@ async function sendFreeResultsEmail(to, jobTitle, data, resultUrl) {
     + '<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;background:#F7F4FF;border:1px solid rgba(45,27,105,0.15);border-radius:8px;overflow:hidden;">'
     + teaserItems + '</table>'
     + '<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;"><tr><td align="center">'
-    + '<a href="' + (resultUrl || config.APP_URL) + '" style="display:inline-block;background:#2D1B69;color:#FFFFFF;text-decoration:none;padding:16px 36px;border-radius:8px;font-size:15px;font-weight:700;letter-spacing:-0.01em;">Get your full report &rarr; $79 AUD</a>'
+    + '<a href="' + (resultUrl || config.APP_URL) + '" style="display:inline-block;background:#2D1B69;color:#FFFFFF;text-decoration:none;padding:16px 36px;border-radius:8px;font-size:15px;font-weight:700;letter-spacing:-0.01em;">Get your full report &rarr; $29.99 AUD</a>'
     + '</td></tr></table>'
     + '<p style="margin:32px 0 6px;font-size:14px;font-weight:700;color:#0A0A0A;line-height:1.7;">one quick favour - got 2 minutes?</p>'
     + '<p style="margin:0 0 14px;font-size:14px;color:#0A0A0A;line-height:1.7;">I\'m currently in beta and your feedback genuinely shapes what gets built next. I\'d love to know what landed, what didn\'t, and yes - you can roast me back.</p>'

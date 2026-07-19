@@ -28,7 +28,7 @@ export default function LeadCapture({ onUpgrade }) {
       transition={{ duration: 0.5, delay: 0.2 }}
     >
       <div className="lead-label">you've seen the problem. here's the fix.</div>
-      <h2>Get the full report for $79 AUD →</h2>
+      <h2>Get the full report for $29.99 AUD →</h2>
       <p className="lead-sub">
         You know something is off. The full report tells you exactly what, why, and precisely what to do about it.
       </p>
@@ -67,7 +67,7 @@ export default function LeadCapture({ onUpgrade }) {
       </div>
 
       <button className="btn--dark-primary" onClick={handlePay}>
-        Unlock everything for $79 AUD →
+        Unlock everything for $29.99 AUD →
       </button>
       <p className="lead-price-note">
         One-time payment · Secure checkout via Stripe · Instant access

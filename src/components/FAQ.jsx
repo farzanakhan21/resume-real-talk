@@ -24,7 +24,7 @@ const GENERAL = [
   },
   {
     q: "What's the difference between free and paid?",
-    a: "The free report shows your overall score, category scores and top issues - enough to know something's wrong. The paid report ($79 AUD) tells you exactly why and gives you the full plan to fix it - detailed recommendations, rewrite suggestions, LinkedIn profile rewrite, networking strategy and PDF download.",
+    a: "The free report shows your overall score, category scores and top issues - enough to know something's wrong. The paid report ($29.99 AUD) tells you exactly why and gives you the full plan to fix it - detailed recommendations, rewrite suggestions, LinkedIn profile rewrite, networking strategy and PDF download.",
   },
   {
     q: "What's coming next?",

@@ -30,7 +30,7 @@ export default function PaywallModal({ email, onClose, onUpgrade, loading }) {
         >
           <button className="modal__close" onClick={onClose}>✕</button>
           <div className="modal__badge">you've been roasted before</div>
-          <h2>Once is free. Twice is $79.</h2>
+          <h2>Once is free. Twice is $29.99.</h2>
           <p>
             You've already had your free roast. Unlock the full report - LinkedIn rewrite, 30-day visibility plan, PDF download, and more.
           </p>
@@ -75,7 +75,7 @@ export default function PaywallModal({ email, onClose, onUpgrade, loading }) {
               onClick={handlePay}
               disabled={loading}
             >
-              {loading ? 'Redirecting...' : 'Unlock for $79 AUD →'}
+              {loading ? 'Redirecting...' : 'Unlock for $29.99 AUD →'}
             </button>
             <button className="btn btn--ghost" onClick={onClose} style={{ flexShrink: 0 }}>
               Not now

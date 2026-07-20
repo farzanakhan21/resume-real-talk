@@ -28,7 +28,9 @@ export default function LeadCapture({ onUpgrade }) {
       transition={{ duration: 0.5, delay: 0.2 }}
     >
       <div className="lead-label">you've seen the problem. here's the fix.</div>
-      <h2>Get the full report for $29.99 AUD →</h2>
+      <div className="lead-label">beta pricing</div>
+      <h2>Get the full report for <s>$79</s> $29.99 AUD →</h2>
+      <p className="lead-price-note">price increases as the product grows.</p>
       <p className="lead-sub">
         You know something is off. The full report tells you exactly what, why, and precisely what to do about it.
       </p>

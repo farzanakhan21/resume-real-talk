@@ -30,7 +30,11 @@ export default function PaywallModal({ email, onClose, onUpgrade, loading }) {
         >
           <button className="modal__close" onClick={onClose}>✕</button>
           <div className="modal__badge">you've been roasted before</div>
-          <h2>Once is free. Twice is $29.99.</h2>
+          <div className="modal__badge">beta pricing</div>
+          <h2>Once is free. Twice is <s>$79</s> $29.99.</h2>
+          <p style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', fontFamily: 'var(--mono)' }}>
+            price increases as the product grows.
+          </p>
           <p>
             You've already had your free roast. Unlock the full report - LinkedIn rewrite, 30-day visibility plan, PDF download, and more.
           </p>

@@ -22,7 +22,7 @@ export default function EmailGate({ onSubmit, onClose }) {
         transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
       >
         <button className="modal__close" onClick={onClose}>✕</button>
-        <div className="modal__badge">almost there</div>
+        <div className="modal__badge" style={{ background: 'var(--purple)' }}>almost there</div>
         <h2>Where should we send our roast to?</h2>
         <p>Drop your email and we'll fire it straight to you. no spam.</p>
         <form onSubmit={handleSubmit} noValidate>
@@ -38,7 +38,7 @@ export default function EmailGate({ onSubmit, onClose }) {
             />
           </div>
           {error && <div className="error-msg" style={{ marginBottom: '1rem' }}>{error}</div>}
-          <button type="submit" className="btn btn--primary">
+          <button type="submit" className="btn btn--primary" style={{ background: 'var(--purple)' }}>
             Roast me <span className="btn-arrow">→</span>
           </button>
         </form>

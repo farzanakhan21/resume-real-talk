@@ -1,3 +1,5 @@
+import Lockup from '../brand/Lockup'
+
 export default function LandingFooter({ onNavigate }) {
   const scrollToAbout = () => {
     if (window.location.pathname === '/') {
@@ -16,7 +18,7 @@ export default function LandingFooter({ onNavigate }) {
     <footer className="lp-footer">
       <div className="lp-footer__inner">
         <div className="lp-footer__logo">
-          <span>N</span>URHR
+          <Lockup variant="dark" />
         </div>
         <div className="lp-footer__links">
           <button onClick={() => onNavigate('/faq')}>FAQs</button>

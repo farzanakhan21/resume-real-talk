@@ -2031,19 +2031,13 @@ html { scroll-behavior: smooth; }
   border-bottom: 1px solid var(--lp-border);
 }
 .lp-nav__logo {
-  font-family: var(--lp-sans);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--lp-text);
   flex-shrink: 0;
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
+  text-align: left;
 }
-.lp-nav__logo span { color: var(--lp-purple); }
 .lp-nav__links {
   display: flex;
   gap: 32px;
@@ -2791,13 +2785,7 @@ html { scroll-behavior: smooth; }
   flex-wrap: wrap;
   gap: 20px;
 }
-.lp-footer__logo {
-  font-family: var(--lp-sans);
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--text);
-}
-.lp-footer__logo span { color: var(--purple); }
+.lp-footer__logo { display: inline-flex; }
 .lp-footer__links {
   display: flex;
   gap: 26px;
@@ -3478,4 +3466,117 @@ html { scroll-behavior: smooth; }
 @media (max-width: 768px) {
   .lp-form-hero { padding: 60px 24px 52px; }
   .lp-form-body { padding: 40px 24px 60px; }
+}
+
+/* ═══════════════════════════════════════════════
+   BRAND COMPONENTS — nurhr
+   ═══════════════════════════════════════════════ */
+
+/* ── Wordmark: n(plum) + urhr(gold), one continuous word ── */
+.nurhr {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 48, "wght" 470;
+  letter-spacing: -0.015em;
+  color: var(--plum);
+}
+.nurhr__urhr { color: var(--gold); }
+
+/* ── Lockup ── */
+.lockup { display: inline-flex; color: var(--plum); }
+.lockup__product {
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 60, "WONK" 1, "opsz" 60, "wght" 470;
+  letter-spacing: -0.012em;
+  line-height: 1;
+  color: var(--plum);
+}
+.lockup__by {
+  font-family: var(--font-sans);
+  font-variation-settings: "wght" 430;
+  color: var(--plum-50);
+  font-size: 11px;
+}
+.lockup__tag {
+  font-family: var(--font-sans);
+  font-variation-settings: "wght" 430;
+  color: var(--plum-72);
+  font-size: 11px;
+  letter-spacing: 0.01em;
+}
+
+/* inline (nav): one baseline */
+.lockup--inline { align-items: baseline; gap: 8px; }
+.lockup--inline .lockup__product { font-size: 22px; }
+.lockup--inline .nurhr { font-size: 22px; }
+.lockup--inline .lockup__by { font-size: 11px; }
+
+/* stacked (header / OG) */
+.lockup--stacked,
+.lockup--dark { flex-direction: column; align-items: flex-start; gap: 3px; }
+.lockup--stacked .lockup__product,
+.lockup--dark .lockup__product { font-size: 44px; }
+.lockup--stacked .lockup__line,
+.lockup--dark .lockup__line { display: inline-flex; align-items: baseline; gap: 7px; }
+.lockup--stacked .nurhr,
+.lockup--dark .nurhr { font-size: 26px; }
+
+/* dark (footer / plum): cream text, gold-light urhr */
+.lockup--dark { color: var(--cream); }
+.lockup--dark .lockup__product { color: var(--cream); }
+.lockup--dark .nurhr { color: var(--cream); }
+.lockup--dark .nurhr__urhr { color: var(--gold-light); }
+.lockup--dark .lockup__by { color: rgba(244, 239, 229, 0.5); }
+.lockup--dark .lockup__tag { color: rgba(244, 239, 229, 0.72); }
+
+/* ── Highlighter mark (one word per headline) ── */
+.mark { background: linear-gradient(transparent 55%, var(--gold-tint) 55%); }
+
+/* ── Hand-drawn underline ── */
+.hand-underline { position: relative; display: inline-block; white-space: nowrap; }
+.hand-underline__svg {
+  position: absolute;
+  left: -2%;
+  bottom: -0.16em;
+  width: 104%;
+  height: 0.42em;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* ── Hand-drawn annotation (Caveat, gold, decorative) ── */
+.annotation {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 4px;
+  transform: rotate(var(--annotation-rot, -3deg));
+  transform-origin: center;
+  pointer-events: none;
+}
+.annotation__text {
+  font-family: var(--font-hand);
+  font-weight: 600;
+  color: var(--gold);
+  font-size: 32px;
+  line-height: 1.05;
+}
+.annotation--on-plum .annotation__text { color: var(--gold-light); }
+.annotation__arrow {
+  width: 46px;
+  height: 34px;
+  flex-shrink: 0;
+}
+.annotation--on-plum .annotation__arrow path { stroke: var(--gold-light); }
+.annotation__arrow--up-right { transform: scaleY(-1); }
+
+/* On mobile: annotations become static blocks above their referent,
+   never absolutely positioned, never overlapping. */
+@media (max-width: 767px) {
+  .annotation {
+    position: static !important;
+    display: block;
+    transform: rotate(-2deg);
+    margin: 0 0 6px;
+  }
+  .annotation__text { font-size: 26px; }
+  .annotation__arrow { display: none; }
 }

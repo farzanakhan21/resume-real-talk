@@ -1,59 +1,89 @@
-﻿/* ── nurhr design tokens ── */
+﻿/* ── nurhr design tokens — Visual System v1 (source of truth) ── */
 :root {
-  /* Canonical brand palette (the only colours allowed) */
-  --cream:      #F4EFE5;                 /* page background */
-  --cream-2:    #EDE6D8;                 /* cards, panels, inputs */
-  --plum:       #241332;                 /* primary text, buttons, dark sections */
-  --plum-90:    rgba(36, 19, 50, 0.90);  /* button hover */
-  --plum-72:    rgba(36, 19, 50, 0.72);  /* secondary text */
-  --plum-50:    rgba(36, 19, 50, 0.50);  /* placeholder / disabled */
-  --line:       rgba(36, 19, 50, 0.16);  /* borders, dividers */
-  --gold:       #A67B1C;                 /* wordmark urhr on cream, annotations, underlines, paid CTA */
-  --gold-ink:   #8C6614;                 /* gold as small text (<24px) on cream — meets AA */
-  --gold-light: #C9A24A;                 /* gold on plum: score numerals, urhr in dark lockup */
-  --gold-tint:  rgba(166, 123, 28, 0.16);/* highlighter, score track, warning bg */
+  /* Plum family — buttons, dark surfaces, deepest ink */
+  --plum-900:  #25101F;
+  --plum:      #4B1E43;                 /* primary plum: buttons, dark sections */
+  --plum-700:  #5F2B55;
+  --plum-500:  #7A4570;
+  --plum-line: rgba(37, 16, 31, 0.14);  /* borders, dividers */
+
+  /* Cream / paper — page and surfaces (near-white paper allowed for cards) */
+  --cream:     #FBF6EC;                 /* page background */
+  --cream-2:   #F4EBD9;                 /* tinted panels, inputs */
+  --cream-3:   #EDE1CB;                 /* tinted-card borders */
+  --paper:     #FFFCF6;                 /* card surface */
+
+  /* Gold — accents, paid CTA, annotations, wordmark urhr */
+  --gold:      #C4A048;
+  --gold-ink:  #8A6A18;                 /* gold as text on cream (AA) + annotations */
+  --gold-soft: #E7D6A6;
+  --gold-wash: #F6EDD4;                 /* washes, highlighter, score track */
+
+  /* Ink — body + UI text */
+  --ink:       #25101F;
+  --ink-70:    #5A4452;                 /* secondary text */
+  --ink-50:    #7C6A76;                 /* tertiary / placeholder */
 
   /* Surfaces inside dark (plum) sections */
-  --on-plum-fill:   rgba(244, 239, 229, 0.06);
-  --on-plum-border: rgba(244, 239, 229, 0.18);
+  --on-plum-fill:   rgba(251, 246, 236, 0.06);
+  --on-plum-border: rgba(251, 246, 236, 0.18);
 
   /* Type families */
-  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;  /* headlines, product name, score, quotes */
-  --font-sans:    'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; /* all UI/body */
-  --font-hand:    'Caveat', cursive;                              /* annotations only, always gold */
+  --serif:        'Newsreader', Georgia, 'Times New Roman', serif;   /* headlines, quotes, score */
+  --sans:         'Archivo', 'Helvetica Neue', Helvetica, Arial, sans-serif; /* all UI/body */
+  --hand:         'Caveat', cursive;                                 /* annotations */
+  --font-display: var(--serif);
+  --font-sans:    var(--sans);
+  --font-hand:    var(--hand);
 
-  /* ── Legacy tokens remapped onto the new palette ── */
+  /* Radii */
+  --r-lg: 18px;
+  --r-md: 12px;
+  --r-sm: 8px;
+
+  /* Shadows */
+  --sh-card: 0 1px 2px rgba(37, 16, 31, 0.04), 0 14px 30px -18px rgba(37, 16, 31, 0.22);
+  --sh-lift: 0 24px 54px -24px rgba(37, 16, 31, 0.34);
+
+  /* ── Legacy tokens remapped onto the v1 palette ── */
   --bg: var(--cream);
-  --bg-card: var(--cream-2);
+  --bg-card: var(--paper);
   --bg-elevated: var(--cream-2);
   --bg-dark: var(--plum);
   --bg-input: var(--cream-2);
 
-  --border: var(--line);
+  --border: var(--plum-line);
   --border-dark: var(--plum);
-  --border-accent: var(--line);
-  --border-amber: var(--gold-tint);
+  --border-accent: var(--plum-line);
+  --border-amber: var(--gold-soft);
 
-  --text: var(--plum);
-  --text-secondary: var(--plum-72);
-  --text-tertiary: var(--plum-50);
+  --text: var(--ink);
+  --text-secondary: var(--ink-70);
+  --text-tertiary: var(--ink-50);
   --text-on-dark: var(--cream);
 
   --accent: var(--plum);
-  --accent-hover: var(--plum-90);
-  --amber: var(--gold);
-  --green: var(--plum);   /* no green: success is plum text + gold accent */
-  --red: var(--plum);     /* no red: errors are plum text on --gold-tint */
+  --accent-hover: var(--plum-700);
+  --amber: var(--gold-ink);
+  --green: var(--ink);    /* no green: success is ink text + gold accent */
+  --red: var(--ink);      /* no red: errors are ink text on --gold-wash */
 
-  --font: var(--font-sans);
-  --mono: var(--font-sans);
+  --font: var(--sans);
+  --mono: var(--sans);
 
-  --radius: 8px;
-  --radius-sm: 6px;
+  --radius: var(--r-md);
+  --radius-sm: var(--r-sm);
 
-  /* No box shadows in the new system */
-  --shadow: none;
-  --shadow-sm: none;
+  --shadow: var(--sh-card);
+  --shadow-sm: var(--sh-card);
+
+  /* Back-compat aliases kept from the earlier pass */
+  --plum-90: var(--plum-700);
+  --plum-72: var(--ink-70);
+  --plum-50: var(--ink-50);
+  --line: var(--plum-line);
+  --gold-light: var(--gold);
+  --gold-tint: var(--gold-wash);
 }
 
 /* ── Reset ── */
@@ -62,25 +92,25 @@ html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: var(--font-sans);
-  font-variation-settings: "wght" 430;
+  font-family: var(--sans);
   font-style: normal;
   font-size: 16px;
-  line-height: 1.65;
+  line-height: 1.6;
   min-height: 100vh;
 }
-/* Headlines, product name, quotes, score → Fraunces (lowercase brand voice) */
+/* Headlines, quotes, score → Newsreader (serif, weight 500) */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-variation-settings: "SOFT" 60, "WONK" 1, "opsz" 144, "wght" 470;
-  letter-spacing: -0.012em;
-  line-height: 1.05;
+  font-family: var(--serif);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
   font-style: normal;
 }
+h1 { letter-spacing: -0.03em; line-height: 1.04; }
 /* No italics anywhere in the brand */
 i, em { font-style: normal; }
-button { cursor: pointer; font-family: var(--font-sans); font-variation-settings: "wght" 520; }
-input, textarea, select { font-family: var(--font-sans); }
+button { cursor: pointer; font-family: var(--sans); font-weight: 600; }
+input, textarea, select { font-family: var(--sans); }
 ul { list-style: none; }
 
 /* ── Layout ── */

@@ -6,7 +6,7 @@ export default function LandingAbout() {
 
           <div className="lp-about__profile">
             <img
-              src="/farzana.png"
+              src="/farzana-headshot.webp"
               alt="Farzana Khan"
               className="lp-about__portrait"
             />

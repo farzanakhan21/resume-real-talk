@@ -2865,6 +2865,14 @@ html { scroll-behavior: smooth; }
   color: var(--text);
 }
 .lp-footer__logo span { color: var(--purple); }
+/* same N fade-out reveal as the navbar logo */
+.lp-footer__logo-n {
+  display: inline-block;
+  animation: lp-logo-n-fade 0.8s ease 0.5s forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-footer__logo-n { animation: none; opacity: 0; font-size: 0; }
+}
 .lp-footer__links {
   display: flex;
   gap: 26px;

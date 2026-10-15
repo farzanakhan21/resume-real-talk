@@ -2755,6 +2755,62 @@ html { scroll-behavior: smooth; }
 }
 .lp-cta .lp-btn-secondary:hover { background: rgba(255,255,255,0.1); }
 
+/* ── Why trust me (dark plum story section) ── */
+.lp-trust { padding: 96px 32px; background: var(--lp-purple-deep); }
+.lp-trust__inner { max-width: 640px; margin: 0 auto; text-align: left; }
+.lp-trust__title {
+  font-family: var(--lp-sans);
+  font-size: clamp(30px, 4vw, 44px);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: #fff;
+  margin-bottom: 22px;
+}
+.lp-trust__lead {
+  font-family: var(--lp-sans);
+  font-size: clamp(19px, 2.3vw, 23px);
+  font-weight: 600;
+  line-height: 1.5;
+  color: #fff;
+  margin-bottom: 38px;
+}
+.lp-trust__p {
+  font-family: var(--lp-sans);
+  font-size: 17px;
+  line-height: 1.75;
+  color: rgba(255,255,255,0.72);
+  margin-bottom: 20px;
+}
+/* standalone pivot lines — gold, with extra breathing room above */
+.lp-trust__beat {
+  font-family: var(--lp-sans);
+  font-size: clamp(22px, 2.8vw, 28px);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--lp-gold);
+  margin-top: 50px;
+  margin-bottom: 22px;
+}
+.lp-trust__close {
+  font-family: var(--lp-sans);
+  font-size: clamp(20px, 2.6vw, 26px);
+  font-weight: 700;
+  line-height: 1.3;
+  color: #fff;
+  margin-top: 42px;
+}
+.lp-trust__link {
+  display: inline-block;
+  margin-top: 40px;
+  font-family: var(--lp-sans);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--lp-gold);
+  text-decoration: none;
+}
+.lp-trust__link:hover { text-decoration: underline; text-underline-offset: 3px; }
+
 /* ── Footer ── */
 .lp-footer {
   background: #fff;
@@ -2888,6 +2944,8 @@ html { scroll-behavior: smooth; }
   .lp-diff,
   .lp-about,
   .lp-cta { padding: 68px 22px; }
+  .lp-trust { padding: 68px 22px; }
+  .lp-trust__beat { margin-top: 38px; }
   .lp-proof { padding: 68px 0 56px; }
   .lp-footer__inner { flex-direction: column; text-align: center; }
   .lp-compare-row { grid-template-columns: 1fr; }

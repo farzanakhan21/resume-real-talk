@@ -4,6 +4,7 @@ import Header from './components/Header'
 import TermsPage from './components/TermsPage'
 import LandingNav from './components/landing/LandingNav'
 import LandingHero from './components/landing/LandingHero'
+import LandingTrust from './components/landing/LandingTrust'
 import LandingWho from './components/landing/LandingWho'
 import LandingWhat from './components/landing/LandingWhat'
 import LandingProof from './components/landing/LandingProof'
@@ -274,6 +275,7 @@ export default function App() {
           <motion.div key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
             <LandingNav onNavigate={navigateTo} />
             <LandingHero />
+            <LandingTrust />
             <LandingProofBar />
             <LandingWho />
             <LandingCTA />

@@ -4,12 +4,12 @@ import Header from './components/Header'
 import TermsPage from './components/TermsPage'
 import LandingNav from './components/landing/LandingNav'
 import LandingHero from './components/landing/LandingHero'
-import LandingTrust from './components/landing/LandingTrust'
 import LandingWho from './components/landing/LandingWho'
 import LandingWhat from './components/landing/LandingWhat'
 import LandingProof from './components/landing/LandingProof'
 import LandingCTA from './components/landing/LandingCTA'
 import LandingFooter from './components/landing/LandingFooter'
+import LandingAbout from './components/landing/LandingAbout'
 import LandingProofBar from './components/landing/LandingProofBar'
 import FAQPage from './components/FAQPage'
 import MultiStepForm from './components/MultiStepForm'
@@ -277,7 +277,7 @@ export default function App() {
             <LandingProofBar />
             <LandingWho />
             <LandingCTA />
-            <LandingTrust light id="lp-about" />
+            <LandingAbout />
             <LandingWhat />
             <LandingProof />
 

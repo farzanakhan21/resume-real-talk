@@ -2647,8 +2647,18 @@ html { scroll-behavior: smooth; }
   font-size: 16px;
   color: var(--text-muted);
   line-height: 1.7;
-  margin-bottom: 0;
+  margin-bottom: 16px;
 }
+.lp-about__link {
+  display: inline-block;
+  margin-top: 18px;
+  font-family: var(--lp-sans);
+  font-size: 16px;
+  font-weight: 600;
+  color: #8A6A18;
+  text-decoration: none;
+}
+.lp-about__link:hover { text-decoration: underline; text-underline-offset: 3px; }
 .lp-about__signoff {
   margin-top: 18px;
   font-size: 17px;

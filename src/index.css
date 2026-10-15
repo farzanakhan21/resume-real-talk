@@ -2755,8 +2755,17 @@ html { scroll-behavior: smooth; }
 }
 .lp-cta .lp-btn-secondary:hover { background: rgba(255,255,255,0.1); }
 
-/* ── Why trust me (dark plum story section) ── */
+/* ── Why trust me (story section) ── */
 .lp-trust { padding: 96px 32px; background: var(--lp-purple-deep); }
+/* light variant — sits on the soft-plum background the About section uses */
+.lp-trust--light { background: var(--bg-soft); }
+.lp-trust--light .lp-trust__title,
+.lp-trust--light .lp-trust__lead,
+.lp-trust--light .lp-trust__close { color: var(--lp-text); }
+.lp-trust--light .lp-trust__p { color: var(--lp-text-muted); }
+.lp-trust--light .lp-trust__beat { color: var(--lp-purple); }
+/* darker gold so the link stays legible on the light background */
+.lp-trust--light .lp-trust__link { color: #8A6A18; }
 .lp-trust__inner { max-width: 640px; margin: 0 auto; text-align: left; }
 .lp-trust__title {
   font-family: var(--lp-sans);

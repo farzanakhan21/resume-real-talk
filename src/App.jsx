@@ -8,7 +8,6 @@ import LandingTrust from './components/landing/LandingTrust'
 import LandingWho from './components/landing/LandingWho'
 import LandingWhat from './components/landing/LandingWhat'
 import LandingProof from './components/landing/LandingProof'
-import LandingAbout from './components/landing/LandingAbout'
 import LandingCTA from './components/landing/LandingCTA'
 import LandingFooter from './components/landing/LandingFooter'
 import LandingProofBar from './components/landing/LandingProofBar'
@@ -275,11 +274,10 @@ export default function App() {
           <motion.div key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
             <LandingNav onNavigate={navigateTo} />
             <LandingHero />
-            <LandingTrust />
             <LandingProofBar />
             <LandingWho />
             <LandingCTA />
-            <LandingAbout />
+            <LandingTrust light id="lp-about" />
             <LandingWhat />
             <LandingProof />
 

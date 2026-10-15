@@ -1,6 +1,6 @@
-export default function LandingTrust() {
+export default function LandingTrust({ light = false, id = 'lp-trust' }) {
   return (
-    <section className="lp-trust" id="lp-trust">
+    <section className={`lp-trust${light ? ' lp-trust--light' : ''}`} id={id}>
       <div className="lp-trust__inner">
         <h2 className="lp-trust__title">why trust me with your resume?</h2>
         <p className="lp-trust__lead">because i've been on both sides of the table - and neither one is what you think.</p>

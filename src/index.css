@@ -2024,6 +2024,26 @@ html { scroll-behavior: smooth; }
   cursor: pointer;
 }
 .lp-nav__logo span { color: var(--lp-purple); }
+/* reserve space for the longest phrase so the nav doesn't reflow while typing */
+.lp-nav__logo { min-width: 190px; text-align: left; }
+.typewriter {
+  display: inline-flex;
+  align-items: center;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--lp-purple);
+}
+.typewriter__text { white-space: pre; }
+.typewriter__cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.05em;
+  margin-left: 2px;
+  background: var(--lp-gold);
+  animation: tw-blink 1s steps(1, end) infinite;
+}
+@keyframes tw-blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .typewriter__cursor { animation: none; } }
 .lp-nav__links {
   display: flex;
   gap: 32px;
@@ -2925,6 +2945,7 @@ html { scroll-behavior: smooth; }
 
 @media (max-width: 680px) {
   .lp-nav { padding: 14px 20px; }
+  .lp-nav__logo { min-width: 140px; font-size: 13px; }
   .lp-nav__links { display: none; }
   .lp-nav__links--open {
     display: flex;

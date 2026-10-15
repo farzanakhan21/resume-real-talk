@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Typewriter from './Typewriter'
 
 // Scroll directly if already on the homepage; otherwise navigate home first
 // then scroll once the home sections have had time to render.
@@ -23,8 +24,8 @@ export default function LandingNav({ onNavigate }) {
 
   return (
     <nav className="lp-nav">
-      <button className="lp-nav__logo" onClick={() => { close(); onNavigate('/') }}>
-        <span>N</span>URHR
+      <button className="lp-nav__logo" onClick={() => { close(); onNavigate('/') }} aria-label="not ur regular hr - home">
+        <Typewriter />
       </button>
 
       <ul className={`lp-nav__links${menuOpen ? ' lp-nav__links--open' : ''}`}>

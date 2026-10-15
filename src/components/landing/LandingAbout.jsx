@@ -11,7 +11,7 @@ export default function LandingAbout() {
               className="lp-about__portrait"
             />
             <div className="lp-about__profile-name">Farzana Khan</div>
-            <div className="lp-about__profile-role">Founder · HR Strategist</div>
+            <div className="lp-about__profile-role">Founder, HR</div>
             <span className="lp-about__profile-tag">not ur regular hr</span>
           </div>
 

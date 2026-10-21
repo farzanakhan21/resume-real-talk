@@ -1128,11 +1128,10 @@ ${strategyCtx}
 
 Analyse this ${documentType} through the lens of a hiring decision-maker evaluating a ${jobTitle} candidate${industry ? ` in the ${industry} industry` : ''}${department ? ` (${department} department)` : ''}. Treat a LinkedIn PDF with the same rigour as a resume - weak positioning is weak positioning regardless of format.
 
-Let the career situation and timeframe shape the TONE and FOCUS of every section - not just a mention, but the actual strategic direction of the advice. Someone who needs a role in 30 days needs different advice to someone who is planning a move in 12 months.
+Let the career situation and timeframe shape the TONE and FOCUS of every section - not just a mention, but the actual strategic direction of the advice. Someone who needs a role in 30 days needs different advice to someone who is planning a move in 12 months.`;
 
-Return EXACTLY this JSON structure. No markdown fences, no extra text, only valid JSON:
-
-{
+    // Full report schema. It is split into section groups below and generated in parallel for speed.
+    const schema = `{
   "scores": {
     "atsCompatibility": { "score": <0-100>, "insight": "<one sentence - specific to their resume, not generic>" },
     "executivePresence": { "score": <0-100>, "insight": "<one sentence>" },
@@ -1215,42 +1214,83 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
   }${isPaid ? `,\n${paidSections}` : ''}
 }`;
 
+    // Split the schema into its top-level sections, keyed by name
+    const sectionMap = {};
+    schema.trim().replace(/^\{/, '').replace(/\}$/, '')
+      .split(/\n(?=  "[A-Za-z]+":)/)
+      .map(chunk => chunk.trim().replace(/,\s*$/, ''))
+      .filter(Boolean)
+      .forEach(chunk => {
+        const key = chunk.match(/^"([A-Za-z]+)"/)?.[1];
+        if (key) sectionMap[key] = chunk;
+      });
+
+    // Generating one giant JSON took 60-90s. Running small groups in parallel
+    // means the total wait is roughly the time of the slowest group.
+    const SECTION_GROUPS = [
+      ['scores', 'topIssues'],
+      ['firstImpression', 'executivePresence'],
+      ['atsRisk', 'hardTruth'],
+      ['hiddenAdvantages', 'industryTranslation'],
+      ['rewriteSuggestions'],
+      ['networkingStrategy', 'positioningStrategy'],
+      ...(isPaid ? [['linkedInRewrite'], ['thirtyDayPlan']] : []),
+    ]
+      .map(group => group.filter(k => sectionMap[k]))
+      .filter(group => group.length);
+
+    const SYSTEM_PROMPT = 'You are a brutally honest career analyst powering "Roast My Resume". Return only valid JSON - no markdown, no preamble, no explanation. Be specific, uncomfortable, and direct - name exact problems, quote actual resume language, never soften. SCORING CALIBRATION: most real-world resumes score 40-65 out of 100. Truly exceptional resumes score 75-85. Scores above 85 are extremely rare.';
+
+    const parseJson = (raw) => {
+      try {
+        return JSON.parse(raw);
+      } catch {
+        const match = raw.match(/\{[\s\S]*\}/);
+        if (!match) throw new Error('Failed to parse AI response.');
+        return JSON.parse(match[0]);
+      }
+    };
+
     // Retry up to 3 times on 529 overloaded_error, with a 3-second pause between attempts
-    let message;
     const MAX_RETRIES = 3;
     const RETRY_DELAY_MS = 3000;
-    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-      try {
-        message = await client.messages.create({
-          model: 'claude-sonnet-4-6',
-          max_tokens: isPaid ? 12000 : 8000,
-          system: 'You are a brutally honest career analyst powering "Roast My Resume". Return only valid JSON - no markdown, no preamble, no explanation. Be specific, uncomfortable, and direct - name exact problems, quote actual resume language, never soften. SCORING CALIBRATION: most real-world resumes score 40-65 out of 100. Truly exceptional resumes score 75-85. Scores above 85 are extremely rare.',
-          messages: [{ role: 'user', content: prompt }],
-        });
-        break; // success - exit retry loop
-      } catch (apiErr) {
-        const isOverloaded = apiErr.status === 529 ||
-          apiErr.error?.type === 'overloaded_error' ||
-          (apiErr.message || '').toLowerCase().includes('overloaded');
-        if (isOverloaded && attempt < MAX_RETRIES) {
-          console.warn(`[Anthropic] 529 overloaded on attempt ${attempt}/${MAX_RETRIES} - retrying in ${RETRY_DELAY_MS}ms`);
-          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
-          continue;
-        }
-        // Final attempt failed or non-retryable error - re-throw for outer catch
-        throw apiErr;
-      }
-    }
+    const generateGroup = async (keys) => {
+      const groupPrompt = `${prompt}
 
-    const raw = message.content[0].text.trim();
-    let parsed;
-    try {
-      parsed = JSON.parse(raw);
-    } catch {
-      const match = raw.match(/\{[\s\S]*\}/);
-      if (!match) throw new Error('Failed to parse AI response.');
-      parsed = JSON.parse(match[0]);
-    }
+This report is generated in parts. For this part, return ONLY the following section(s) of the full report: ${keys.join(', ')}. Do not include any other sections.
+
+Return EXACTLY this JSON structure. No markdown fences, no extra text, only valid JSON:
+
+{
+${keys.map(k => '  ' + sectionMap[k]).join(',\n')}
+}`;
+      for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+        try {
+          const message = await client.messages.create({
+            model: 'claude-sonnet-4-6',
+            max_tokens: 3000,
+            system: SYSTEM_PROMPT,
+            messages: [{ role: 'user', content: groupPrompt }],
+          });
+          return parseJson(message.content[0].text.trim());
+        } catch (apiErr) {
+          const isOverloaded = apiErr.status === 529 ||
+            apiErr.error?.type === 'overloaded_error' ||
+            (apiErr.message || '').toLowerCase().includes('overloaded');
+          if (isOverloaded && attempt < MAX_RETRIES) {
+            console.warn(`[Anthropic] 529 overloaded on attempt ${attempt}/${MAX_RETRIES} (${keys.join(',')}) - retrying in ${RETRY_DELAY_MS}ms`);
+            await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+            continue;
+          }
+          throw apiErr;
+        }
+      }
+    };
+
+    const startedAt = Date.now();
+    const groupResults = await Promise.all(SECTION_GROUPS.map(generateGroup));
+    console.log(`[Analyze] ${SECTION_GROUPS.length} parallel groups done in ${((Date.now() - startedAt) / 1000).toFixed(1)}s`);
+    let parsed = Object.assign({}, ...groupResults);
 
     // Decode HTML entities the AI sometimes includes in string values
     const decodeEntities = (s) => typeof s === 'string'

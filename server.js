@@ -32,6 +32,7 @@ const config = {
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || fileConfig.ADMIN_PASSWORD || '',
   SUPABASE_URL: process.env.SUPABASE_URL || fileConfig.SUPABASE_URL || '',
   SUPABASE_KEY: process.env.SUPABASE_KEY || fileConfig.SUPABASE_KEY || '',
+  RESUME_RETENTION_DAYS: parseInt(process.env.RESUME_RETENTION_DAYS || '90', 10),
 };
 
 // ── Startup validation ────────────────────────────────────────────────────
@@ -140,6 +141,8 @@ async function saveAnalysis(entry) {
       ...basePayload,
       result_id: entry.resultId || null,
       results_data: entry.resultsData || null,
+      resume_url: entry.resumeUrl || null,
+      resume_expires_at: entry.resumeExpiresAt || null,
     };
     try {
       // Attempt full insert (with result_id + results_data)
@@ -173,6 +176,87 @@ async function saveAnalysis(entry) {
     writeAnalysis(entry);
   }
 }
+
+// ── Resume Storage (Supabase Storage bucket: "resumes") ───────────────────
+
+async function uploadResume(fileBuffer, filename) {
+  if (!config.SUPABASE_URL || !config.SUPABASE_KEY) return null;
+  try {
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + config.RESUME_RETENTION_DAYS);
+    const path = `${filename}`;
+    const res = await fetch(
+      `${config.SUPABASE_URL}/storage/v1/object/resumes/${path}`,
+      {
+        method: 'POST',
+        headers: {
+          apikey: config.SUPABASE_KEY,
+          Authorization: `Bearer ${config.SUPABASE_KEY}`,
+          'Content-Type': 'application/pdf',
+          'x-upsert': 'false',
+        },
+        body: fileBuffer,
+      }
+    );
+    if (!res.ok) {
+      const msg = await res.text();
+      console.warn('[Storage] Resume upload failed:', msg);
+      return null;
+    }
+    console.log('[Storage] Resume uploaded:', path);
+    return { path, expiresAt: expiresAt.toISOString() };
+  } catch (err) {
+    console.error('[Storage] uploadResume error:', err.message);
+    return null;
+  }
+}
+
+async function deleteExpiredResumes() {
+  if (!config.SUPABASE_URL || !config.SUPABASE_KEY) return;
+  try {
+    // Find analyses where resume has expired
+    const res = await fetch(
+      `${config.SUPABASE_URL}/rest/v1/analyses?resume_url=not.is.null&resume_expires_at=lte.${new Date().toISOString()}&select=id,resume_url`,
+      { headers: supabaseHeaders() }
+    );
+    if (!res.ok) { console.warn('[Storage] Could not query expired resumes'); return; }
+    const expired = await res.json();
+    if (!expired.length) { console.log('[Storage] No expired resumes to delete'); return; }
+
+    // Delete files from storage
+    const paths = expired.map(r => r.resume_url.replace(/^resumes\//, ''));
+    const delRes = await fetch(`${config.SUPABASE_URL}/storage/v1/object/resumes`, {
+      method: 'DELETE',
+      headers: {
+        apikey: config.SUPABASE_KEY,
+        Authorization: `Bearer ${config.SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ prefixes: paths }),
+    });
+    if (!delRes.ok) { console.warn('[Storage] Storage delete failed:', await delRes.text()); }
+
+    // Clear resume_url + resume_expires_at from DB rows
+    const ids = expired.map(r => r.id);
+    const patchRes = await fetch(
+      `${config.SUPABASE_URL}/rest/v1/analyses?id=in.(${ids.join(',')})`,
+      {
+        method: 'PATCH',
+        headers: { ...supabaseHeaders(), 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ resume_url: null, resume_expires_at: null }),
+      }
+    );
+    if (patchRes.ok) {
+      console.log(`[Storage] Deleted ${expired.length} expired resume(s) and cleared DB references`);
+    }
+  } catch (err) {
+    console.error('[Storage] deleteExpiredResumes error:', err.message);
+  }
+}
+
+// Run cleanup daily (every 24h) — fires once on startup then every 24h
+deleteExpiredResumes();
+setInterval(deleteExpiredResumes, 24 * 60 * 60 * 1000);
 
 async function markAnalysisPaid(email) {
   if (!config.SUPABASE_URL || !config.SUPABASE_KEY) return;
@@ -1290,17 +1374,22 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
       console.error('[Email] Fire-and-forget failed:', err.message, err.statusCode, JSON.stringify(err))
     );
 
-    // Record analysis + full results for persistent retrieval - fire and forget
-    saveAnalysis({
-      email: normalised,
-      date: new Date().toISOString(),
-      jobTitle: jobTitle || '',
-      industry: industry || '',
-      careerSituation: careerSituation || '',
-      timeframe: timeframe || '',
-      isPaid,
-      resultId,
-      resultsData: parsed,
+    // Upload resume PDF to Supabase Storage then save analysis record
+    const resumeFilename = `${resultId}.pdf`;
+    uploadResume(req.file.buffer, resumeFilename).then(uploaded => {
+      return saveAnalysis({
+        email: normalised,
+        date: new Date().toISOString(),
+        jobTitle: jobTitle || '',
+        industry: industry || '',
+        careerSituation: careerSituation || '',
+        timeframe: timeframe || '',
+        isPaid,
+        resultId,
+        resultsData: parsed,
+        resumeUrl: uploaded ? `resumes/${resumeFilename}` : null,
+        resumeExpiresAt: uploaded ? uploaded.expiresAt : null,
+      });
     }).catch(err => console.error('[DB] saveAnalysis fire-and-forget failed:', err.message));
 
     res.json({ success: true, data: parsed, isPaid, resultId });
@@ -1313,6 +1402,53 @@ Return EXACTLY this JSON structure. No markdown fences, no extra text, only vali
       ? "We're experiencing high demand right now. Please try again in a moment."
       : 'Something went wrong analysing your resume. Please try again.';
     res.status(500).json({ error: userMessage });
+  }
+});
+
+// ── Admin: get signed URL for a stored resume ─────────────────────────────
+app.get('/api/admin/resume/:resultId', async (req, res) => {
+  const pwd = req.headers['x-admin-password'] || req.query.password;
+  if (!config.ADMIN_PASSWORD || pwd !== config.ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorised' });
+  }
+  if (!config.SUPABASE_URL || !config.SUPABASE_KEY) {
+    return res.status(503).json({ error: 'Storage not configured' });
+  }
+  try {
+    // Look up the resume_url for this result
+    const dbRes = await fetch(
+      `${config.SUPABASE_URL}/rest/v1/analyses?result_id=eq.${encodeURIComponent(req.params.resultId)}&select=resume_url,resume_expires_at`,
+      { headers: supabaseHeaders() }
+    );
+    const rows = await dbRes.json();
+    if (!rows.length || !rows[0].resume_url) {
+      return res.status(404).json({ error: 'Resume not found or already deleted' });
+    }
+    const storagePath = rows[0].resume_url.replace(/^resumes\//, '');
+    // Generate a signed URL (1 hour expiry)
+    const signRes = await fetch(
+      `${config.SUPABASE_URL}/storage/v1/object/sign/resumes/${storagePath}`,
+      {
+        method: 'POST',
+        headers: {
+          apikey: config.SUPABASE_KEY,
+          Authorization: `Bearer ${config.SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ expiresIn: 3600 }),
+      }
+    );
+    if (!signRes.ok) {
+      return res.status(500).json({ error: 'Could not generate download link' });
+    }
+    const { signedURL } = await signRes.json();
+    res.json({
+      url: `${config.SUPABASE_URL}/storage/v1${signedURL}`,
+      expiresAt: rows[0].resume_expires_at,
+    });
+  } catch (err) {
+    console.error('[Admin] Resume signed URL error:', err.message);
+    res.status(500).json({ error: 'Internal error' });
   }
 });
 

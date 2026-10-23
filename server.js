@@ -284,12 +284,20 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
     const session = event.data.object;
     const email = session.customer_email || session.metadata?.email;
     if (email) {
-      const emails = readEmails();
       const normalised = email.toLowerCase().trim();
+      // Record the payment in Supabase (is_paid=true) — this is the store the
+      // admin panel reads. The webhook is the reliable, out-of-band record:
+      // it fires even when the buyer never returns to the success URL (which
+      // is what otherwise triggers /api/verify-payment). Awaited before we
+      // respond so the write completes on serverless before the function freezes.
+      await markAnalysisPaid(normalised);
+      // Keep the local paid list too (best-effort; ephemeral on Vercel serverless).
+      const emails = readEmails();
       if (!emails.paid.includes(normalised)) {
         emails.paid.push(normalised);
         writeEmails(emails);
       }
+      console.log('[Webhook] checkout.session.completed recorded paid for:', normalised);
     }
   }
   res.sendStatus(200);

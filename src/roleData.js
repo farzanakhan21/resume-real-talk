@@ -13,6 +13,7 @@ export const INDUSTRIES = [
   'Consulting & Professional Services',
   'Defence & National Security',
   'E-commerce & Marketplaces',
+  'Executive & Administration Support',
   'Education & Training',
   'Energy & Utilities',
   'Engineering (Civil, Structural, Mechanical)',
@@ -73,6 +74,13 @@ const GENERIC_DEPARTMENTS = [
 
 // ── Industry → Department mappings ───────────────────────────────────────────
 const INDUSTRY_DEPARTMENTS = {
+  'Executive & Administration Support': [
+    'Executive Support',
+    'Administration & Office Management',
+    'Operations Support',
+    'Project & Programme Support',
+    'Board & Governance Support',
+  ],
   'Technology & SaaS': [
     'Backend Engineering',
     'Cloud & Infrastructure',
@@ -787,10 +795,30 @@ const R = {
     'C-Suite Executive',
     'Other / Describe my role',
   ],
+  admin_support: [
+    'Receptionist / Office Assistant',
+    'Administration Officer',
+    'Senior Administrator',
+    'Team Assistant',
+    'Personal Assistant (PA)',
+    'Executive Assistant (EA)',
+    'Senior Executive Assistant',
+    'Office Manager',
+    'Executive Office Manager',
+    'Chief of Staff',
+    'Other / Describe my role',
+  ],
 }
 
 // ── Department → Roles mapping ────────────────────────────────────────────────
 const DEPARTMENT_ROLES = {
+  // Executive & Administration Support
+  'Executive Support': R.admin_support,
+  'Administration & Office Management': R.admin_support,
+  'Operations Support': R.admin_support,
+  'Project & Programme Support': R.admin_support,
+  'Board & Governance Support': R.admin_support,
+
   // Technology & SaaS
   'Backend Engineering': R.engineering,
   'Frontend Engineering': R.engineering,
